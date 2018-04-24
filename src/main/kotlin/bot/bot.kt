@@ -1,10 +1,7 @@
 package bot
 
 import data.repositories.StarRepository
-import fr.tunaki.stackoverflow.chat.ChatHost
-import fr.tunaki.stackoverflow.chat.Message
-import fr.tunaki.stackoverflow.chat.Room
-import fr.tunaki.stackoverflow.chat.StackExchangeClient
+import fr.tunaki.stackoverflow.chat.*
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.BehaviorSubject
@@ -29,13 +26,13 @@ class Bot(
         joinRoom(client, roomId)
     }
 
-    private fun die() {
+    private fun die(killer: User) {
         disposables.clear()
 
         aliveSubject.onNext(false)
         aliveSubject.onComplete()
 
-        println("Died")
+        println("Died. Killed by ${killer.name}")
     }
 
     private fun joinRoom(client: StackExchangeClient, roomId: Int) {
@@ -50,7 +47,7 @@ class Bot(
 
     private fun processMessage(message: Message) {
         when (message.plainContent) {
-            "1" -> die()
+            "1" -> die(killer = message.user)
             "2" -> room.send("${message.user.id}")
             "3" -> sync()
         }
