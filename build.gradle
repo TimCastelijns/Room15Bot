@@ -1,5 +1,5 @@
 buildscript {
-    ext.kotlin_version = '1.2.31'
+    ext.kotlin_version = '1.2.40'
 
     repositories {
         mavenCentral()
@@ -34,6 +34,7 @@ dependencies {
     implementation 'org.jsoup:jsoup:1.11.3'
 
     implementation "org.koin:koin-core:0.9.2"
+    testImplementation 'org.koin:koin-test:0.9.2'
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlin_version"

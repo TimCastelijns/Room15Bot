@@ -1,8 +1,9 @@
 package di
 
 import bot.Bot
+import data.commands.GetStarsOverviewCommand
 import data.repositories.CredentialsRepository
-import data.repositories.StarRepository
+import data.repositories.StarredMessageRepository
 import network.StarService
 import org.koin.dsl.module.Module
 import org.koin.dsl.module.applicationContext
@@ -14,8 +15,10 @@ private val module: Module = applicationContext {
 
     factory { Bot(get()) }
 
+    factory { GetStarsOverviewCommand(get()) }
+
     bean { CredentialsRepository() }
-    bean { StarRepository(get()) }
+    bean { StarredMessageRepository(get()) }
 
     bean { provideRetrofit().create(StarService::class.java) as StarService }
 

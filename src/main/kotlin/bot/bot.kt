@@ -1,15 +1,15 @@
 package bot
 
-import data.repositories.StarRepository
+import data.commands.GetStarsOverviewCommand
 import fr.tunaki.stackoverflow.chat.*
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.BehaviorSubject
 import room.observeMessagesPosted
 
-class Bot(
-        private val starRepository: StarRepository
-) {
+class Bot (
+        private val getStarsOverviewCommand: GetStarsOverviewCommand
+){
 
     private val aliveSubject = BehaviorSubject.create<Boolean>()
 
@@ -49,16 +49,14 @@ class Bot(
         when (message.plainContent) {
             "1" -> die(killer = message.user)
             "2" -> room.send("${message.user.id}")
-            "3" -> sync()
+            "3" -> showStarsOverview()
         }
     }
 
-    private fun sync() {
-        disposables.add(starRepository.getStarData()
-                .subscribe({
-                    println(it)
-                }, {
-                    println(it.message)
-                }))
+    private fun showStarsOverview() {
+        disposables.add(getStarsOverviewCommand.execute()
+                .subscribe { it ->
+                    room.send(it)
+                })
     }
 }
