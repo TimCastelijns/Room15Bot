@@ -2,6 +2,7 @@ package di
 
 import bot.Bot
 import data.commands.GetStarsOverviewCommand
+import data.commands.GetUserStatsCommand
 import data.repositories.CredentialsRepository
 import data.repositories.StarredMessageRepository
 import network.StarService
@@ -13,9 +14,10 @@ import retrofit2.converter.scalars.ScalarsConverterFactory
 
 private val module: Module = applicationContext {
 
-    factory { Bot(get()) }
+    factory { Bot(get(), get()) }
 
     factory { GetStarsOverviewCommand(get()) }
+    factory { GetUserStatsCommand() }
 
     bean { CredentialsRepository() }
     bean { StarredMessageRepository(get()) }

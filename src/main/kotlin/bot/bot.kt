@@ -1,15 +1,18 @@
 package bot
 
 import data.commands.GetStarsOverviewCommand
+import data.commands.GetUserStatsCommand
 import fr.tunaki.stackoverflow.chat.*
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.BehaviorSubject
 import room.observeMessagesPosted
+import room.observeUsersEntered
 
-class Bot (
-        private val getStarsOverviewCommand: GetStarsOverviewCommand
-){
+class Bot(
+        private val getStarsOverviewCommand: GetStarsOverviewCommand,
+        private val getUserStatsCommand: GetUserStatsCommand
+) {
 
     private val aliveSubject = BehaviorSubject.create<Boolean>()
 
@@ -41,8 +44,19 @@ class Bot (
     }
 
     fun start() {
-        disposables.add(room.observeMessagesPosted()
-                .subscribe { processMessage(it) })
+        disposables.addAll(
+                room.observeMessagesPosted()
+                        .subscribe { processMessage(it) },
+                room.observeUsersEntered()
+                        .subscribe { processUserEntered(it) }
+        )
+    }
+
+    private fun processUserEntered(user: User) {
+        disposables.add(getUserStatsCommand.execute(user)
+                .subscribe { it ->
+                    room.send(it)
+                })
     }
 
     private fun processMessage(message: Message) {
