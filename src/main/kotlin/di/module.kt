@@ -13,6 +13,7 @@ import org.koin.dsl.module.applicationContext
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
+import util.UserNameValidator
 
 private val module: Module = applicationContext {
 
@@ -25,6 +26,8 @@ private val module: Module = applicationContext {
     bean { StarredMessageRepository(get()) }
     bean { UserStatsRepository(get()) }
 
+    factory { UserNameValidator() }
+    
     bean { provideChatRetrofit().create(StarService::class.java) as StarService }
     bean { provideMainRetrofit().create(UserStatsService::class.java) as UserStatsService }
 
