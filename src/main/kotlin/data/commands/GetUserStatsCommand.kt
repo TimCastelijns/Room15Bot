@@ -4,9 +4,11 @@ import data.repositories.UserStatsRepository
 import fr.tunaki.stackoverflow.chat.User
 import io.reactivex.Single
 import io.reactivex.functions.BiFunction
+import util.UserNameValidator
 
 class GetUserStatsCommand(
-        private val userStatsRepository: UserStatsRepository
+        private val userStatsRepository: UserStatsRepository,
+        private val userNameValidator: UserNameValidator
 ) {
 
     fun execute(user: User): Single<String> =
@@ -14,11 +16,13 @@ class GetUserStatsCommand(
                     BiFunction<Int, Int, Pair<Int, Int>> { q, a -> Pair(q, a) }
             ).map {
                 val ratio = "4:%.1f".format(it.second / (it.first / 4.0))
+                val isNameValid = userNameValidator.isValid(user.name)
 
-                "User joined: ${user.name}. Stats are: " +
+                "${user.name} joined. " +
                         "**Rep:** ${user.reputation} - " +
                         "**Questions:** ${it.first} - " +
-                        "**Answers:** ${it.second} ($ratio)"
+                        "**Answers:** ${it.second} ($ratio) " +
+                        "**Name**: ${if (isNameValid) "✓" else "x"}"
             }
 
 }

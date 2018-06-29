@@ -20,7 +20,7 @@ private val module: Module = applicationContext {
     factory { Bot(get(), get()) }
 
     factory { GetStarsOverviewCommand(get()) }
-    factory { GetUserStatsCommand(get()) }
+    factory { GetUserStatsCommand(get(), get()) }
 
     bean { CredentialsRepository() }
     bean { StarredMessageRepository(get()) }
