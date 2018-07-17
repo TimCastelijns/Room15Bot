@@ -1,7 +1,7 @@
 package data.commands
 
+import com.timcastelijns.chatexchange.chat.User
 import data.repositories.UserStatsRepository
-import fr.tunaki.stackoverflow.chat.User
 import io.reactivex.Single
 import io.reactivex.functions.BiFunction
 import util.UserNameValidator

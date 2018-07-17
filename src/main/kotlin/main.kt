@@ -1,8 +1,8 @@
 import bot.Bot
+import com.timcastelijns.chatexchange.chat.StackExchangeClient
 import data.Credentials
 import data.repositories.CredentialsRepository
 import di.modules
-import fr.tunaki.stackoverflow.chat.StackExchangeClient
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.StandAloneContext.startKoin
 import org.koin.standalone.inject
@@ -32,7 +32,7 @@ class Application : KoinComponent {
         val credentials = credentialsRepository.getCredentials()
         val client = connectClient(credentials)
 
-        bot.boot(client, ROOM_ID_TEST)
+        bot.boot(client, ROOM_ID_ANDROID)
         bot.observeLife()
                 .subscribe { alive ->
                     if (!alive) {

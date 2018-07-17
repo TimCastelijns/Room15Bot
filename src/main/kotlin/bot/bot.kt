@@ -1,8 +1,8 @@
 package bot
 
+import com.timcastelijns.chatexchange.chat.*
 import data.commands.GetStarsOverviewCommand
 import data.commands.GetUserStatsCommand
-import fr.tunaki.stackoverflow.chat.*
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.BehaviorSubject
@@ -61,8 +61,8 @@ class Bot(
 
     private fun processMessage(message: Message) {
         when (message.plainContent) {
-            "1" -> die(killer = message.user)
-            "2" -> room.send("${message.user.id}")
+            "1" -> die(killer = message.user!!)
+            "2" -> room.send("${message.user!!.id}")
             "3" -> showStarsOverview()
         }
     }

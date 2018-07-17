@@ -1,19 +1,18 @@
 package room
 
-import fr.tunaki.stackoverflow.chat.event.EventType
-import fr.tunaki.stackoverflow.chat.Message
-import fr.tunaki.stackoverflow.chat.Room
-import fr.tunaki.stackoverflow.chat.User
+import com.timcastelijns.chatexchange.chat.Message
+import com.timcastelijns.chatexchange.chat.Room
+import com.timcastelijns.chatexchange.chat.User
 import io.reactivex.Observable
 
 fun Room.observeMessagesPosted(): Observable<Message> = Observable.create<Message> { emitter ->
-    addEventListener(EventType.MESSAGE_POSTED) {
+    messagePostedEventListener = {
         emitter.onNext(it.message)
     }
 }
 
 fun Room.observeUsersEntered(): Observable<User> = Observable.create<User> { emitter ->
-    addEventListener(EventType.USER_ENTERED) {
-        it.user.ifPresent { emitter.onNext(it) }
+    userEnteredEventListener = {
+        it.user?.let { emitter.onNext(it) }
     }
 }

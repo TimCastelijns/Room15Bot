@@ -20,11 +20,11 @@ targetCompatibility = 1.8
 
 repositories {
     jcenter()
-    maven { url = "https://raw.github.com/Tunaki/chatexchange/mvn-repo/" }
+    maven { url = "https://jitpack.io" }
 }
 
 dependencies {
-    implementation 'fr.tunaki.stackoverflow:chatexchange:1.1.1'
+    implementation 'com.github.TimCastelijns:ChatExchange:1.0.0-alpha2'
     implementation 'org.slf4j:slf4j-simple:1.7.25'
 
     implementation 'com.squareup.retrofit2:retrofit:2.4.0'
