@@ -24,7 +24,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.github.TimCastelijns:ChatExchange:1.0.0-alpha2'
+    implementation 'com.github.TimCastelijns:ChatExchange:1.0.0-alpha5'
     implementation 'org.slf4j:slf4j-simple:1.7.25'
 
     implementation 'com.squareup.retrofit2:retrofit:2.4.0'

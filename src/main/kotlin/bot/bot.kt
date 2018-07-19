@@ -5,7 +5,6 @@ import data.commands.GetUserStatsCommand
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.BehaviorSubject
-import kotlinx.coroutines.experimental.launch
 
 class Bot(
         private val getUserStatsCommand: GetUserStatsCommand
@@ -41,6 +40,12 @@ class Bot(
     }
 
     fun start() {
+        room.accessLevelChangedEventListener = {
+            if (it.accessLevel == AccessLevel.REQUEST) {
+                processUserRequestedAccess(it.targetUser)
+            }
+        }
+
         room.messagePostedEventListener = {
             println("${it.userName}: ${it.message.content}")
 
@@ -48,6 +53,13 @@ class Bot(
                 processMessage(it.message)
             }
         }
+    }
+
+    private fun processUserRequestedAccess(user: User) {
+        disposables.add(getUserStatsCommand.execute(user)
+                .subscribe { it ->
+                    room.send("${user.name} requested access. $it")
+                })
     }
 
     private fun processMessage(message: Message) {
