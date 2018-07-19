@@ -17,7 +17,7 @@ import util.UserNameValidator
 
 private val module: Module = applicationContext {
 
-    factory { Bot(get(), get()) }
+    factory { Bot() }
 
     factory { GetStarsOverviewCommand(get()) }
     factory { GetUserStatsCommand(get(), get()) }
