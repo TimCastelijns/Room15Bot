@@ -1,18 +1,21 @@
 package bot
 
-import com.timcastelijns.chatexchange.chat.ChatHost
-import com.timcastelijns.chatexchange.chat.Room
-import com.timcastelijns.chatexchange.chat.StackExchangeClient
-import com.timcastelijns.chatexchange.chat.User
+import com.timcastelijns.chatexchange.chat.*
+import data.commands.GetUserStatsCommand
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.BehaviorSubject
+import kotlinx.coroutines.experimental.launch
 
-class Bot {
+class Bot(
+        private val getUserStatsCommand: GetUserStatsCommand
+) {
 
     private val aliveSubject = BehaviorSubject.create<Boolean>()
 
     lateinit var room: Room
+
+    private val disposables = CompositeDisposable()
 
     fun observeLife(): Observable<Boolean> {
         return aliveSubject.hide()
@@ -24,6 +27,8 @@ class Bot {
     }
 
     private fun die(killer: User) {
+        disposables.clear()
+
         aliveSubject.onNext(false)
         aliveSubject.onComplete()
 
@@ -36,6 +41,36 @@ class Bot {
     }
 
     fun start() {
+        room.messagePostedEventListener = {
+            println("${it.userName}: ${it.message.content}")
 
+            if (it.message.content!!.startsWith("!")) {
+                processMessage(it.message)
+            }
+        }
+    }
+
+    private fun processMessage(message: Message) {
+        val command = message.content!!.substring(1)
+        if (command == "shoo" && message.user!!.id == 1843331L) {
+            die(killer = message.user!!)
+        } else if (command.startsWith("stats")) {
+            val userId = command.split(" ").last().toLongOrNull()
+
+            val user = if (userId == null) {
+                message.user!!
+            } else {
+                room.getUser(userId)
+            }
+
+            processShowStatsCommand(user)
+        }
+    }
+
+    private fun processShowStatsCommand(user: User) {
+        disposables.add(getUserStatsCommand.execute(user)
+                .subscribe { it ->
+                    room.send("Stats for ${user.name} -- $it")
+                })
     }
 }

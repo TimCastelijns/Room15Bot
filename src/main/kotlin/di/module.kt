@@ -17,10 +17,10 @@ import util.UserNameValidator
 
 private val module: Module = applicationContext {
 
-    factory { Bot() }
+    factory { Bot(get()) }
 
     factory { GetStarsOverviewCommand(get()) }
-    factory { GetUserStatsCommand(get(), get()) }
+    factory { GetUserStatsCommand(get()) }
 
     bean { CredentialsRepository() }
     bean { StarredMessageRepository(get()) }

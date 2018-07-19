@@ -4,25 +4,30 @@ import com.timcastelijns.chatexchange.chat.User
 import data.repositories.UserStatsRepository
 import io.reactivex.Single
 import io.reactivex.functions.BiFunction
+import io.reactivex.schedulers.Schedulers
 import util.UserNameValidator
 
 class GetUserStatsCommand(
-        private val userStatsRepository: UserStatsRepository,
-        private val userNameValidator: UserNameValidator
+        private val userStatsRepository: UserStatsRepository
 ) {
 
     fun execute(user: User): Single<String> =
             Single.zip(userStatsRepository.getNumberOfQuestions(user.id), userStatsRepository.getNumberOfAnswers(user.id),
-                    BiFunction<Int, Int, Pair<Int, Int>> { q, a -> Pair(q, a) }
-            ).map {
-                val ratio = "4:%.1f".format(it.second / (it.first / 4.0))
-                val isNameValid = userNameValidator.isValid(user.name)
+                    BiFunction<Int, Int, Pair<Int, Int>> { q, a -> Pair(q, a) })
+                    .map {
+                        val answersPerQuestion = answersPerQuestion(it.first, it.second)
 
-                "${user.name} joined. " +
                         "**Rep:** ${user.reputation} - " +
-                        "**Questions:** ${it.first} - " +
-                        "**Answers:** ${it.second} ($ratio) " +
-                        "**Name**: ${if (isNameValid) "✓" else "x"}"
-            }
+                                "**Questions:** ${it.first} - " +
+                                "**Answers:** ${it.second} (ratio ${ratio(answersPerQuestion)})"
+                    }
+                    .subscribeOn(Schedulers.io())
+
+    private fun answersPerQuestion(questions: Int, answers: Int) = when (answers) {
+        0 -> 0F
+        else -> (answers / (questions / 4.0)).toFloat()
+    }
+
+    private fun ratio(answersPerQuestion: Float) = "4:%.1f".format(answersPerQuestion)
 
 }
