@@ -9,7 +9,7 @@ import org.koin.standalone.inject
 import java.util.concurrent.CountDownLatch
 
 const val ROOM_ID_ANDROID = 15
-const val ROOM_ID_TEST = 169617
+const val ROOM_ID_TEST = 1
 
 fun main(args: Array<String>) {
     startKoin(modules)
