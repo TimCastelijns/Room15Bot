@@ -3,6 +3,7 @@ package di
 import bot.Bot
 import data.commands.GetStarsOverviewCommand
 import data.commands.GetUserStatsCommand
+import data.commands.SyncStarsDataCommand
 import data.repositories.CredentialsRepository
 import data.repositories.StarredMessageRepository
 import data.repositories.UserStatsRepository
@@ -17,10 +18,11 @@ import util.UserNameValidator
 
 private val module: Module = applicationContext {
 
-    factory { Bot(get()) }
+    factory { Bot(get(), get()) }
 
-    factory { GetStarsOverviewCommand(get()) }
     factory { GetUserStatsCommand(get()) }
+    factory { SyncStarsDataCommand(get()) }
+    factory { GetStarsOverviewCommand(get()) }
 
     bean { CredentialsRepository() }
     bean { StarredMessageRepository(get()) }

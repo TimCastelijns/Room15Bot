@@ -2,12 +2,14 @@ package bot
 
 import com.timcastelijns.chatexchange.chat.*
 import data.commands.GetUserStatsCommand
+import data.commands.SyncStarsDataCommand
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.BehaviorSubject
 
 class Bot(
-        private val getUserStatsCommand: GetUserStatsCommand
+        private val getUserStatsCommand: GetUserStatsCommand,
+        private val syncStarsDataCommand: SyncStarsDataCommand
 ) {
 
     private val aliveSubject = BehaviorSubject.create<Boolean>()
@@ -76,6 +78,8 @@ class Bot(
             }
 
             processShowStatsCommand(user)
+        } else if (command.startsWith("sync stars")) {
+            processSyncStarsCommand()
         }
     }
 
@@ -84,5 +88,13 @@ class Bot(
                 .subscribe { it ->
                     room.send("Stats for ${user.name} -- $it")
                 })
+    }
+
+    private fun processSyncStarsCommand() {
+        println("processSyncStarsCommand")
+        disposables.add(syncStarsDataCommand.execute()
+                .subscribe({
+                    room.send("Done.")
+                }, ::println))
     }
 }
