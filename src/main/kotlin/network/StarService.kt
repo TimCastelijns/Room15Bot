@@ -11,4 +11,5 @@ interface StarService {
 
     @GET("rooms/info/15/android?tab=stars&")
     fun getStarsDataByPage(@Query("page") page: Int) : Single<String>
+
 }

@@ -2,6 +2,7 @@ package data.repositories
 
 import com.timcastelijns.chatexchange.chat.ChatHost
 import io.reactivex.Single
+import io.reactivex.schedulers.Schedulers
 import network.StarService
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -30,10 +31,23 @@ class StarredMessageRepository(
                 }
     }
 
-    fun getAllStarredMessages(): Single<List<StarredMessage>> {
-        return starService.getStarsDataByPage(page = 1)
+    fun getStarredMessagesByPage(page: Int): Single<List<StarredMessage>> {
+        return starService.getStarsDataByPage(page)
                 .map { Jsoup.parse(it) }
                 .map { document -> document.extractStarredMessages() }
+    }
+
+    fun getNumberOfStarredMessagesPages(): Single<Int> {
+        return starService.getStarsDataByPage(1)
+                .map { Jsoup.parse(it) }
+                .map {
+                    it.select("div.pager").first()
+                            .select("a[href^=\"?tab=stars&page=\"]")
+                            .secondToLast()?.run {
+                                getElementsByClass("page-numbers").first().text().toInt()
+                            } ?: 0
+                }
+                .subscribeOn(Schedulers.io())
     }
 
 }
@@ -50,13 +64,18 @@ private fun Document.extractStarredMessages(): List<StarredMessage> {
     val elements = select("div.monologue")
 
     elements.forEach {
-        val username = it.getElementsByAttribute("title").first().text()
         val message = with(it.select("div.message").first().select("div.content").first()) {
             if (hasText()) {
                 text()
             } else {
                 "-image-"
             }
+        }
+        val username = try {
+            it.getElementsByAttribute("title").first().text()
+        } catch (e: Exception) {
+            // Deleted users do not have a a[title] because their is no profile to link to. Their name is in div.username
+            it.getElementsByClass("username").first().text()
         }
 
         val times = it.getElementsByClass("times").first().text()
@@ -70,3 +89,5 @@ private fun Document.extractStarredMessages(): List<StarredMessage> {
 
     return starredMessages
 }
+
+private fun <T> List<T>.secondToLast(): T? = get(size - 2)
