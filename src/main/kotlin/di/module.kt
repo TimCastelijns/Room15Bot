@@ -1,10 +1,12 @@
 package di
 
 import bot.Bot
+import data.commands.GetStarsDataCommand
 import data.commands.GetStarsOverviewCommand
 import data.commands.GetUserStatsCommand
 import data.commands.SyncStarsDataCommand
-import data.repositories.CredentialsRepository
+import data.db.Database
+import data.repositories.ConfigRepository
 import data.repositories.StarredMessageRepository
 import data.repositories.UserStatsRepository
 import network.StarService
@@ -18,18 +20,20 @@ import util.UserNameValidator
 
 private val module: Module = applicationContext {
 
-    factory { Bot(get(), get()) }
+    factory { Bot(get(), get(), get()) }
+    bean { Database(get()) }
 
     factory { GetUserStatsCommand(get()) }
     factory { SyncStarsDataCommand(get()) }
     factory { GetStarsOverviewCommand(get()) }
+    factory { GetStarsDataCommand() }
 
-    bean { CredentialsRepository() }
+    bean { ConfigRepository() }
     bean { StarredMessageRepository(get()) }
     bean { UserStatsRepository(get()) }
 
     factory { UserNameValidator() }
-    
+
     bean { provideChatRetrofit().create(StarService::class.java) as StarService }
     bean { provideMainRetrofit().create(UserStatsService::class.java) as UserStatsService }
 

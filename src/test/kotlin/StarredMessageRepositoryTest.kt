@@ -39,7 +39,7 @@ class StarredMessageRepositoryTest : KoinTest {
     @Test
     fun test() {
         assertEquals<List<StarredMessage>>(
-                listOf(StarredMessage("Mehdi B.", 10, "https://chat.stackoverflow.com/transcript/15?m=42215261#42215261")),
+                listOf(StarredMessage("Mehdi B.", "", 10, "https://chat.stackoverflow.com/transcript/15?m=42215261#42215261")),
                 repository.getStarredMessages().blockingGet()
         )
     }
@@ -53,6 +53,10 @@ class MockStarService : StarService {
             html = getFileContent(it)
         }
         return Single.just(html)
+    }
+
+    override fun getStarsDataByPage(page: Int): Single<String> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     private fun getFileContent(fis: FileInputStream): String {

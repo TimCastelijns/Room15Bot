@@ -3,5 +3,5 @@ build/
 .gradle/
 **/*.iml
 .idea/
-credentials.properties
+config.properties
 *.pem

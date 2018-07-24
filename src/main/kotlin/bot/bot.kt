@@ -1,15 +1,19 @@
 package bot
 
 import com.timcastelijns.chatexchange.chat.*
+import data.commands.GetStarsDataCommand
 import data.commands.GetUserStatsCommand
 import data.commands.SyncStarsDataCommand
+import data.commands.truncate
+import data.repositories.StarredMessage
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.BehaviorSubject
 
 class Bot(
         private val getUserStatsCommand: GetUserStatsCommand,
-        private val syncStarsDataCommand: SyncStarsDataCommand
+        private val syncStarsDataCommand: SyncStarsDataCommand,
+        private val getStarsDataCommand: GetStarsDataCommand
 ) {
 
     private val aliveSubject = BehaviorSubject.create<Boolean>()
@@ -80,6 +84,12 @@ class Bot(
             processShowStatsCommand(user)
         } else if (command.startsWith("sync stars")) {
             processSyncStarsCommand()
+        } else if (command.startsWith("stars")) {
+            val username = if (command.split(" ").size > 1) {
+                command.split(" ").last()
+            } else null
+
+            processShowStarsCommand(username)
         }
     }
 
@@ -91,10 +101,54 @@ class Bot(
     }
 
     private fun processSyncStarsCommand() {
-        println("processSyncStarsCommand")
         disposables.add(syncStarsDataCommand.execute()
-                .subscribe({
+                .subscribe {
                     room.send("Done.")
-                }, ::println))
+                })
+    }
+
+    private fun processShowStarsCommand(username: String?) {
+        disposables.add(getStarsDataCommand.execute(username)
+                .subscribe { data ->
+                    println(data.asTableString())
+                    room.send(data.asTableString())
+                })
+    }
+
+    private fun List<StarredMessage>.asTableString(): String {
+        if (isEmpty()) {
+            return "No starred messages found"
+        }
+
+        val nameColumnMaxLength = 10
+        val messageColumnMaxLength = 48
+
+        val longestNameLength = maxBy { it.username.length }!!.username.length
+        val nameColumnLength = if (longestNameLength >= nameColumnMaxLength) {
+            nameColumnMaxLength
+        } else {
+            longestNameLength
+        }
+
+        val userHeader = "User".padEnd(nameColumnLength)
+        val messageHeader = "Message".padEnd(messageColumnMaxLength)
+
+        val header = " $userHeader | $messageHeader | Stars | Link"
+        val separator = "-".repeat(header.length)
+
+        val table = mutableListOf<String>()
+        table.add(header)
+        table.add(separator)
+
+        forEach {
+            val user = it.username.truncate(nameColumnLength).padEnd(nameColumnLength)
+            val message = it.message.truncate(messageColumnMaxLength).padEnd(messageColumnMaxLength)
+            val stars = it.stars.toString().truncate(5).padEnd(5)
+            val permanentLink = ""
+            val line = " $user | $message | $stars | $permanentLink"
+            table.add(line)
+        }
+
+        return table.joinToString("\n") { "    $it" }
     }
 }
