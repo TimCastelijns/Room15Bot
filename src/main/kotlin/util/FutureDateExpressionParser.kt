@@ -24,8 +24,8 @@ class FutureDateExpressionParser {
     private val regexDigits = Regex("\\d+")
 
     /**
-     * Parses an expression that describes date in the future and returns the
-     * milliseconds that represents it relative to now.
+     * Parses an expression that describes a date in the future and returns the
+     * milliseconds that represents it, relative to now.
      *
      * E.g. but not limited to:
      * 12h returns 12 * 3_600_000
