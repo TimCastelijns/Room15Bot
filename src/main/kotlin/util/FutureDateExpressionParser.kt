@@ -35,19 +35,21 @@ class FutureDateExpressionParser {
     fun parse(expression: String): Long {
         validateInput(expression)
 
-        return if (expression.matches(regexMinutes)) {
-            val mins = expression.extractValue()
-            TimeUnit.MINUTES.toMillis(mins)
-        } else if (expression.matches(regexHours)) {
-            val hours = expression.extractValue()
-            TimeUnit.HOURS.toMillis(hours)
-        } else if (expression.matches(regexDays)) {
-            val days = expression.extractValue()
-            TimeUnit.DAYS.toMillis(days)
-        } else if (expression.matches(regexArbitrary)) {
-            arbitraries[expression] ?: throw IllegalArgumentException("This syntax is not supported")
-        } else {
-            throw IllegalArgumentException("This syntax is not supported")
+        return when {
+            expression.matches(regexMinutes) -> {
+                val mins = expression.extractValue()
+                TimeUnit.MINUTES.toMillis(mins)
+            }
+            expression.matches(regexHours) -> {
+                val hours = expression.extractValue()
+                TimeUnit.HOURS.toMillis(hours)
+            }
+            expression.matches(regexDays) -> {
+                val days = expression.extractValue()
+                TimeUnit.DAYS.toMillis(days)
+            }
+            expression.matches(regexArbitrary) -> arbitraries[expression] ?: throw IllegalArgumentException("This syntax is not supported")
+            else -> throw IllegalArgumentException("This syntax is not supported")
         }
     }
 
