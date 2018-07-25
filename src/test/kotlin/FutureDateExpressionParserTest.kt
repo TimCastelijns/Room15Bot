@@ -39,6 +39,7 @@ class FutureDateExpressionParserTest: TestCase() {
         assertTrue { parser.parse("in 1 hour") == TimeUnit.HOURS.toMillis(1) }
         assertTrue { parser.parse("in about 6 hours") == TimeUnit.HOURS.toMillis(6) }
         assertTrue { parser.parse("in about 24 hours from now") == TimeUnit.HOURS.toMillis(24) }
+        assertTrue { parser.parse("let's do 10 hours from now") == TimeUnit.HOURS.toMillis(10) }
     }
 
     @Test

@@ -6,11 +6,11 @@ class FutureDateExpressionParser {
 
     private val secondsIndicators = listOf("seconds", "sec", "secs")
     private val pastDateIndicators = listOf("yesterday", "yday", "last", "past", "ago")
-    private val regexPast = Regex("(-[0-9]+)")
+    private val regexPast =     Regex("(-[0-9]+)")
 
-    private val regexMinutes = Regex("\\d+(\\s+)?m(in|ins)?")
-    private val regexHours = Regex("([A-Za-z \']+)?\\d+(\\s+)?h(our|ours)?(.+)?")
-    private val regexDays = Regex("\\d+(\\s+)?d(ay)?(s)?")
+    private val regexMinutes =  Regex("([A-Za-z ']+)?\\d+(\\s+)?m(in|ins)?(.+)?")
+    private val regexHours =    Regex("([A-Za-z ']+)?\\d+(\\s+)?h(our|ours)?(.+)?")
+    private val regexDays =     Regex("([A-Za-z ']+)?\\d+(\\s+)?d(ay)?(s)?(.+)?")
 
     private val arbitraries = mapOf(
             "later" to TimeUnit.HOURS.toMillis(4),
