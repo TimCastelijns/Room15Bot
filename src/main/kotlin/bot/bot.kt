@@ -2,11 +2,19 @@ package bot
 
 import com.timcastelijns.chatexchange.chat.*
 import data.commands.*
+import data.db.Reminders
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
+import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.update
+import java.time.Instant
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
+import java.util.concurrent.TimeUnit
 
 class Bot(
         private val getUserStatsCommand: GetUserStatsCommand,
@@ -65,6 +73,8 @@ class Bot(
                 processReply(it.message)
             }
         }
+
+        monitorReminders()
     }
 
     private fun processUserRequestedAccess(user: User) {
@@ -133,7 +143,32 @@ class Bot(
                 .subscribe { triggerDate ->
                     val dtf = DateTimeFormatter.ofPattern("'at' HH:mm 'on' dd MMMM yyyy")
                             .withZone(ZoneOffset.UTC)
-                    room.send("Ok, I will remind you at ${dtf.format(triggerDate)} (UTC)")
+                    room.send("Ok, I will remind you ${dtf.format(triggerDate)} (UTC)")
+                })
+    }
+
+    private fun monitorReminders() {
+        disposables.add(Observable.interval(1, TimeUnit.MINUTES)
+                .observeOn(Schedulers.io())
+                .subscribe {
+                    val nowMillis = Instant.now().toEpochMilli()
+
+                    // Query for reminders to send out.
+                    val messageIdsToReplyTo = transaction {
+                        Reminders.select { (Reminders.triggerAt lessEq nowMillis) and (Reminders.completed eq false) }
+                                .map { it[Reminders.messageId] }
+                    }
+
+                    messageIdsToReplyTo.forEach {
+                        room.replyTo(it, "Here is your reminder")
+                    }
+
+                    // Set reminders to completed.
+                    transaction {
+                        Reminders.update({ Reminders.triggerAt lessEq nowMillis }) {
+                            it[Reminders.completed] = true
+                        }
+                    }
                 })
     }
 

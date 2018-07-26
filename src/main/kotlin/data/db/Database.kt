@@ -26,8 +26,10 @@ class Database(
 
     private fun createTables() {
         transaction {
-            SchemaUtils.create(StarredMessages)
-            SchemaUtils.create(Reminders)
+            SchemaUtils.createMissingTablesAndColumns(
+                    StarredMessages,
+                    Reminders
+            )
         }
     }
 
@@ -43,4 +45,5 @@ object StarredMessages : LongIdTable() {
 object Reminders : IntIdTable() {
     val messageId = long("messageId")
     val triggerAt = long("triggerAt")
+    val completed = bool("completed").default(false)
 }
