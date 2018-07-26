@@ -1,10 +1,7 @@
 package bot
 
 import com.timcastelijns.chatexchange.chat.*
-import data.commands.GetStarsDataCommand
-import data.commands.GetUserStatsCommand
-import data.commands.SyncStarsDataCommand
-import data.commands.truncate
+import data.commands.*
 import data.repositories.StarredMessage
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
@@ -115,15 +112,15 @@ class Bot(
                 })
     }
 
-    private fun List<StarredMessage>.asTableString(): String {
-        if (isEmpty()) {
+    private fun StarsData.asTableString(): String {
+        if (starredMessages.isEmpty()) {
             return "No starred messages found"
         }
 
         val nameColumnMaxLength = 10
         val messageColumnMaxLength = 48
 
-        val longestNameLength = maxBy { it.username.length }!!.username.length
+        val longestNameLength = starredMessages.maxBy { it.username.length }!!.username.length
         val nameColumnLength = if (longestNameLength >= nameColumnMaxLength) {
             nameColumnMaxLength
         } else {
@@ -131,19 +128,20 @@ class Bot(
         }
 
         val userHeader = "User".padEnd(nameColumnLength)
-        val messageHeader = "Message".padEnd(messageColumnMaxLength)
+        val messageHeader = "Message ($totalStarredMessages)".padEnd(messageColumnMaxLength)
+        val starsHeader = "Stars ($totalStars)"
 
-        val header = " $userHeader | $messageHeader | Stars | Link"
+        val header = " $userHeader | $messageHeader | $starsHeader | Link"
         val separator = "-".repeat(header.length)
 
         val table = mutableListOf<String>()
         table.add(header)
         table.add(separator)
 
-        forEach {
+        starredMessages.forEach {
             val user = it.username.truncate(nameColumnLength).padEnd(nameColumnLength)
             val message = it.message.truncate(messageColumnMaxLength).padEnd(messageColumnMaxLength)
-            val stars = it.stars.toString().truncate(5).padEnd(5)
+            val stars = it.stars.toString().truncate(starsHeader.length).padEnd(starsHeader.length)
             val permanentLink = ""
             val line = " $user | $message | $stars | $permanentLink"
             table.add(line)

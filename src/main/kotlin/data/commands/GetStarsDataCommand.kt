@@ -5,6 +5,7 @@ import data.repositories.StarredMessage
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import org.jetbrains.exposed.sql.ResultRow
+import org.jetbrains.exposed.sql.count
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -16,7 +17,7 @@ class GetStarsDataCommand {
         private const val LIMIT_ANY = 25
     }
 
-    fun execute(username: String?): Single<List<StarredMessage>> {
+    fun execute(username: String?): Single<StarsData> {
         val starredMessages = if (username != null) {
             getForUsername(username)
         } else {
@@ -27,26 +28,49 @@ class GetStarsDataCommand {
                 .subscribeOn(Schedulers.io())
     }
 
-    private fun getForUsername(username: String): List<StarredMessage> {
+    private fun getForUsername(username: String): StarsData {
         var list = emptyList<StarredMessage>()
+        var totalStarredMessages = 0
+        var totalStars = 0
+
         transaction {
             list = StarredMessages.select { StarredMessages.username like "%$username%" }
                     .orderBy(StarredMessages.stars to false)
                     .limit(LIMIT_USER)
                     .map { it.toStarredMessage() }
+
+            totalStarredMessages = StarredMessages
+                    .select { StarredMessages.username like "%$username%" }
+                    .count()
+
+            totalStars = StarredMessages.slice(StarredMessages.stars)
+                    .select { StarredMessages.username like "%$username%" }
+                    .sumBy { it[StarredMessages.stars] }
+
+
         }
-        return list
+        return StarsData(list, totalStarredMessages, totalStars)
     }
 
-    private fun getAny(): List<StarredMessage> {
+    private fun getAny(): StarsData {
         var list = emptyList<StarredMessage>()
+        var totalStarredMessages = 0
+        var totalStars = 0
+
         transaction {
             list = StarredMessages.selectAll()
                     .orderBy(StarredMessages.stars to false)
                     .limit(LIMIT_ANY)
                     .map { it.toStarredMessage() }
+
+            totalStarredMessages = StarredMessages.selectAll()
+                    .count()
+
+            totalStars = StarredMessages.slice(StarredMessages.stars)
+                    .selectAll()
+                    .sumBy { it[StarredMessages.stars] }
         }
-        return list
+        return StarsData(list, totalStarredMessages, totalStars)
     }
 
 }
@@ -59,3 +83,9 @@ private fun ResultRow.toStarredMessage() = with(this) {
             this[StarredMessages.permalink]
     )
 }
+
+data class StarsData(
+        val starredMessages: List<StarredMessage>,
+        val totalStarredMessages: Int,
+        val totalStars: Int
+)
