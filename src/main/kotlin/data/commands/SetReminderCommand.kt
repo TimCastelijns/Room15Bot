@@ -2,6 +2,7 @@ package data.commands
 
 import data.db.Reminders
 import io.reactivex.Single
+import io.reactivex.schedulers.Schedulers
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
 import util.FutureDateExpressionParser
@@ -11,7 +12,11 @@ class SetReminderCommand {
 
     fun execute(messageId: Long, command: String): Single<Instant> {
         val now = Instant.now()
-        val futureDateMillis = FutureDateExpressionParser().parse(command)
+        val futureDateMillis = try {
+            FutureDateExpressionParser().parse(command)
+        } catch (e: IllegalArgumentException) {
+            return Single.error(e)
+        }
         val triggerAt = now.plusMillis(futureDateMillis)
 
         transaction {
@@ -23,6 +28,7 @@ class SetReminderCommand {
         }
 
         return Single.just(triggerAt)
+                .subscribeOn(Schedulers.io())
     }
 
 

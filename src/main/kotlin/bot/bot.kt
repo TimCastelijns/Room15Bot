@@ -140,11 +140,17 @@ class Bot(
 
     private fun processRemindMeCommand(messageId: Long, command: String) {
         disposables.add(setReminderCommand.execute(messageId, command.substring("remindme".length + 1))
-                .subscribe { triggerDate ->
+                .observeOn(Schedulers.io())
+                .subscribe({ triggerDate ->
                     val dtf = DateTimeFormatter.ofPattern("'at' HH:mm 'on' dd MMMM yyyy")
                             .withZone(ZoneOffset.UTC)
                     room.send("Ok, I will remind you ${dtf.format(triggerDate)} (UTC)")
-                })
+                }, {
+                    it.printStackTrace()
+                    it.message?.let {
+                        room.send(it)
+                    }
+                }))
     }
 
     private fun monitorReminders() {
