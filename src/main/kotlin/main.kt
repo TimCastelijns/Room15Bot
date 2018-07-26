@@ -25,7 +25,7 @@ private fun connectClient(credentials: Credentials): StackExchangeClient {
 class Application : KoinComponent {
 
     private val configRepository: ConfigRepository by inject()
-    private val database : Database by inject()
+    private val database: Database by inject()
     private val bot: Bot by inject()
 
     init {

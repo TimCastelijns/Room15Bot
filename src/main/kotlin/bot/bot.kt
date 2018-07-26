@@ -2,15 +2,17 @@ package bot
 
 import com.timcastelijns.chatexchange.chat.*
 import data.commands.*
-import data.repositories.StarredMessage
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.BehaviorSubject
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 
 class Bot(
         private val getUserStatsCommand: GetUserStatsCommand,
         private val syncStarsDataCommand: SyncStarsDataCommand,
-        private val getStarsDataCommand: GetStarsDataCommand
+        private val getStarsDataCommand: GetStarsDataCommand,
+        private val setReminderCommand: SetReminderCommand
 ) {
 
     private val aliveSubject = BehaviorSubject.create<Boolean>()
@@ -56,6 +58,13 @@ class Bot(
                 processMessage(it.message)
             }
         }
+
+        room.messageRepliedToEventListener = {
+            println("${it.userName}: ${it.parentMessageId} <- ${it.message.content}")
+            if (it.message.content!!.split(" ")[1].startsWith("!")) {
+                processReply(it.message)
+            }
+        }
     }
 
     private fun processUserRequestedAccess(user: User) {
@@ -90,6 +99,13 @@ class Bot(
         }
     }
 
+    private fun processReply(message: Message) {
+        val command = message.content!!.substring(message.content!!.indexOf(" ") + 2)
+        if (command.startsWith("remindme")) {
+            processRemindMeCommand(message.id, command)
+        }
+    }
+
     private fun processShowStatsCommand(user: User) {
         disposables.add(getUserStatsCommand.execute(user)
                 .subscribe { it ->
@@ -109,6 +125,15 @@ class Bot(
                 .subscribe { data ->
                     println(data.asTableString())
                     room.send(data.asTableString())
+                })
+    }
+
+    private fun processRemindMeCommand(messageId: Long, command: String) {
+        disposables.add(setReminderCommand.execute(messageId, command.substring("remindme".length + 1))
+                .subscribe { triggerDate ->
+                    val dtf = DateTimeFormatter.ofPattern("'at' HH:mm 'on' dd MMMM yyyy")
+                            .withZone(ZoneOffset.UTC)
+                    room.send("Ok, I will remind you at ${dtf.format(triggerDate)} (UTC)")
                 })
     }
 

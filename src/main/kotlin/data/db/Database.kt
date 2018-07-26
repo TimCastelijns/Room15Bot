@@ -1,6 +1,7 @@
 package data.db
 
 import data.repositories.ConfigRepository
+import org.jetbrains.exposed.dao.IntIdTable
 import org.jetbrains.exposed.dao.LongIdTable
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -26,6 +27,7 @@ class Database(
     private fun createTables() {
         transaction {
             SchemaUtils.create(StarredMessages)
+            SchemaUtils.create(Reminders)
         }
     }
 
@@ -36,4 +38,9 @@ object StarredMessages : LongIdTable() {
     val message = varchar("message", 500)
     val stars = integer("stars")
     val permalink = varchar("permalink", 255)
+}
+
+object Reminders : IntIdTable() {
+    val messageId = long("messageId")
+    val triggerAt = long("triggerAt")
 }
