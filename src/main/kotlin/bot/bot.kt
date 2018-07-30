@@ -158,14 +158,15 @@ class Bot(
             return "No starred messages found"
         }
 
+        val nameColumnMinLength = 6
         val nameColumnMaxLength = 10
         val messageColumnMaxLength = 48
 
         val longestNameLength = starredMessages.maxBy { it.username.length }!!.username.length
-        val nameColumnLength = if (longestNameLength >= nameColumnMaxLength) {
-            nameColumnMaxLength
-        } else {
-            longestNameLength
+        val nameColumnLength = when {
+            longestNameLength >= nameColumnMaxLength -> nameColumnMaxLength
+            longestNameLength < nameColumnMinLength -> nameColumnMinLength
+            else -> longestNameLength
         }
 
         val userHeader = "User".padEnd(nameColumnLength)
