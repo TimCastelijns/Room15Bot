@@ -2,6 +2,7 @@ package di
 
 import bot.Bot
 import bot.commands.*
+import bot.monitors.ReminderMonitor
 import data.db.Database
 import data.db.ReminderDao
 import data.db.StarredMessageDao
@@ -30,6 +31,8 @@ private val module: Module = applicationContext {
     bean { ConfigRepository() }
     bean { StarredMessageRepository(get()) }
     bean { UserStatsRepository(get()) }
+
+    bean { ReminderMonitor(get()) }
 
     bean { StarredMessageDao() }
     bean { ReminderDao() }
