@@ -1,7 +1,7 @@
 package di
 
 import bot.Bot
-import data.commands.*
+import bot.commands.*
 import data.db.Database
 import data.db.ReminderDao
 import data.db.StarredMessageDao

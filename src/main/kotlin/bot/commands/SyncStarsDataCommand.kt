@@ -1,4 +1,4 @@
-package data.commands
+package bot.commands
 
 import data.db.StarredMessageDao
 import data.repositories.StarredMessage

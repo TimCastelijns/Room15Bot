@@ -1,4 +1,4 @@
-package data.commands
+package bot.commands
 
 import com.timcastelijns.chatexchange.chat.User
 import data.repositories.UserStatsRepository

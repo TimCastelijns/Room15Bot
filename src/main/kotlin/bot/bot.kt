@@ -1,8 +1,8 @@
 package bot
 
 import com.timcastelijns.chatexchange.chat.*
-import data.commands.*
-import data.monitors.ReminderMonitor
+import bot.commands.*
+import bot.monitors.ReminderMonitor
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers

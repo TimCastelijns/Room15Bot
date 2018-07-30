@@ -1,4 +1,4 @@
-package data.monitors
+package bot.monitors
 
 import com.timcastelijns.chatexchange.chat.Room
 import data.db.ReminderDao

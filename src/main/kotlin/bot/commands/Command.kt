@@ -1,4 +1,4 @@
-package data.commands
+package bot.commands
 
 import io.reactivex.Completable
 import io.reactivex.Single
