@@ -1,14 +1,14 @@
 package data.commands
 
-import data.db.Reminders
+import data.db.ReminderDao
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.transactions.transaction
 import util.FutureDateExpressionParser
 import java.time.Instant
 
-class SetReminderCommand: SingleCommand<SetReminderCommandParams, Instant> {
+class SetReminderCommand(
+    private val ReminderDao: ReminderDao
+): SingleCommand<SetReminderCommandParams, Instant> {
 
     override fun execute(params: SetReminderCommandParams): Single<Instant> {
         val now = Instant.now()
@@ -19,13 +19,7 @@ class SetReminderCommand: SingleCommand<SetReminderCommandParams, Instant> {
         }
         val triggerAt = now.plusMillis(futureDateMillis)
 
-        transaction {
-            Reminders.insert {
-                it[Reminders.messageId] = params.messageId
-                it[Reminders.triggerAt] = triggerAt.toEpochMilli()
-                it[Reminders.completed] = false
-            }
-        }
+        ReminderDao.createReminder(params.messageId, triggerAt.toEpochMilli())
 
         return Single.just(triggerAt)
                 .subscribeOn(Schedulers.io())

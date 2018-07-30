@@ -1,15 +1,15 @@
 package data.commands
 
-import data.db.StarredMessages
+import data.db.StarredMessageDao
+import data.repositories.StarredMessage
 import data.repositories.StarredMessageRepository
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
-import org.jetbrains.exposed.sql.batchInsert
-import org.jetbrains.exposed.sql.transactions.transaction
 
 class SyncStarsDataCommand(
-        private val starredMessageRepository: StarredMessageRepository
+        private val starredMessageRepository: StarredMessageRepository,
+        private val starredMessageDao: StarredMessageDao
 ) : CompletableCommand<Unit> {
 
     override fun execute(params: Unit): Completable = starredMessageRepository.getNumberOfStarredMessagesPages()
@@ -19,24 +19,20 @@ class SyncStarsDataCommand(
                         .flatMapSingle { pageNr -> starredMessageRepository.getStarredMessagesByPage(pageNr) }
                         .toList()
             }
-            .doOnSuccess {
-                it.flatten().maxBy { it.message.length }?.also { println("${it.message.length} is the longest message") }
-
-                transaction {
-                    it.chunked(500).forEach {
-                        it.forEach {
-                            StarredMessages.batchInsert(it) {
-                                this[StarredMessages.username] = it.username
-                                this[StarredMessages.message] = it.message.truncate()
-                                this[StarredMessages.stars] = it.stars
-                                this[StarredMessages.permalink] = it.permanentLink
-                            }
-                        }
-                    }
-                }
-            }
+            .doOnSuccess { store(it) }
             .toCompletable()
             .subscribeOn(Schedulers.io())
+
+    private fun store(it: MutableList<List<StarredMessage>>) {
+        it.flatten().maxBy { it.message.length }
+                ?.also { println("${it.message.length} is the longest message") }
+
+        it.chunked(500).forEach {
+            it.forEach {
+                starredMessageDao.create(it)
+            }
+        }
+    }
 }
 
 fun String.truncate(max: Int = 500) = if (length > max) substring(0, max) else this

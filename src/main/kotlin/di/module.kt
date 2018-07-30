@@ -3,6 +3,8 @@ package di
 import bot.Bot
 import data.commands.*
 import data.db.Database
+import data.db.ReminderDao
+import data.db.StarredMessageDao
 import data.repositories.ConfigRepository
 import data.repositories.StarredMessageRepository
 import data.repositories.UserStatsRepository
@@ -17,17 +19,20 @@ import util.UserNameValidator
 
 private val module: Module = applicationContext {
 
-    factory { Bot(get(), get(), get(), get()) }
+    factory { Bot(get(), get(), get(), get(), get()) }
     bean { Database(get()) }
 
     factory { GetUserStatsCommand(get()) }
-    factory { SyncStarsDataCommand(get()) }
-    factory { GetStarsDataCommand() }
-    factory { SetReminderCommand() }
+    factory { SyncStarsDataCommand(get(), get()) }
+    factory { GetStarsDataCommand(get()) }
+    factory { SetReminderCommand(get()) }
 
     bean { ConfigRepository() }
     bean { StarredMessageRepository(get()) }
     bean { UserStatsRepository(get()) }
+
+    bean { StarredMessageDao() }
+    bean { ReminderDao() }
 
     factory { UserNameValidator() }
 

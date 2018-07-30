@@ -1,12 +1,9 @@
 package data.db
 
 import data.repositories.ConfigRepository
-import org.jetbrains.exposed.dao.IntIdTable
-import org.jetbrains.exposed.dao.LongIdTable
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
-
 
 class Database(
         private val configRepository: ConfigRepository
@@ -33,17 +30,4 @@ class Database(
         }
     }
 
-}
-
-object StarredMessages : LongIdTable() {
-    val username = varchar("username", 255)
-    val message = varchar("message", 500)
-    val stars = integer("stars")
-    val permalink = varchar("permalink", 255)
-}
-
-object Reminders : IntIdTable() {
-    val messageId = long("messageId")
-    val triggerAt = long("triggerAt")
-    val completed = bool("completed").default(false)
 }
