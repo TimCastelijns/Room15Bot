@@ -20,7 +20,7 @@ class Bot(
 
     private val aliveSubject = BehaviorSubject.create<Boolean>()
 
-    lateinit var room: Room
+    private lateinit var room: Room
 
     private val disposables = CompositeDisposable()
 
