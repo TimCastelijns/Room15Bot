@@ -11,26 +11,6 @@ class StarredMessageRepository(
         private val starService: StarService
 ) {
 
-    fun getStarredMessages(): Single<List<StarredMessage>> {
-        return starService.getStarsData()
-                .map { Jsoup.parse(it) }
-                .map { document ->
-                    val starredMessages = mutableListOf<StarredMessage>()
-                    val elements = document.select("div.monologue").subList(0, 5)
-
-                    elements.forEach {
-                        val username = it.getElementsByAttribute("title").first().text()
-
-                        val times = it.getElementsByClass("times").first().text()
-                        val stars = if (times.isNotEmpty()) times.toInt() else 1
-
-                        starredMessages += StarredMessage(username, "", stars, "http")
-                    }
-
-                    starredMessages
-                }
-    }
-
     fun getStarredMessagesByPage(page: Int): Single<List<StarredMessage>> {
         return starService.getStarsDataByPage(page)
                 .map { Jsoup.parse(it) }

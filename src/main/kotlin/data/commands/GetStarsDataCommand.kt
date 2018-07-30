@@ -5,21 +5,20 @@ import data.repositories.StarredMessage
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.count
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 
-class GetStarsDataCommand {
+class GetStarsDataCommand : SingleCommand<String?, StarsData> {
 
     companion object {
         private const val LIMIT_USER = 3
         private const val LIMIT_ANY = 25
     }
 
-    fun execute(username: String?): Single<StarsData> {
-        val starredMessages = if (username != null) {
-            getForUsername(username)
+    override fun execute(params: String?): Single<StarsData> {
+        val starredMessages = if (params != null) {
+            getForUsername(params)
         } else {
             getAny()
         }

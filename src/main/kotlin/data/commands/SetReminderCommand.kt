@@ -8,12 +8,12 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import util.FutureDateExpressionParser
 import java.time.Instant
 
-class SetReminderCommand {
+class SetReminderCommand: SingleCommand<SetReminderCommandParams, Instant> {
 
-    fun execute(messageId: Long, command: String): Single<Instant> {
+    override fun execute(params: SetReminderCommandParams): Single<Instant> {
         val now = Instant.now()
         val futureDateMillis = try {
-            FutureDateExpressionParser().parse(command)
+            FutureDateExpressionParser().parse(params.command)
         } catch (e: IllegalArgumentException) {
             return Single.error(e)
         }
@@ -21,7 +21,7 @@ class SetReminderCommand {
 
         transaction {
             Reminders.insert {
-                it[Reminders.messageId] = messageId
+                it[Reminders.messageId] = params.messageId
                 it[Reminders.triggerAt] = triggerAt.toEpochMilli()
                 it[Reminders.completed] = false
             }
@@ -31,5 +31,9 @@ class SetReminderCommand {
                 .subscribeOn(Schedulers.io())
     }
 
-
 }
+
+data class SetReminderCommandParams(
+        val messageId: Long,
+        val command: String
+)

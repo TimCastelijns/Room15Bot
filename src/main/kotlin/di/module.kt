@@ -22,7 +22,6 @@ private val module: Module = applicationContext {
 
     factory { GetUserStatsCommand(get()) }
     factory { SyncStarsDataCommand(get()) }
-    factory { GetStarsOverviewCommand(get()) }
     factory { GetStarsDataCommand() }
     factory { SetReminderCommand() }
 

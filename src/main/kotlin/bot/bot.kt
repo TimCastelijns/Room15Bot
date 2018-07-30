@@ -124,7 +124,7 @@ class Bot(
     }
 
     private fun processSyncStarsCommand() {
-        disposables.add(syncStarsDataCommand.execute()
+        disposables.add(syncStarsDataCommand.execute(Unit)
                 .subscribe {
                     room.send("Done.")
                 })
@@ -139,7 +139,10 @@ class Bot(
     }
 
     private fun processRemindMeCommand(messageId: Long, command: String) {
-        disposables.add(setReminderCommand.execute(messageId, command.substring("remindme".length + 1))
+        val params = SetReminderCommandParams(messageId,
+                command.substring("remindme".length + 1))
+
+        disposables.add(setReminderCommand.execute(params)
                 .observeOn(Schedulers.io())
                 .subscribe({ triggerDate ->
                     val dtf = DateTimeFormatter.ofPattern("'at' HH:mm 'on' dd MMMM yyyy")
