@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/TimCastelijns/Room15Bot/tree/master.svg?style=shield)](https://circleci.com/gh/TimCastelijns/Room15Bot/tree/master)
+
 # Room15Bot
 
 This is a bot solely for [room 15](https://chat.stackoverflow.com/rooms/15/android) on Stack Overflow chat.
