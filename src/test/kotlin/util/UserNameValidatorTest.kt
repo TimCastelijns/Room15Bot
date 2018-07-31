@@ -1,10 +1,12 @@
+package util
+
 import org.junit.Test
 import util.UserNameValidator
 import kotlin.test.assertFalse
 
 class UserNameValidatorTest {
 
-    val userNameValidator = UserNameValidator()
+    private val userNameValidator = UserNameValidator()
 
     @Test
     fun testValidNameIsValid() {

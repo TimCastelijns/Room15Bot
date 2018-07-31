@@ -1,3 +1,5 @@
+package util
+
 import util.FutureDateExpressionParser
 import junit.framework.TestCase
 import org.junit.Test
@@ -5,7 +7,7 @@ import java.util.concurrent.TimeUnit
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
-class FutureDateExpressionParserTest: TestCase() {
+class FutureDateExpressionParserTest {
 
     private val parser = FutureDateExpressionParser()
 
