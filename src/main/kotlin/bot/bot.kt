@@ -1,15 +1,13 @@
 package bot
 
-import com.timcastelijns.chatexchange.chat.*
 import bot.commands.*
 import bot.monitors.ReminderMonitor
+import com.timcastelijns.chatexchange.chat.*
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
 import util.MessageFormatter
-import java.time.ZoneOffset
-import java.time.format.DateTimeFormatter
 
 class Bot(
         private val getUserStatsCommand: GetUserStatsCommand,
@@ -77,7 +75,7 @@ class Bot(
     private fun processUserRequestedAccess(user: User) {
         disposables.add(getUserStatsCommand.execute(user)
                 .subscribe { it ->
-                    room.send("${user.name} requested access. $it")
+                    room.send(messageFormatter.asRequestedAccessString(user, it))
                 })
     }
 
@@ -116,14 +114,14 @@ class Bot(
     private fun processShowStatsCommand(user: User) {
         disposables.add(getUserStatsCommand.execute(user)
                 .subscribe { it ->
-                    room.send("Stats for ${user.name} -- $it")
+                    room.send(messageFormatter.asStatsString(user, it))
                 })
     }
 
     private fun processSyncStarsCommand() {
         disposables.add(syncStarsDataCommand.execute(Unit)
                 .subscribe {
-                    room.send("Done.")
+                    room.send(messageFormatter.asDoneString())
                 })
     }
 
@@ -141,9 +139,7 @@ class Bot(
         disposables.add(setReminderCommand.execute(params)
                 .observeOn(Schedulers.io())
                 .subscribe({ triggerDate ->
-                    val dtf = DateTimeFormatter.ofPattern("'at' HH:mm 'on' dd MMMM yyyy")
-                            .withZone(ZoneOffset.UTC)
-                    room.send("Ok, I will remind you ${dtf.format(triggerDate)} (UTC)")
+                    room.send(messageFormatter.asReminderString(triggerDate))
                 }, {
                     it.printStackTrace()
                     it.message?.let {

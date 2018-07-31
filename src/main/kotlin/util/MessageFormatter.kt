@@ -2,6 +2,10 @@ package util
 
 import bot.commands.StarsData
 import bot.commands.truncate
+import com.timcastelijns.chatexchange.chat.User
+import java.time.Instant
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 
 class MessageFormatter {
 
@@ -43,6 +47,19 @@ class MessageFormatter {
 
         table.joinToString("\n") { "    $it" }
     }
+
+    fun asDoneString() = "Done."
+
+    fun asReminderString(triggerDate: Instant): String {
+        val dtf = DateTimeFormatter.ofPattern("'at' HH:mm 'on' dd MMMM yyyy")
+                .withZone(ZoneOffset.UTC)
+
+        return "Ok, I will remind you ${dtf.format(triggerDate)} (UTC)"
+    }
+
+    fun asStatsString(user: User, stats: String) = "Stats for ${user.name} -- $stats"
+
+    fun asRequestedAccessString(user: User, stats: String) = "${user.name} requested access. $stats"
 
     private fun String.sanitize() = this.replace("\r", "").replace("\n", " ").trimEnd()
 
