@@ -20,7 +20,7 @@ import util.UserNameValidator
 
 private val module: Module = applicationContext {
 
-    factory { Bot(get(), get(), get(), get(), get()) }
+    factory { Bot(get(), get(), get(), get(), get(), get()) }
     bean { Database(get()) }
 
     factory { GetUserStatsCommand(get()) }

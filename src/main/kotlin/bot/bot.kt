@@ -7,6 +7,7 @@ import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
+import util.MessageFormatter
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 
@@ -15,7 +16,8 @@ class Bot(
         private val syncStarsDataCommand: SyncStarsDataCommand,
         private val getStarsDataCommand: GetStarsDataCommand,
         private val setReminderCommand: SetReminderCommand,
-        private val reminderMonitor: ReminderMonitor
+        private val reminderMonitor: ReminderMonitor,
+        private val messageFormatter: MessageFormatter
 ) {
 
     private val aliveSubject = BehaviorSubject.create<Boolean>()
@@ -128,8 +130,7 @@ class Bot(
     private fun processShowStarsCommand(username: String?) {
         disposables.add(getStarsDataCommand.execute(username)
                 .subscribe { data ->
-                    println(data.asTableString())
-                    room.send(data.asTableString())
+                    room.send(messageFormatter.asTableString(data))
                 })
     }
 
@@ -153,42 +154,4 @@ class Bot(
 
     private fun monitorReminders() = disposables.add(reminderMonitor.start(room))
 
-    private fun StarsData.asTableString(): String {
-        if (starredMessages.isEmpty()) {
-            return "No starred messages found"
-        }
-
-        val nameColumnMinLength = 6
-        val nameColumnMaxLength = 10
-        val messageColumnMaxLength = 48
-
-        val longestNameLength = starredMessages.maxBy { it.username.length }!!.username.length
-        val nameColumnLength = when {
-            longestNameLength >= nameColumnMaxLength -> nameColumnMaxLength
-            longestNameLength < nameColumnMinLength -> nameColumnMinLength
-            else -> longestNameLength
-        }
-
-        val userHeader = "User".padEnd(nameColumnLength)
-        val messageHeader = "Message ($totalStarredMessages)".padEnd(messageColumnMaxLength)
-        val starsHeader = "Stars ($totalStars)"
-
-        val header = " $userHeader | $messageHeader | $starsHeader | Link"
-        val separator = "-".repeat(header.length)
-
-        val table = mutableListOf<String>()
-        table.add(header)
-        table.add(separator)
-
-        starredMessages.forEach {
-            val user = it.username.truncate(nameColumnLength).padEnd(nameColumnLength)
-            val message = it.message.truncate(messageColumnMaxLength).padEnd(messageColumnMaxLength)
-            val stars = it.stars.toString().truncate(starsHeader.length).padEnd(starsHeader.length)
-            val permanentLink = ""
-            val line = " $user | $message | $stars | $permanentLink"
-            table.add(line)
-        }
-
-        return table.joinToString("\n") { "    $it" }
-    }
 }
