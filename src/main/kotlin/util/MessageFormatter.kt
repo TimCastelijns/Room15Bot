@@ -61,6 +61,12 @@ class MessageFormatter {
 
     fun asRequestedAccessString(user: User, stats: String) = "${user.name} requested access. $stats"
 
+    fun asUnknownCommandString(command: String) = "Unknown command '$command'"
+
+    fun asNoAccessString() = "You do not have sufficient access for this command"
+
+    fun asLeavingString() = "Ok, see ya"
+
     private fun String.sanitize() = this.replace("\r", "").replace("\n", " ").trimEnd()
 
 }

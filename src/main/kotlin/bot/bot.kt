@@ -1,12 +1,14 @@
 package bot
 
-import bot.usecases.*
 import bot.monitors.ReminderMonitor
+import bot.usecases.*
 import com.timcastelijns.chatexchange.chat.*
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
+import util.CommandParser
+import util.CommandType
 import util.MessageFormatter
 
 class Bot(
@@ -80,31 +82,51 @@ class Bot(
     }
 
     private fun processMessage(message: Message) {
-        val command = message.content!!.substring(1)
-        if (command == "shoo" && message.user!!.id == 1843331L) {
-            die(killer = message.user!!)
-        } else if (command.startsWith("stats")) {
-            val userId = command.split(" ").last().toLongOrNull()
+        val rawCommand = message.content!!.substring(1)
 
-            val user = if (userId == null) {
-                message.user!!
-            } else {
-                room.getUser(userId)
+        val command = try {
+            CommandParser().parse(rawCommand)
+        } catch (e: IllegalArgumentException) {
+            processUnknownCommand(rawCommand)
+            return
+        }
+
+        when (command.type) {
+            CommandType.STATS_ME -> {
+                val userId = message.user!!.id
+                val user = room.getUser(userId)
+                processShowStatsCommand(user)
+            }
+            CommandType.STATS_USER -> {
+                val userId = command.args!!.toLong()
+                val user = room.getUser(userId)
+                processShowStatsCommand(user)
+            }
+            CommandType.STARS_ANY -> processShowStarsCommand(null)
+            CommandType.STARS_USER -> {
+                val username = command.args!!
+                processShowStarsCommand(username)
+            }
+            CommandType.REMIND_ME -> {
+                //TODO move processReply here
             }
 
-            processShowStatsCommand(user)
-        } else if (command.startsWith("sync stars")) {
-            processSyncStarsCommand()
-        } else if (command.startsWith("stars")) {
-            val username = if (command.split(" ").size > 1) {
-                command.split(" ").last()
-            } else null
+            CommandType.LEAVE -> processLeaveCommand(message.user!!)
+            CommandType.SYNC_STARS -> processSyncStarsCommand(message.user!!)
+        }
+    }
 
-            processShowStarsCommand(username)
+    private fun processLeaveCommand(user: User) {
+        if (user.id == 1843331L) {
+            room.send(messageFormatter.asLeavingString())
+            die(killer = user)
+        } else {
+            room.send("\uD83D\uDD95\uD83C\uDFFB")
         }
     }
 
     private fun processReply(message: Message) {
+        // TODO move to processMessage
         val command = message.content!!.substring(message.content!!.indexOf(" ") + 2)
         if (command.startsWith("remindme")) {
             processRemindMeCommand(message.id, command)
@@ -118,7 +140,12 @@ class Bot(
                 })
     }
 
-    private fun processSyncStarsCommand() {
+    private fun processSyncStarsCommand(user: User) {
+        if (user.id != 1843331L) {
+            messageFormatter.asNoAccessString()
+            return
+        }
+
         disposables.add(syncStarsDataCommand.execute(Unit)
                 .subscribe {
                     room.send(messageFormatter.asDoneString())
@@ -146,6 +173,10 @@ class Bot(
                         room.send(it)
                     }
                 }))
+    }
+
+    private fun processUnknownCommand(rawCommand: String) {
+        room.send(messageFormatter.asUnknownCommandString(rawCommand))
     }
 
     private fun monitorReminders() = disposables.add(reminderMonitor.start(room))
