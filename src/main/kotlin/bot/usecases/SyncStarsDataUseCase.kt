@@ -1,4 +1,4 @@
-package bot.commands
+package bot.usecases
 
 import data.db.StarredMessageDao
 import data.repositories.StarredMessage
@@ -7,10 +7,10 @@ import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 
-class SyncStarsDataCommand(
+class SyncStarsDataUseCase(
         private val starredMessageRepository: StarredMessageRepository,
         private val starredMessageDao: StarredMessageDao
-) : CompletableCommand<Unit> {
+) : CompletableUseCase<Unit> {
 
     override fun execute(params: Unit): Completable = starredMessageRepository.getNumberOfStarredMessagesPages()
             .flatMap { lastPage ->

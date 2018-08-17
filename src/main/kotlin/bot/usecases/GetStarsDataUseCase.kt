@@ -1,13 +1,13 @@
-package bot.commands
+package bot.usecases
 
 import data.db.StarredMessageDao
 import data.repositories.StarredMessage
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 
-class GetStarsDataCommand(
+class GetStarsDataUseCase(
         private val starredMessageDao: StarredMessageDao
-) : SingleCommand<String?, StarsData> {
+) : SingleUseCase<String?, StarsData> {
 
     companion object {
         private const val LIMIT_USER = 3

@@ -1,4 +1,4 @@
-package bot.commands
+package bot.usecases
 
 import data.db.ReminderDao
 import io.reactivex.Single
@@ -6,9 +6,9 @@ import io.reactivex.schedulers.Schedulers
 import util.FutureDateExpressionParser
 import java.time.Instant
 
-class SetReminderCommand(
+class SetReminderUseCase(
     private val ReminderDao: ReminderDao
-): SingleCommand<SetReminderCommandParams, Instant> {
+): SingleUseCase<SetReminderCommandParams, Instant> {
 
     override fun execute(params: SetReminderCommandParams): Single<Instant> {
         val now = Instant.now()

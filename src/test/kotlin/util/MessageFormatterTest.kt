@@ -1,6 +1,6 @@
 package util
 
-import bot.commands.StarsData
+import bot.usecases.StarsData
 import com.timcastelijns.chatexchange.chat.User
 import data.repositories.StarredMessage
 import org.junit.Test

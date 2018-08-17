@@ -1,7 +1,7 @@
 package util
 
-import bot.commands.StarsData
-import bot.commands.truncate
+import bot.usecases.StarsData
+import bot.usecases.truncate
 import com.timcastelijns.chatexchange.chat.User
 import java.time.Instant
 import java.time.ZoneOffset

@@ -1,4 +1,4 @@
-package bot.commands
+package bot.usecases
 
 import com.timcastelijns.chatexchange.chat.User
 import data.repositories.UserStatsRepository
@@ -6,9 +6,9 @@ import io.reactivex.Single
 import io.reactivex.functions.BiFunction
 import io.reactivex.schedulers.Schedulers
 
-class GetUserStatsCommand(
+class GetUserStatsUseCase(
         private val userStatsRepository: UserStatsRepository
-) : SingleCommand<User, String> {
+) : SingleUseCase<User, String> {
 
     override fun execute(params: User): Single<String> = Single.zip(userStatsRepository.getNumberOfQuestions(params.id), userStatsRepository.getNumberOfAnswers(params.id),
             BiFunction<Int, Int, Pair<Int, Int>> { q, a -> Pair(q, a) })

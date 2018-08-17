@@ -1,6 +1,6 @@
 package bot
 
-import bot.commands.*
+import bot.usecases.*
 import bot.monitors.ReminderMonitor
 import com.timcastelijns.chatexchange.chat.*
 import io.reactivex.Observable
@@ -10,10 +10,10 @@ import io.reactivex.subjects.BehaviorSubject
 import util.MessageFormatter
 
 class Bot(
-        private val getUserStatsCommand: GetUserStatsCommand,
-        private val syncStarsDataCommand: SyncStarsDataCommand,
-        private val getStarsDataCommand: GetStarsDataCommand,
-        private val setReminderCommand: SetReminderCommand,
+        private val getUserStatsCommand: GetUserStatsUseCase,
+        private val syncStarsDataCommand: SyncStarsDataUseCase,
+        private val getStarsDataCommand: GetStarsDataUseCase,
+        private val setReminderCommand: SetReminderUseCase,
         private val reminderMonitor: ReminderMonitor,
         private val messageFormatter: MessageFormatter
 ) {

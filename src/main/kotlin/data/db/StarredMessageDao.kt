@@ -1,6 +1,6 @@
 package data.db
 
-import bot.commands.truncate
+import bot.usecases.truncate
 import data.repositories.StarredMessage
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.batchInsert

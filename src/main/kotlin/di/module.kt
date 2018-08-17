@@ -1,7 +1,7 @@
 package di
 
 import bot.Bot
-import bot.commands.*
+import bot.usecases.*
 import bot.monitors.ReminderMonitor
 import data.db.Database
 import data.db.ReminderDao
@@ -24,10 +24,10 @@ private val module: Module = applicationContext {
     factory { Bot(get(), get(), get(), get(), get(), get()) }
     bean { Database(get()) }
 
-    factory { GetUserStatsCommand(get()) }
-    factory { SyncStarsDataCommand(get(), get()) }
-    factory { GetStarsDataCommand(get()) }
-    factory { SetReminderCommand(get()) }
+    factory { GetUserStatsUseCase(get()) }
+    factory { SyncStarsDataUseCase(get(), get()) }
+    factory { GetStarsDataUseCase(get()) }
+    factory { SetReminderUseCase(get()) }
 
     bean { ConfigRepository() }
     bean { StarredMessageRepository(get()) }
