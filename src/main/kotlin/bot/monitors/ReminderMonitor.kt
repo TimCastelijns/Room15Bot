@@ -8,18 +8,18 @@ import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 
 class ReminderMonitor(
-        private val ReminderDao: ReminderDao
+        private val reminderDao: ReminderDao
 ) {
 
     fun start(room: Room): Disposable = Observable.interval(1, TimeUnit.MINUTES)
             .observeOn(Schedulers.io())
             .subscribe {
-                ReminderDao.getMessageIdsToRemind()
+                reminderDao.getMessageIdsToRemind()
                         .forEach {
                             room.replyTo(it, "Here is your reminder")
                         }
 
-                ReminderDao.completePassedReminders()
+                reminderDao.completePassedReminders()
             }
 
 }
