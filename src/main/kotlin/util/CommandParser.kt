@@ -12,74 +12,35 @@ class CommandParser {
     private val remindMePattern = Pattern.compile("!(?i)remindme\\s(.+)")
 
     // Elevated access commands.
-    private val leavePattern = Pattern.compile("!(?i)(shoo|leave|die|getlost|fuckoff)(.+)?")
+    private val leavePattern = Pattern.compile("!(?i)(?:shoo|leave|die|getlost|fuckoff)")
     private val syncStarsPattern = Pattern.compile("!(?i)syncstars")
 
-    fun parse(rawCommand: String): Command {
-        var command: Command? = null
+    private val needsName = mapOf<Pattern, CommandType>(
+            statsMePattern to CommandType.STATS_ME,
+            statsUserPattern to CommandType.STATS_USER,
+            starsAnyPattern to CommandType.STARS_ANY,
+            starsUserPattern to CommandType.STARS_USER,
+            remindMePattern to CommandType.REMIND_ME,
+            leavePattern to CommandType.LEAVE,
+            syncStarsPattern to CommandType.SYNC_STARS
+    )
 
-        if (rawCommand.matches(statsMePattern.toRegex())) {
-            with(statsMePattern.matcher(rawCommand)) {
-                if (find()) {
-                    command = commandOf {
-                        type = CommandType.STATS_ME
-                    }
-                }
-            }
-        } else if (rawCommand.matches(statsUserPattern.toRegex())) {
-            with(statsUserPattern.matcher(rawCommand)) {
-                if (find()) {
-                    command = commandOf {
-                        type = CommandType.STATS_USER
-                        args = group(1)
-                    }
-                }
-            }
-        } else if (rawCommand.matches(starsAnyPattern.toRegex())) {
-            with(starsAnyPattern.matcher(rawCommand)) {
-                if (find()) {
-                    command = commandOf {
-                        type = CommandType.STARS_ANY
-                    }
-                }
-            }
-        } else if (rawCommand.matches(starsUserPattern.toRegex())) {
-            with(starsUserPattern.matcher(rawCommand)) {
-                if (find()) {
-                    command = commandOf {
-                        type = CommandType.STARS_USER
-                        args = group(1)
-                    }
-                }
-            }
-        } else if (rawCommand.matches(remindMePattern.toRegex())) {
-            with(remindMePattern.matcher(rawCommand)) {
-                if (find()) {
-                    command = commandOf {
-                        type = CommandType.REMIND_ME
-                        args = group(1)
-                    }
-                }
-            }
-        } else if (rawCommand.matches(leavePattern.toRegex())) {
-            with(leavePattern.matcher(rawCommand)) {
-                if (find()) {
-                    command = commandOf {
-                        type = CommandType.LEAVE
-                    }
-                }
-            }
-        } else if (rawCommand.matches(syncStarsPattern.toRegex())) {
-            with(syncStarsPattern.matcher(rawCommand)) {
-                if (find()) {
-                    command = commandOf {
-                        type = CommandType.SYNC_STARS
-                    }
+    fun parse(rawCommand: String): Command {
+        val matcher = needsName.keys.firstOrNull {
+            rawCommand.matches(it.toRegex())
+        }?.matcher(rawCommand) ?: throw IllegalArgumentException("Unknown command: $rawCommand")
+
+        var command: Command? = null
+        with(matcher) {
+            if (find()) {
+                command = commandOf {
+                    type = needsName[matcher.pattern()]!!
+                    args = if (groupCount() >= 1) group(1) else null
                 }
             }
         }
 
-        return command ?: throw IllegalArgumentException("Unknown command: $command")
+        return command ?: throw IllegalArgumentException("Unknown command: $rawCommand")
     }
 }
 
@@ -98,7 +59,6 @@ class Command private constructor(
 
 fun commandOf(block: Command.Builder.() -> Unit) =
         Command.Builder().apply(block).build()
-
 
 enum class CommandType {
     STATS_ME,

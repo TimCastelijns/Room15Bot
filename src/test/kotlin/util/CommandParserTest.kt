@@ -11,7 +11,6 @@ class CommandParserTest {
     @Test
     fun testStatsMe() {
         val command = "!stats"
-
         assertTrue { parser.parse(command).type == CommandType.STATS_ME }
         assertTrue { parser.parse(command).args == null }
     }
