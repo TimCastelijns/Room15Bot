@@ -8,6 +8,6 @@ class RejectUserUseCase : UseCase<String, String> {
         private var rejectMessage = "@%s you currently do not meet the requirements to chat here. You can find our requirements in the [rules]($rulesUrl)."
     }
 
-    override fun execute(params: String) = rejectMessage.format(params)
+    override fun execute(params: String) = rejectMessage.format(params.replace(" ", ""))
 
 }

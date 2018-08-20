@@ -3,6 +3,7 @@ package usecases
 import bot.usecases.AcceptUserUseCase
 import org.junit.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class AcceptUserUseCaseTest {
 
@@ -12,6 +13,13 @@ class AcceptUserUseCaseTest {
         val expectedOutput = "@shog9 welcome. Please start by reading the [rules](http://room-15.github.io/) and confirm you have read them before saying anything else."
 
         assertEquals(expectedOutput, AcceptUserUseCase().execute(input))
+    }
+
+    @Test
+    fun testSpacesAreRemovedFromName() {
+        val input = "jon skeet"
+
+        assertTrue { AcceptUserUseCase().execute(input).startsWith("@jonskeet") }
     }
 
 }
