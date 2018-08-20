@@ -26,6 +26,8 @@ class GetUserStatsUseCase(
         else -> (answers / (questions / 4.0)).toFloat()
     }
 
-    private fun ratio(answersPerQuestion: Float) = "4:%.1f".format(answersPerQuestion)
+    private fun ratio(answersPerQuestion: Float) = "4:%.1f".format(answersPerQuestion).stripUnnecessaryDecimal()
+
+    private fun String.stripUnnecessaryDecimal() = removeSuffix(".0")
 
 }
