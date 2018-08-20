@@ -84,7 +84,7 @@ class Bot(
     }
 
     private fun processMessage(message: Message) {
-        val rawCommand = message.content!!.substring(1)
+        val rawCommand = message.content!!
 
         val command = try {
             CommandParser().parse(rawCommand)
