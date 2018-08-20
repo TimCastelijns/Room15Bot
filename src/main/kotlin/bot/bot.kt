@@ -62,12 +62,15 @@ class Bot(
             println("${it.userName}: ${it.message.content}")
 
             if (it.message.content!!.startsWith("!")) {
-                processMessage(it.message)
+                processCommandMessage(it.message)
             }
+
+            processMessage(it.message)
         }
 
         room.messageRepliedToEventListener = {
             println("${it.userName}: ${it.parentMessageId} <- ${it.message.content}")
+
             if (it.message.content!!.split(" ")[1].startsWith("!")) {
                 processReply(it.message)
             }
@@ -84,6 +87,12 @@ class Bot(
     }
 
     private fun processMessage(message: Message) {
+        if (message.content?.contains("dQw4w9WgXcQ") == true) {
+            room.replyTo(message.id, "Rick roll alert")
+        }
+    }
+
+    private fun processCommandMessage(message: Message) {
         val rawCommand = message.content!!
 
         val command = try {
@@ -148,7 +157,7 @@ class Bot(
     }
 
     private fun processReply(message: Message) {
-        // TODO move to processMessage
+        // TODO move to processCommandMessage
         val command = message.content!!.substring(message.content!!.indexOf(" ") + 2)
         if (command.startsWith("remindme")) {
             processRemindMeCommand(message.id, command)
