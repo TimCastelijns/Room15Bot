@@ -4,14 +4,16 @@ import java.util.regex.Pattern
 
 class CommandParser {
 
-    // User commands.
+    private val anyUsernameRegex = Regex("(.+)")
+
     private val statsMePattern = Pattern.compile("!(?i)stats")
     private val statsUserPattern = Pattern.compile("!(?i)stats\\s(\\d+)")
     private val starsAnyPattern = Pattern.compile("!(?i)stars")
     private val starsUserPattern = Pattern.compile("!(?i)stars\\s([\\-\\p{L} ]+)")
     private val remindMePattern = Pattern.compile("!(?i)remindme\\s(.+)")
 
-    // Elevated access commands.
+    private val acceptPattern = Pattern.compile("!(?i)accept\\s$anyUsernameRegex")
+    private val rejectPattern = Pattern.compile("!(?i)reject\\s$anyUsernameRegex")
     private val leavePattern = Pattern.compile("!(?i)(?:shoo|leave|die|getlost|fuckoff)")
     private val syncStarsPattern = Pattern.compile("!(?i)syncstars")
 
@@ -21,6 +23,8 @@ class CommandParser {
             starsAnyPattern to CommandType.STARS_ANY,
             starsUserPattern to CommandType.STARS_USER,
             remindMePattern to CommandType.REMIND_ME,
+            acceptPattern to CommandType.ACCEPT,
+            rejectPattern to CommandType.REJECT,
             leavePattern to CommandType.LEAVE,
             syncStarsPattern to CommandType.SYNC_STARS
     )
@@ -61,12 +65,16 @@ fun commandOf(block: Command.Builder.() -> Unit) =
         Command.Builder().apply(block).build()
 
 enum class CommandType {
+    // User commands.
     STATS_ME,
     STATS_USER,
     STARS_ANY,
     STARS_USER,
     REMIND_ME,
 
+    // Elevated access commands.
+    ACCEPT,
+    REJECT,
     LEAVE,
     SYNC_STARS
 }

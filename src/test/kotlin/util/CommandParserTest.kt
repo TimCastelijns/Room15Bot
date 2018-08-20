@@ -53,6 +53,20 @@ class CommandParserTest {
     }
 
     @Test
+    fun testAccept() {
+        val command = "!accept Random Username123"
+        assertTrue { parser.parse(command).type == CommandType.ACCEPT }
+        assertTrue { parser.parse(command).args == "Random Username123"}
+    }
+
+    @Test
+    fun testReject() {
+        val command = "!reject alsorandomnamebutDifferent1"
+        assertTrue { parser.parse(command).type == CommandType.REJECT }
+        assertTrue { parser.parse(command).args == "alsorandomnamebutDifferent1"}
+    }
+
+    @Test
     fun testLeave() {
         val command = "!getlost"
         assertTrue { parser.parse(command).type == CommandType.LEAVE }

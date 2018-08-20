@@ -17,6 +17,8 @@ class Bot(
         private val getStarsDataCommand: GetStarsDataUseCase,
         private val setReminderCommand: SetReminderUseCase,
         private val reminderMonitor: ReminderMonitor,
+        private val acceptUserUseCase: AcceptUserUseCase,
+        private val rejectUserUseCase: RejectUserUseCase,
         private val messageFormatter: MessageFormatter
 ) {
 
@@ -111,9 +113,21 @@ class Bot(
                 //TODO move processReply here
             }
 
+            CommandType.ACCEPT -> processAcceptCommand(command.args!!)
+            CommandType.REJECT-> processRejectCommand(command.args!!)
             CommandType.LEAVE -> processLeaveCommand(message.user!!)
             CommandType.SYNC_STARS -> processSyncStarsCommand(message.user!!)
         }
+    }
+
+    private fun processAcceptCommand(username: String) {
+        val message = acceptUserUseCase.execute(username)
+        room.send(message)
+    }
+
+    private fun processRejectCommand(username: String) {
+        val message = rejectUserUseCase.execute(username)
+        room.send(message)
     }
 
     private fun processLeaveCommand(user: User) {

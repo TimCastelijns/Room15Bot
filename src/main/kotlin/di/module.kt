@@ -21,13 +21,15 @@ import util.UserNameValidator
 
 private val module: Module = applicationContext {
 
-    factory { Bot(get(), get(), get(), get(), get(), get()) }
+    factory { Bot(get(), get(), get(), get(), get(), get(), get(), get()) }
     bean { Database(get()) }
 
     factory { GetUserStatsUseCase(get()) }
     factory { SyncStarsDataUseCase(get(), get()) }
     factory { GetStarsDataUseCase(get()) }
     factory { SetReminderUseCase(get()) }
+    factory { AcceptUserUseCase() }
+    factory { RejectUserUseCase() }
 
     bean { ConfigRepository() }
     bean { StarredMessageRepository(get()) }
