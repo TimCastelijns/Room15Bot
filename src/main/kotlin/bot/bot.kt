@@ -90,7 +90,7 @@ class Bot(
 
     private fun processMessage(message: Message) {
         if (message.content?.contains("dQw4w9WgXcQ") == true) {
-            room.replyTo(message.id, "Rick roll alert")
+            room.replyTo(message.id, messageFormatter.asRickRollAlertString())
         }
     }
 
