@@ -19,7 +19,7 @@ class FutureDateExpressionParser {
             "next month" to TimeUnit.DAYS.toMillis(30),
             "next year" to TimeUnit.DAYS.toMillis(365)
     )
-    private val regexArbitrary = Regex(arbitraries.keys.joinToString("|"))
+    private val regexArbitrary = Regex("${arbitraries.keys.joinToString("|")}(.+)?")
 
     private val regexDigits = Regex("\\d+")
 
