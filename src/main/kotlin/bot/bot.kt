@@ -113,19 +113,27 @@ class Bot(
                 //TODO move processReply here
             }
 
-            CommandType.ACCEPT -> processAcceptCommand(command.args!!)
-            CommandType.REJECT-> processRejectCommand(command.args!!)
+            CommandType.ACCEPT -> processAcceptCommand(message.user!!, command.args!!)
+            CommandType.REJECT-> processRejectCommand(message.user!!, command.args!!)
             CommandType.LEAVE -> processLeaveCommand(message.user!!)
             CommandType.SYNC_STARS -> processSyncStarsCommand(message.user!!)
         }
     }
 
-    private fun processAcceptCommand(username: String) {
+    private fun processAcceptCommand(user: User, username: String) {
+        if (!user.isRoomOwner) {
+            return
+        }
+
         val message = acceptUserUseCase.execute(username)
         room.send(message)
     }
 
-    private fun processRejectCommand(username: String) {
+    private fun processRejectCommand(user: User, username: String) {
+        if (!user.isRoomOwner) {
+            return
+        }
+
         val message = rejectUserUseCase.execute(username)
         room.send(message)
     }
