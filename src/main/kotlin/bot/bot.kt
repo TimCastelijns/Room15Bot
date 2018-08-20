@@ -70,14 +70,6 @@ class Bot(
             onNewMessage(it.message)
         }
 
-        room.messageRepliedToEventListener = {
-            println("${it.userName}: ${it.parentMessageId} <- ${it.message.content}")
-
-            if (it.message.content!!.split(" ")[1].startsWith("!")) {
-                processReply(it.message)
-            }
-        }
-
         monitorReminders()
     }
 
@@ -129,7 +121,7 @@ class Bot(
                 processShowStarsCommand(username)
             }
             CommandType.REMIND_ME -> {
-                //TODO move processReply here
+                processRemindMeCommand(message.id, command.args!!)
             }
 
             CommandType.ACCEPT -> processAcceptCommand(message.user!!, command.args!!)
@@ -166,14 +158,6 @@ class Bot(
         }
     }
 
-    private fun processReply(message: Message) {
-        // TODO move to processCommandMessage
-        val command = message.content!!.substring(message.content!!.indexOf(" ") + 2)
-        if (command.startsWith("remindme")) {
-            processRemindMeCommand(message.id, command)
-        }
-    }
-
     private fun processShowStatsCommand(user: User) {
         disposables.add(getUserStatsCommand.execute(user)
                 .subscribe { it ->
@@ -200,9 +184,8 @@ class Bot(
                 })
     }
 
-    private fun processRemindMeCommand(messageId: Long, command: String) {
-        val params = SetReminderCommandParams(messageId,
-                command.substring("remindme".length + 1))
+    private fun processRemindMeCommand(messageId: Long, commandArgs: String) {
+        val params = SetReminderCommandParams(messageId, commandArgs)
 
         disposables.add(setReminderCommand.execute(params)
                 .observeOn(Schedulers.io())
