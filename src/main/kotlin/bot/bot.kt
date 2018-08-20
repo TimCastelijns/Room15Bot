@@ -61,11 +61,13 @@ class Bot(
         room.messagePostedEventListener = {
             println("${it.userName}: ${it.message.content}")
 
-            if (it.message.content!!.startsWith("!")) {
-                processCommandMessage(it.message)
-            }
+            onNewMessage(it.message)
+        }
 
-            processMessage(it.message)
+        room.messageEditedEventListener = {
+            println("${it.userName} (edit): ${it.message.content}")
+
+            onNewMessage(it.message)
         }
 
         room.messageRepliedToEventListener = {
@@ -77,6 +79,14 @@ class Bot(
         }
 
         monitorReminders()
+    }
+
+    private fun onNewMessage(message: Message) {
+        if (message.containsCommand()) {
+            processCommandMessage(message)
+        }
+
+        processMessage(message)
     }
 
     private fun processUserRequestedAccess(user: User) {
@@ -123,7 +133,7 @@ class Bot(
             }
 
             CommandType.ACCEPT -> processAcceptCommand(message.user!!, command.args!!)
-            CommandType.REJECT-> processRejectCommand(message.user!!, command.args!!)
+            CommandType.REJECT -> processRejectCommand(message.user!!, command.args!!)
             CommandType.LEAVE -> processLeaveCommand(message.user!!)
             CommandType.SYNC_STARS -> processSyncStarsCommand(message.user!!)
         }
@@ -213,3 +223,5 @@ class Bot(
     private fun monitorReminders() = disposables.add(reminderMonitor.start(room))
 
 }
+
+private fun Message.containsCommand() = content?.startsWith("!") ?: false
