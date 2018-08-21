@@ -14,13 +14,13 @@ import util.MessageFormatter
 import kotlin.system.measureTimeMillis
 
 class Bot(
-        private val getUserStatsCommand: GetUserStatsUseCase,
-        private val syncStarsDataCommand: SyncStarsDataUseCase,
-        private val getStarsDataCommand: GetStarsDataUseCase,
-        private val setReminderCommand: SetReminderUseCase,
-        private val reminderMonitor: ReminderMonitor,
+        private val getUserStatsUseCase: GetUserStatsUseCase,
+        private val syncStarsDataUseCase: SyncStarsDataUseCase,
+        private val getStarsDataUseCase: GetStarsDataUseCase,
+        private val setReminderUseCase: SetReminderUseCase,
         private val acceptUserUseCase: AcceptUserUseCase,
         private val rejectUserUseCase: RejectUserUseCase,
+        private val reminderMonitor: ReminderMonitor,
         private val messageFormatter: MessageFormatter
 ) {
 
@@ -84,7 +84,7 @@ class Bot(
     }
 
     private fun processUserRequestedAccess(user: User) {
-        disposables.add(getUserStatsCommand.execute(user)
+        disposables.add(getUserStatsUseCase.execute(user)
                 .subscribe { it ->
                     room.send(messageFormatter.asRequestedAccessString(user, it))
                 })
@@ -161,7 +161,7 @@ class Bot(
     }
 
     private fun processShowStatsCommand(user: User) {
-        disposables.add(getUserStatsCommand.execute(user)
+        disposables.add(getUserStatsUseCase.execute(user)
                 .subscribe { it ->
                     room.send(messageFormatter.asStatsString(user, it))
                 })
@@ -177,7 +177,7 @@ class Bot(
 
         val measuredTime = measureTimeMillis {
             runBlocking {
-                syncStarsDataCommand.execute(Unit)
+                syncStarsDataUseCase.execute(Unit)
             }
         }
 
@@ -185,7 +185,7 @@ class Bot(
     }
 
     private fun processShowStarsCommand(username: String?) {
-        disposables.add(getStarsDataCommand.execute(username)
+        disposables.add(getStarsDataUseCase.execute(username)
                 .subscribe { data ->
                     room.send(messageFormatter.asTableString(data))
                 })
@@ -194,7 +194,7 @@ class Bot(
     private fun processRemindMeCommand(messageId: Long, commandArgs: String) {
         val params = SetReminderCommandParams(messageId, commandArgs)
 
-        disposables.add(setReminderCommand.execute(params)
+        disposables.add(setReminderUseCase.execute(params)
                 .observeOn(Schedulers.io())
                 .subscribe({ triggerDate ->
                     room.send(messageFormatter.asReminderString(triggerDate))
