@@ -11,3 +11,9 @@ interface UseCase<in P, out T> {
 
 interface CompletableUseCase<in P> : UseCase<P, Completable>
 interface SingleUseCase<in P, T> : UseCase<P, Single<T>>
+
+interface AsyncUseCase<in P, out T> {
+
+    suspend fun execute(params: P): T
+
+}

@@ -3,6 +3,7 @@ package di
 import bot.Bot
 import bot.usecases.*
 import bot.monitors.ReminderMonitor
+import com.jakewharton.retrofit2.adapter.kotlin.coroutines.experimental.CoroutineCallAdapterFactory
 import data.db.Database
 import data.db.ReminderDao
 import data.db.StarredMessageDao
@@ -53,6 +54,7 @@ fun provideChatRetrofit(): Retrofit =
                 .baseUrl("https://chat.stackoverflow.com/")
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .addCallAdapterFactory(CoroutineCallAdapterFactory())
                 .build()
 
 fun provideMainRetrofit(): Retrofit =

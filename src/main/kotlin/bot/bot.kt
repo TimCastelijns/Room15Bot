@@ -7,9 +7,11 @@ import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
+import kotlinx.coroutines.experimental.runBlocking
 import util.CommandParser
 import util.CommandType
 import util.MessageFormatter
+import kotlin.system.measureTimeMillis
 
 class Bot(
         private val getUserStatsCommand: GetUserStatsUseCase,
@@ -171,10 +173,15 @@ class Bot(
             return
         }
 
-        disposables.add(syncStarsDataCommand.execute(Unit)
-                .subscribe {
-                    room.send(messageFormatter.asDoneString())
-                })
+        room.send(messageFormatter.asStartingJobString())
+
+        val measuredTime = measureTimeMillis {
+            runBlocking {
+                syncStarsDataCommand.execute(Unit)
+            }
+        }
+
+        room.send(messageFormatter.asDoneString(measuredTime))
     }
 
     private fun processShowStarsCommand(username: String?) {

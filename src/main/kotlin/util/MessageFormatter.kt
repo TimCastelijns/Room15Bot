@@ -48,7 +48,9 @@ class MessageFormatter {
         table.joinToString("\n") { "    $it" }
     }
 
-    fun asDoneString() = "Done."
+    fun asStartingJobString() = "Ok, give me a second"
+
+    fun asDoneString(measuredTime: Long) = "Done, took $measuredTime ms"
 
     fun asReminderString(triggerDate: Instant): String {
         val dtf = DateTimeFormatter.ofPattern("'at' HH:mm 'on' dd MMMM yyyy")

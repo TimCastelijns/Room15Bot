@@ -1,8 +1,6 @@
 package data.repositories
 
 import com.timcastelijns.chatexchange.chat.ChatHost
-import io.reactivex.Single
-import io.reactivex.schedulers.Schedulers
 import network.StarService
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -11,25 +9,20 @@ class StarredMessageRepository(
         private val starService: StarService
 ) {
 
-    fun getStarredMessagesByPage(page: Int): Single<List<StarredMessage>> {
-        return starService.getStarsDataByPage(page)
-                .map { Jsoup.parse(it) }
-                .map { document -> document.extractStarredMessages() }
+    suspend fun getStarredMessagesByPage(page: Int): List<StarredMessage> {
+        val data = starService.getStarsDataByPage(page).await()
+        return Jsoup.parse(data).extractStarredMessages()
     }
 
-    fun getNumberOfStarredMessagesPages(): Single<Int> {
-        return starService.getStarsDataByPage(1)
-                .map { Jsoup.parse(it) }
-                .map {
-                    it.select("div.pager").first()
-                            .select("a[href^=\"?tab=stars&page=\"]")
-                            .secondToLast()?.run {
-                                getElementsByClass("page-numbers").first().text().toInt()
-                            } ?: 0
-                }
-                .subscribeOn(Schedulers.io())
+    suspend fun getNumberOfStarredMessagesPages(): Int {
+        val data = starService.getStarsDataByPage(1).await()
+        return Jsoup.parse(data)
+                .select("div.pager").first()
+                .select("a[href^=\"?tab=stars&page=\"]")
+                .secondToLast()?.run {
+                    getElementsByClass("page-numbers").first().text().toInt()
+                } ?: 0
     }
-
 }
 
 data class StarredMessage(
