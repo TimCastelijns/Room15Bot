@@ -82,7 +82,9 @@ class StarredMessageDao {
 
     fun deleteAll() {
         transaction {
-            StarredMessages.deleteAll()
+            if (StarredMessages.exists()) {
+                StarredMessages.deleteAll()
+            }
         }
     }
 
