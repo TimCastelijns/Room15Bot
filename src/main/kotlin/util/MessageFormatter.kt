@@ -69,6 +69,8 @@ class MessageFormatter {
 
     fun asLeavingString() = "Ok, see ya"
 
+    fun asRickRollAlertString() = "Rick roll alert"
+
     private fun String.sanitize() = this.replace("\r", "").replace("\n", " ").trimEnd()
 
 }
