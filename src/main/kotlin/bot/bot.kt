@@ -1,28 +1,21 @@
 package bot
 
+import bot.eventhandlers.AccessLevelChangedEventHandler
+import bot.eventhandlers.MessageEventHandler
 import bot.monitors.ReminderMonitor
-import bot.usecases.*
-import com.timcastelijns.chatexchange.chat.*
+import com.timcastelijns.chatexchange.chat.ChatHost
+import com.timcastelijns.chatexchange.chat.Room
+import com.timcastelijns.chatexchange.chat.StackExchangeClient
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
-import kotlinx.coroutines.experimental.runBlocking
-import util.CommandParser
-import util.CommandType
-import util.MessageFormatter
-import kotlin.system.measureTimeMillis
+import kotlinx.coroutines.experimental.launch
 
 class Bot(
-        private val getUserStatsUseCase: GetUserStatsUseCase,
-        private val syncStarsDataUseCase: SyncStarsDataUseCase,
-        private val getStarsDataUseCase: GetStarsDataUseCase,
-        private val setReminderUseCase: SetReminderUseCase,
-        private val acceptUserUseCase: AcceptUserUseCase,
-        private val rejectUserUseCase: RejectUserUseCase,
-        private val reminderMonitor: ReminderMonitor,
-        private val messageFormatter: MessageFormatter
-) {
+        private val accessLevelChangedEventHandler: AccessLevelChangedEventHandler,
+        private val messageEventHandler: MessageEventHandler,
+        private val reminderMonitor: ReminderMonitor
+) : Actor {
 
     private val aliveSubject = BehaviorSubject.create<Boolean>()
 
@@ -39,13 +32,11 @@ class Bot(
         joinRoom(client, roomId)
     }
 
-    private fun die(killer: User) {
+    private fun die() {
         disposables.clear()
 
         aliveSubject.onNext(false)
         aliveSubject.onComplete()
-
-        println("Died. Killed by ${killer.name}")
     }
 
     private fun joinRoom(client: StackExchangeClient, roomId: Int) {
@@ -55,163 +46,47 @@ class Bot(
 
     fun start() {
         room.accessLevelChangedEventListener = {
-            if (it.accessLevel == AccessLevel.REQUEST) {
-                processUserRequestedAccess(it.targetUser)
+            launch {
+                accessLevelChangedEventHandler.handle(it, this@Bot)
             }
         }
 
         room.messagePostedEventListener = {
             println("${it.userName}: ${it.message.content}")
 
-            onNewMessage(it.message)
+            launch {
+                messageEventHandler.handle(it, this@Bot)
+            }
         }
 
         room.messageEditedEventListener = {
             println("${it.userName} (edit): ${it.message.content}")
 
-            onNewMessage(it.message)
+            launch {
+                messageEventHandler.handle(it, this@Bot)
+            }
         }
 
         monitorReminders()
     }
 
-    private fun onNewMessage(message: Message) {
-        if (message.containsCommand()) {
-            processCommandMessage(message)
-        }
-
-        processMessage(message)
-    }
-
-    private fun processUserRequestedAccess(user: User) {
-        disposables.add(getUserStatsUseCase.execute(user)
-                .subscribe { it ->
-                    room.send(messageFormatter.asRequestedAccessString(user, it))
-                })
-    }
-
-    private fun processMessage(message: Message) {
-        if (message.content?.contains("dQw4w9WgXcQ") == true) {
-            room.replyTo(message.id, messageFormatter.asRickRollAlertString())
-        }
-    }
-
-    private fun processCommandMessage(message: Message) {
-        val rawCommand = message.content!!
-
-        val command = try {
-            CommandParser().parse(rawCommand)
-        } catch (e: IllegalArgumentException) {
-            processUnknownCommand(rawCommand)
-            return
-        }
-
-        when (command.type) {
-            CommandType.STATS_ME -> {
-                val userId = message.user!!.id
-                val user = room.getUser(userId)
-                processShowStatsCommand(user)
-            }
-            CommandType.STATS_USER -> {
-                val userId = command.args!!.toLong()
-                val user = room.getUser(userId)
-                processShowStatsCommand(user)
-            }
-            CommandType.STARS_ANY -> processShowStarsCommand(null)
-            CommandType.STARS_USER -> {
-                val username = command.args!!
-                processShowStarsCommand(username)
-            }
-            CommandType.REMIND_ME -> {
-                processRemindMeCommand(message.id, command.args!!)
-            }
-
-            CommandType.ACCEPT -> processAcceptCommand(message.user!!, command.args!!)
-            CommandType.REJECT -> processRejectCommand(message.user!!, command.args!!)
-            CommandType.LEAVE -> processLeaveCommand(message.user!!)
-            CommandType.SYNC_STARS -> processSyncStarsCommand(message.user!!)
-        }
-    }
-
-    private fun processAcceptCommand(user: User, username: String) {
-        if (!user.isRoomOwner) {
-            return
-        }
-
-        val message = acceptUserUseCase.execute(username)
-        room.send(message)
-    }
-
-    private fun processRejectCommand(user: User, username: String) {
-        if (!user.isRoomOwner) {
-            return
-        }
-
-        val message = rejectUserUseCase.execute(username)
-        room.send(message)
-    }
-
-    private fun processLeaveCommand(user: User) {
-        if (user.id == 1843331L) {
-            room.send(messageFormatter.asLeavingString())
-            die(killer = user)
-        } else {
-            room.send("\uD83D\uDD95\uD83C\uDFFB")
-        }
-    }
-
-    private fun processShowStatsCommand(user: User) {
-        disposables.add(getUserStatsUseCase.execute(user)
-                .subscribe { it ->
-                    room.send(messageFormatter.asStatsString(user, it))
-                })
-    }
-
-    private fun processSyncStarsCommand(user: User) {
-        if (user.id != 1843331L) {
-            messageFormatter.asNoAccessString()
-            return
-        }
-
-        room.send(messageFormatter.asStartingJobString())
-
-        val measuredTime = measureTimeMillis {
-            runBlocking {
-                syncStarsDataUseCase.execute(Unit)
-            }
-        }
-
-        room.send(messageFormatter.asDoneString(measuredTime))
-    }
-
-    private fun processShowStarsCommand(username: String?) {
-        disposables.add(getStarsDataUseCase.execute(username)
-                .subscribe { data ->
-                    room.send(messageFormatter.asTableString(data))
-                })
-    }
-
-    private fun processRemindMeCommand(messageId: Long, commandArgs: String) {
-        val params = SetReminderCommandParams(messageId, commandArgs)
-
-        disposables.add(setReminderUseCase.execute(params)
-                .observeOn(Schedulers.io())
-                .subscribe({ triggerDate ->
-                    room.send(messageFormatter.asReminderString(triggerDate))
-                }, {
-                    it.printStackTrace()
-                    it.message?.let {
-                        room.send(it)
-                    }
-                }))
-    }
-
-    private fun processUnknownCommand(rawCommand: String) {
-        room.send(messageFormatter.asUnknownCommandString(rawCommand))
-    }
-
     private fun monitorReminders() = disposables.add(reminderMonitor.start(room))
 
+    override fun acceptMessage(message: String) {
+        room.send(message)
+    }
+
+    override fun acceptReply(message: String, targetMessageId: Long) {
+        room.replyTo(targetMessageId, message)
+    }
+
+    override fun leaveRoom() {
+        die()
+    }
 }
 
-private fun Message.containsCommand() = content?.startsWith("!") ?: false
+interface Actor {
+    fun acceptMessage(message: String)
+    fun acceptReply(message: String, targetMessageId: Long)
+    fun leaveRoom()
+}

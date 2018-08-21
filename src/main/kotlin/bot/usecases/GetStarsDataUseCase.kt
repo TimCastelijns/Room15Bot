@@ -2,28 +2,22 @@ package bot.usecases
 
 import data.db.StarredMessageDao
 import data.repositories.StarredMessage
-import io.reactivex.Single
-import io.reactivex.schedulers.Schedulers
 
 class GetStarsDataUseCase(
         private val starredMessageDao: StarredMessageDao
-) : SingleUseCase<String?, StarsData> {
+) : UseCase<String?, StarsData> {
 
     companion object {
         private const val LIMIT_USER = 3
         private const val LIMIT_ANY = 25
     }
 
-    override fun execute(params: String?): Single<StarsData> {
-        val starredMessages = if (params != null) {
-            getForUsername(params)
-        } else {
-            getAny()
-        }
-
-        return Single.just(starredMessages)
-                .subscribeOn(Schedulers.io())
-    }
+    override fun execute(params: String?) =
+            if (params != null) {
+                getForUsername(params)
+            } else {
+                getAny()
+            }
 
     private fun getForUsername(username: String) =
             StarsData(starredMessageDao.getStarredMessagesForUser(username, LIMIT_USER),

@@ -1,6 +1,7 @@
 package util
 
 import bot.usecases.StarsData
+import bot.usecases.UserStats
 import com.timcastelijns.chatexchange.chat.User
 import data.repositories.StarredMessage
 import org.junit.Test
@@ -117,18 +118,18 @@ class MessageFormatterTest {
 
     @Test
     fun testStatsFormat() {
-        val expected = "Stats for Jon Skeet -- many rep such wow 30k answers amaze"
+        val expected = "Stats for Jon Skeet -- **Rep:** 50000 - **Questions:** 0 - **Answers:** 800 (ratio 4:3200)"
         val output = messageFormatter.asStatsString(
-                skeet, "many rep such wow 30k answers amaze")
+                skeet, UserStats(50000, 0, 800, "4:3200"))
 
         assertEquals(expected, output)
     }
 
     @Test
     fun testRequestedAccessFormat() {
-        val expected = "Jon Skeet requested access. 1000k rep, few questions, many answers (nice ratio)"
+        val expected = "Jon Skeet requested access. **Rep:** 10000 - **Questions:** 4 - **Answers:** 500 (ratio 4:500)"
         val output = messageFormatter.asRequestedAccessString(
-                skeet, "1000k rep, few questions, many answers (nice ratio)")
+                skeet, UserStats(10000, 4, 500, "4:500"))
 
         assertEquals(expected, output)
     }

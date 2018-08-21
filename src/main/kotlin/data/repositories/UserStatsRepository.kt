@@ -1,31 +1,28 @@
 package data.repositories
 
-import io.reactivex.Single
 import network.UserStatsService
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 
 class UserStatsRepository(
         private val userStatsService: UserStatsService
 ) {
 
-    fun getNumberOfQuestions(userId: Long): Single<Int> =
-            userStatsService.getUserProfileQuestions(userId)
-                    .map { Jsoup.parse(it) }
-                    .map { document ->
-                        val count = document.getElementsByClass("count").first().text()
-                        val nrQuestions = if (count.isNotEmpty()) count.toInt() else 0
+    suspend fun getNumberOfQuestions(userId: Long): Int {
+        val data = userStatsService.getUserProfileQuestions(userId).await()
 
-                        nrQuestions
-                    }
+        return Jsoup.parse(data).valueOfFirstCountClass()
+    }
 
-    fun getNumberOfAnswers(userId: Long): Single<Int> =
-            userStatsService.getUserProfileAnswers(userId)
-                    .map { Jsoup.parse(it) }
-                    .map { document ->
-                        val count = document.getElementsByClass("count").first().text()
-                        val nrAnswers = if (count.isNotEmpty()) count.toInt() else 0
+    suspend fun getNumberOfAnswers(userId: Long): Int {
+        val data = userStatsService.getUserProfileAnswers(userId).await()
 
-                        nrAnswers
-                    }
+        return Jsoup.parse(data).valueOfFirstCountClass()
+    }
+
+    private fun Document.valueOfFirstCountClass(): Int {
+        val text = getElementsByClass("count").first().text()
+        return if (text.isNotEmpty()) text.toInt() else 0
+    }
 
 }

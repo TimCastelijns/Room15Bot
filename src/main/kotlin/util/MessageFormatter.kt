@@ -1,6 +1,7 @@
 package util
 
 import bot.usecases.StarsData
+import bot.usecases.UserStats
 import bot.usecases.truncate
 import com.timcastelijns.chatexchange.chat.User
 import java.time.Instant
@@ -59,9 +60,16 @@ class MessageFormatter {
         return "Ok, I will remind you ${dtf.format(triggerDate)} (UTC)"
     }
 
-    fun asStatsString(user: User, stats: String) = "Stats for ${user.name} -- $stats"
+    fun asStatsString(user: User, stats: UserStats) =
+            "Stats for ${user.name} -- " +
+                    "**Rep:** ${stats.reputation} - " +
+                    "**Questions:** ${stats.nrQuestions} - " +
+                    "**Answers:** ${stats.nrAnswers} (ratio ${stats.formattedRatio})"
 
-    fun asRequestedAccessString(user: User, stats: String) = "${user.name} requested access. $stats"
+    fun asRequestedAccessString(user: User, stats: UserStats) =
+            "${user.name} requested access. **Rep:** ${stats.reputation} - " +
+                    "**Questions:** ${stats.nrQuestions} - " +
+                    "**Answers:** ${stats.nrAnswers} (ratio ${stats.formattedRatio})"
 
     fun asUnknownCommandString(command: String) = "Unknown command '$command'"
 

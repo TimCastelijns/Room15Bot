@@ -2,24 +2,19 @@ package bot.usecases
 
 import com.timcastelijns.chatexchange.chat.User
 import data.repositories.UserStatsRepository
-import io.reactivex.Single
-import io.reactivex.functions.BiFunction
-import io.reactivex.schedulers.Schedulers
 
 class GetUserStatsUseCase(
         private val userStatsRepository: UserStatsRepository
-) : SingleUseCase<User, String> {
+) : AsyncUseCase<User, UserStats> {
 
-    override fun execute(params: User): Single<String> = Single.zip(userStatsRepository.getNumberOfQuestions(params.id), userStatsRepository.getNumberOfAnswers(params.id),
-            BiFunction<Int, Int, Pair<Int, Int>> { q, a -> Pair(q, a) })
-            .map {
-                val answersPerQuestion = answersPerQuestion(it.first, it.second)
+    override suspend fun execute(params: User): UserStats {
+        val nrQuestions = userStatsRepository.getNumberOfQuestions(params.id)
+        val nrAnswers = userStatsRepository.getNumberOfAnswers(params.id)
 
-                "**Rep:** ${params.reputation} - " +
-                        "**Questions:** ${it.first} - " +
-                        "**Answers:** ${it.second} (ratio ${ratio(answersPerQuestion)})"
-            }
-            .subscribeOn(Schedulers.io())
+        val answersPerQuestion = answersPerQuestion(nrQuestions, nrAnswers)
+
+        return UserStats(params.reputation, nrQuestions, nrAnswers, ratio(answersPerQuestion))
+    }
 
     private fun answersPerQuestion(questions: Int, answers: Int) = when (answers) {
         0 -> 0F
@@ -31,3 +26,10 @@ class GetUserStatsUseCase(
     private fun String.stripUnnecessaryDecimal() = removeSuffix(".0")
 
 }
+
+data class UserStats(
+        val reputation: Int,
+        val nrQuestions: Int,
+        val nrAnswers: Int,
+        val formattedRatio: String
+)

@@ -1,28 +1,21 @@
 package bot.usecases
 
 import data.db.ReminderDao
-import io.reactivex.Single
-import io.reactivex.schedulers.Schedulers
 import util.FutureDateExpressionParser
 import java.time.Instant
 
 class SetReminderUseCase(
-    private val ReminderDao: ReminderDao
-): SingleUseCase<SetReminderCommandParams, Instant> {
+        private val ReminderDao: ReminderDao
+) : UseCase<SetReminderCommandParams, Instant> {
 
-    override fun execute(params: SetReminderCommandParams): Single<Instant> {
+    override fun execute(params: SetReminderCommandParams): Instant {
         val now = Instant.now()
-        val futureDateMillis = try {
-            FutureDateExpressionParser().parse(params.command)
-        } catch (e: IllegalArgumentException) {
-            return Single.error(e)
-        }
+        val futureDateMillis = FutureDateExpressionParser().parse(params.command)
         val triggerAt = now.plusMillis(futureDateMillis)
 
         ReminderDao.createReminder(params.messageId, triggerAt.toEpochMilli())
 
-        return Single.just(triggerAt)
-                .subscribeOn(Schedulers.io())
+        return triggerAt
     }
 
 }
