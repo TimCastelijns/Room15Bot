@@ -2,10 +2,7 @@ package data.db
 
 import bot.usecases.truncate
 import data.repositories.StarredMessage
-import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.batchInsert
-import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class StarredMessageDao {
@@ -81,6 +78,12 @@ class StarredMessageDao {
 
         }
         return totalStars
+    }
+
+    fun deleteAll() {
+        transaction {
+            StarredMessages.deleteAll()
+        }
     }
 
 }

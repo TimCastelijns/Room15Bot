@@ -27,6 +27,7 @@ class SyncStarsDataUseCase(
             println("Fetched page $i")
         }
 
+        starredMessageDao.deleteAll()
         store(starredMessages)
     }
 
