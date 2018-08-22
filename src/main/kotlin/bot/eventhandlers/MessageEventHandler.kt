@@ -8,8 +8,8 @@ import com.timcastelijns.chatexchange.chat.MessagePostedEvent
 import com.timcastelijns.chatexchange.chat.User
 import data.repositories.UserRepository
 import kotlinx.coroutines.experimental.launch
-import kotlinx.coroutines.experimental.runBlocking
 import org.slf4j.LoggerFactory
+import util.Command
 import util.CommandParser
 import util.CommandType
 import util.MessageFormatter
@@ -44,7 +44,10 @@ class MessageEventHandler(
 
     private suspend fun handleMessage(message: Message) {
         if (message.containsCommand()) {
-            processCommandMessage(message)
+            val time = measureTimeMillis {
+                processCommandMessage(message)
+            }
+            logger.debug("processing ${message.content} took $time ms")
         }
 
         processMessage(message)
@@ -60,38 +63,48 @@ class MessageEventHandler(
         val rawCommand = message.content!!
         logger.info("processing command: $rawCommand")
 
-        val command = try {
-            CommandParser().parse(rawCommand)
+        lateinit var command: Command
+        try {
+            val time = measureTimeMillis {
+                command = CommandParser().parse(rawCommand)
+            }
+            logger.debug("parsing took $time ms")
+
         } catch (e: IllegalArgumentException) {
             processUnknownCommand(rawCommand)
             return
         }
 
-        when (command.type) {
-            CommandType.STATS_ME -> {
-                val userId = message.user!!.id
-                val user = userRepository.getUser(userId)!!
-                processShowStatsCommand(user)
-            }
-            CommandType.STATS_USER -> {
-                val userId = command.args!!.toLong()
-                val user = userRepository.getUser(userId)!!
-                processShowStatsCommand(user)
-            }
-            CommandType.STARS_ANY -> processShowStarsCommand(null)
-            CommandType.STARS_USER -> {
-                val username = command.args!!
-                processShowStarsCommand(username)
-            }
-            CommandType.REMIND_ME -> {
-                processRemindMeCommand(message.id, command.args!!)
-            }
+        logger.info("parsed command: ${command.type}")
 
-            CommandType.ACCEPT -> processAcceptCommand(message.user!!, command.args!!)
-            CommandType.REJECT -> processRejectCommand(message.user!!, command.args!!)
-            CommandType.LEAVE -> processLeaveCommand(message.user!!)
-            CommandType.SYNC_STARS -> processSyncStarsCommand(message.user!!)
+        val time = measureTimeMillis {
+            when (command.type) {
+                CommandType.STATS_ME -> {
+                    val userId = message.user!!.id
+                    val user = userRepository.getUser(userId)!!
+                    processShowStatsCommand(user)
+                }
+                CommandType.STATS_USER -> {
+                    val userId = command.args!!.toLong()
+                    val user = userRepository.getUser(userId)!!
+                    processShowStatsCommand(user)
+                }
+                CommandType.STARS_ANY -> processShowStarsCommand(null)
+                CommandType.STARS_USER -> {
+                    val username = command.args!!
+                    processShowStarsCommand(username)
+                }
+                CommandType.REMIND_ME -> {
+                    processRemindMeCommand(message.id, command.args!!)
+                }
+
+                CommandType.ACCEPT -> processAcceptCommand(message.user!!, command.args!!)
+                CommandType.REJECT -> processRejectCommand(message.user!!, command.args!!)
+                CommandType.LEAVE -> processLeaveCommand(message.user!!)
+                CommandType.SYNC_STARS -> processSyncStarsCommand(message.user!!)
+            }
         }
+        logger.debug("processing command ${command.type} took $time ms")
     }
 
     private fun processAcceptCommand(user: User, username: String) {

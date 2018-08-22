@@ -41,7 +41,6 @@ class Bot(
 
     private fun joinRoom(client: StackExchangeClient, roomId: Int) {
         room = client.joinRoom(ChatHost.STACK_OVERFLOW, roomId)
-        println("Joined room #$roomId")
     }
 
     fun start() {
@@ -52,16 +51,12 @@ class Bot(
         }
 
         room.messagePostedEventListener = {
-            println("${it.userName}: ${it.message.content}")
-
             launch {
                 messageEventHandler.handle(it, this@Bot)
             }
         }
 
         room.messageEditedEventListener = {
-            println("${it.userName} (edit): ${it.message.content}")
-
             launch {
                 messageEventHandler.handle(it, this@Bot)
             }
