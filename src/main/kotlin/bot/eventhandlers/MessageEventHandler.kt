@@ -156,7 +156,7 @@ class MessageEventHandler(
     }
 
     private fun processUnknownCommand(rawCommand: String) =
-            messageFormatter.asUnknownCommandString(rawCommand)
+            actor.acceptMessage(messageFormatter.asUnknownCommandString(rawCommand))
 
 }
 
