@@ -135,9 +135,7 @@ class MessageEventHandler(
         actor.acceptMessage(messageFormatter.asStartingJobString())
 
         val measuredTime = measureTimeMillis {
-            runBlocking {
-                syncStarsDataUseCase.execute(Unit)
-            }
+            syncStarsDataUseCase.execute(Unit)
         }
 
         actor.acceptMessage(messageFormatter.asDoneString(measuredTime))
