@@ -7,6 +7,7 @@ import di.modules
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.StandAloneContext.startKoin
 import org.koin.standalone.inject
+import org.slf4j.LoggerFactory
 import java.util.concurrent.CountDownLatch
 
 const val ROOM_ID_ANDROID = 15
@@ -24,11 +25,15 @@ private fun connectClient(credentials: Credentials): StackExchangeClient {
 
 class Application : KoinComponent {
 
+    private val logger = LoggerFactory.getLogger(Application::class.java)
+
     private val configRepository: ConfigRepository by inject()
     private val database: Database by inject()
     private val bot: Bot by inject()
 
     init {
+        logger.info("starting")
+
         database.connect()
         val countDownLatch = CountDownLatch(1)
 
@@ -48,5 +53,7 @@ class Application : KoinComponent {
         client.use { _ ->
             countDownLatch.await()
         }
+
+        logger.info("shutting down")
     }
 }

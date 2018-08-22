@@ -9,6 +9,7 @@ import com.timcastelijns.chatexchange.chat.User
 import data.repositories.UserRepository
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.runBlocking
+import org.slf4j.LoggerFactory
 import util.CommandParser
 import util.CommandType
 import util.MessageFormatter
@@ -24,6 +25,10 @@ class MessageEventHandler(
         private val userRepository: UserRepository,
         private val messageFormatter: MessageFormatter
 ) {
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(MessageEventHandler::class.java)
+    }
 
     private lateinit var actor: Actor
 
@@ -53,6 +58,7 @@ class MessageEventHandler(
 
     private suspend fun processCommandMessage(message: Message) {
         val rawCommand = message.content!!
+        logger.info("processing command: $rawCommand")
 
         val command = try {
             CommandParser().parse(rawCommand)
