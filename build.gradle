@@ -40,10 +40,8 @@ dependencies {
     implementation 'org.jsoup:jsoup:1.11.3'
 
     implementation "org.koin:koin-core:0.9.2"
-    testImplementation 'org.koin:koin-test:0.9.2'
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlin_version"
 
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.24.0'
     implementation 'com.jakewharton.retrofit:retrofit2-kotlin-coroutines-experimental-adapter:1.0.0'
@@ -52,6 +50,11 @@ dependencies {
     implementation 'org.jetbrains.exposed:exposed:0.10.4'
     implementation "mysql:mysql-connector-java:5.1.46"
     implementation 'org.mariadb.jdbc:mariadb-java-client:2.2.6'
+
+    // Testing
+    testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlin_version"
+    testImplementation 'org.koin:koin-test:0.9.2'
+    testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:2.0.0-RC1"
 
 }
 
