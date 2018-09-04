@@ -11,6 +11,7 @@ class CommandParser {
     private val starsAnyPattern = Pattern.compile("!(?i)stars")
     private val starsUserPattern = Pattern.compile("!(?i)stars\\s([\\-\\p{L} ]+)")
     private val remindMePattern = Pattern.compile("!(?i)remindme\\s(.+)")
+    private val cfPattern = Pattern.compile("!(?i)cf(\\[-?(\\d+)\\])?")
 
     private val acceptPattern = Pattern.compile("!(?i)accept\\s$anyUsernameRegex")
     private val rejectPattern = Pattern.compile("!(?i)reject\\s$anyUsernameRegex")
@@ -23,6 +24,7 @@ class CommandParser {
             starsAnyPattern to CommandType.STARS_ANY,
             starsUserPattern to CommandType.STARS_USER,
             remindMePattern to CommandType.REMIND_ME,
+            cfPattern to CommandType.CF,
             acceptPattern to CommandType.ACCEPT,
             rejectPattern to CommandType.REJECT,
             leavePattern to CommandType.LEAVE,
@@ -71,6 +73,7 @@ enum class CommandType {
     STARS_ANY,
     STARS_USER,
     REMIND_ME,
+    CF,
 
     // Elevated access commands.
     ACCEPT,

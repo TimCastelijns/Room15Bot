@@ -79,6 +79,8 @@ class MessageFormatter {
 
     fun asRickRollAlertString() = "Rick roll alert"
 
+    fun asCfString(cf: String) = cf
+
     private fun String.sanitize() = this.replace("\r", "").replace("\n", " ").trimEnd()
 
 }

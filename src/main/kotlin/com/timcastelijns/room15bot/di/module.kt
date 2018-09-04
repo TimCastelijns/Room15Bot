@@ -31,12 +31,13 @@ private val module: Module = applicationContext {
     bean { Database(get()) }
 
     bean { AccessLevelChangedEventHandler(get(), get()) }
-    bean { MessageEventHandler(get(), get(), get(), get(), get(), get(), get(), get()) }
+    bean { MessageEventHandler(get(), get(), get(), get(), get(), get(), get(), get(), get()) }
 
     factory { GetUserStatsUseCase(get()) }
     factory { SyncStarsDataUseCase(get(), get()) }
     factory { GetStarsDataUseCase(get()) }
     factory { SetReminderUseCase(get()) }
+    factory { CfUseCase() }
     factory { AcceptUserUseCase() }
     factory { RejectUserUseCase() }
 

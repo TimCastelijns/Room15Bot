@@ -2,6 +2,7 @@ package com.timcastelijns.room15bot.util
 
 import org.junit.Test
 import kotlin.test.assertFailsWith
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class CommandParserTest {
@@ -53,17 +54,28 @@ class CommandParserTest {
     }
 
     @Test
+    fun testCf() {
+        var command = "!cf"
+        assertTrue { parser.parse(command).type == CommandType.CF }
+        assertNull(parser.parse(command).args)
+
+        command = "!cf[3]"
+        assertTrue { parser.parse(command).type == CommandType.CF }
+        assertTrue { parser.parse(command).args == "[3]" }
+    }
+
+    @Test
     fun testAccept() {
         val command = "!accept Random Username123"
         assertTrue { parser.parse(command).type == CommandType.ACCEPT }
-        assertTrue { parser.parse(command).args == "Random Username123"}
+        assertTrue { parser.parse(command).args == "Random Username123" }
     }
 
     @Test
     fun testReject() {
         val command = "!reject alsorandomnamebutDifferent1"
         assertTrue { parser.parse(command).type == CommandType.REJECT }
-        assertTrue { parser.parse(command).args == "alsorandomnamebutDifferent1"}
+        assertTrue { parser.parse(command).args == "alsorandomnamebutDifferent1" }
     }
 
     @Test

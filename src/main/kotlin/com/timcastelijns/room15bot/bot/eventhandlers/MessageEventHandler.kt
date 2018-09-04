@@ -22,6 +22,7 @@ class MessageEventHandler(
         private val rejectUserUseCase: RejectUserUseCase,
         private val syncStarsDataUseCase: SyncStarsDataUseCase,
         private val setReminderUseCase: SetReminderUseCase,
+        private val cfUseCase: CfUseCase,
         private val userRepository: UserRepository,
         private val messageFormatter: MessageFormatter
 ) {
@@ -94,6 +95,7 @@ class MessageEventHandler(
             CommandType.REMIND_ME -> {
                 processRemindMeCommand(message.id, command.args!!)
             }
+            CommandType.CF -> processCfCommand(command.args)
 
             CommandType.ACCEPT -> processAcceptCommand(message.user!!, command.args!!)
             CommandType.REJECT -> processRejectCommand(message.user!!, command.args!!)
@@ -165,6 +167,19 @@ class MessageEventHandler(
                 actor.acceptMessage(it)
             }
         }
+    }
+
+    private fun processCfCommand(commandArgs: String?) {
+        val message = try {
+            val data = cfUseCase.execute(commandArgs)
+            messageFormatter.asCfString(data)
+        } catch (e: IllegalArgumentException) {
+            "IllegalArgumentException: ${e.message ?: commandArgs}"
+        } catch (e: IndexOutOfBoundsException) {
+            "IndexOutOfBoundsException: ${e.message ?: commandArgs}"
+        }
+
+        actor.acceptMessage(message)
     }
 
     private fun processUnknownCommand(rawCommand: String) =
