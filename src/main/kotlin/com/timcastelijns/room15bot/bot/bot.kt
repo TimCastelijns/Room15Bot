@@ -10,12 +10,17 @@ import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.BehaviorSubject
 import kotlinx.coroutines.experimental.launch
+import org.slf4j.LoggerFactory
 
 class Bot(
         private val accessLevelChangedEventHandler: AccessLevelChangedEventHandler,
         private val messageEventHandler: MessageEventHandler,
         private val reminderMonitor: ReminderMonitor
 ) : Actor {
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(Bot::class.java)
+    }
 
     private val aliveSubject = BehaviorSubject.create<Boolean>()
 
@@ -51,6 +56,7 @@ class Bot(
         }
 
         room.messagePostedEventListener = {
+            logger.debug("${it.userName}: ${it.message.content}")
             launch {
                 messageEventHandler.handle(it, this@Bot)
             }
