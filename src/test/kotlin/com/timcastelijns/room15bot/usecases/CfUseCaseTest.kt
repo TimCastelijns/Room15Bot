@@ -28,8 +28,8 @@ class CfUseCaseTest {
     @Test
     fun testByIndex() {
         possibleReplies.forEachIndexed { index, reply ->
-            val command = "[$index]"
-            assertEquals(reply, CfUseCase().execute(command))
+            val input = "[$index]"
+            assertEquals(reply, CfUseCase().execute(input))
         }
     }
 
