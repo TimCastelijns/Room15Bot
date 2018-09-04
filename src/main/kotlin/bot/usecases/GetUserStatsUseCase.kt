@@ -22,7 +22,7 @@ class GetUserStatsUseCase(
             .subscribeOn(Schedulers.io())
 
     private fun answersPerQuestion(questions: Int, answers: Int) =
-        (answers / (questions / 4.0)).toFloat()
+        answers / (questions / 4f)
 
     private fun ratio(answersPerQuestion: Float) = "4:%.1f".format(answersPerQuestion).stripUnnecessaryDecimal()
 
