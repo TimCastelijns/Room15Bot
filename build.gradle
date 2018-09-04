@@ -17,7 +17,7 @@ version = '0.2'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-mainClassName = 'MainKt'
+mainClassName = 'com.timcastelijns.room15bot.MainKt'
 
 repositories {
     jcenter()
