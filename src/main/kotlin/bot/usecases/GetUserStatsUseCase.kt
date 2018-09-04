@@ -21,10 +21,8 @@ class GetUserStatsUseCase(
             }
             .subscribeOn(Schedulers.io())
 
-    private fun answersPerQuestion(questions: Int, answers: Int) = when (answers) {
-        0 -> 0F
-        else -> (answers / (questions / 4.0)).toFloat()
-    }
+    private fun answersPerQuestion(questions: Int, answers: Int) =
+        (answers / (questions / 4.0)).toFloat()
 
     private fun ratio(answersPerQuestion: Float) = "4:%.1f".format(answersPerQuestion).stripUnnecessaryDecimal()
 
