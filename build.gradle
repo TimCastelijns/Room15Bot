@@ -30,7 +30,7 @@ repositories {
 
 dependencies {
     implementation 'org.slf4j:slf4j-log4j12:1.7.5'
-    implementation 'com.github.TimCastelijns:ChatExchange:1.0.0-alpha5'
+    implementation 'com.github.TimCastelijns:ChatExchange:1.0.0-beta1'
 
     implementation 'com.squareup.retrofit2:retrofit:2.4.0'
     implementation 'com.squareup.retrofit2:converter-scalars:2.4.0'
