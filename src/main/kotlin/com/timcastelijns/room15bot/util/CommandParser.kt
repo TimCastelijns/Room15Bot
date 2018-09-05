@@ -15,7 +15,7 @@ class CommandParser {
 
     private val acceptPattern = Pattern.compile("!(?i)accept\\s$anyUsernameRegex")
     private val rejectPattern = Pattern.compile("!(?i)reject\\s$anyUsernameRegex")
-    private val leavePattern = Pattern.compile("!(?i)(?:shoo|leave|die|getlost|fuckoff)")
+    private val leavePattern = Pattern.compile("!(?i)(?:shoo|leave|die|getlost|fuckoff|ahmad)")
     private val syncStarsPattern = Pattern.compile("!(?i)syncstars")
 
     private val needsName = mapOf<Pattern, CommandType>(
