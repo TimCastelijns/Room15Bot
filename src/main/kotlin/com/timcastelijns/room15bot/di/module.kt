@@ -1,10 +1,10 @@
 package com.timcastelijns.room15bot.di
 
+import com.jakewharton.retrofit2.adapter.kotlin.coroutines.experimental.CoroutineCallAdapterFactory
 import com.timcastelijns.room15bot.bot.Bot
 import com.timcastelijns.room15bot.bot.eventhandlers.AccessLevelChangedEventHandler
 import com.timcastelijns.room15bot.bot.eventhandlers.MessageEventHandler
 import com.timcastelijns.room15bot.bot.monitors.ReminderMonitor
-import com.jakewharton.retrofit2.adapter.kotlin.coroutines.experimental.CoroutineCallAdapterFactory
 import com.timcastelijns.room15bot.bot.usecases.*
 import com.timcastelijns.room15bot.data.db.Database
 import com.timcastelijns.room15bot.data.db.ReminderDao
@@ -16,19 +16,20 @@ import com.timcastelijns.room15bot.data.repositories.UserStatsRepository
 import com.timcastelijns.room15bot.network.StarService
 import com.timcastelijns.room15bot.network.UserService
 import com.timcastelijns.room15bot.network.UserStatsService
+import com.timcastelijns.room15bot.util.MessageFormatter
+import com.timcastelijns.room15bot.util.UserNameValidator
 import org.koin.dsl.module.Module
 import org.koin.dsl.module.applicationContext
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
-import com.timcastelijns.room15bot.util.MessageFormatter
-import com.timcastelijns.room15bot.util.UserNameValidator
 
 private val module: Module = applicationContext {
 
-    factory { Bot(get(), get(), get()) }
     bean { Database(get()) }
+
+    factory { Bot(get(), get(), get()) }
 
     bean { AccessLevelChangedEventHandler(get(), get()) }
     bean { MessageEventHandler(get(), get(), get(), get(), get(), get(), get(), get(), get()) }

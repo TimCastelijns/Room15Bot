@@ -1,6 +1,6 @@
 package com.timcastelijns.room15bot.bot.monitors
 
-import com.timcastelijns.chatexchange.chat.Room
+import com.timcastelijns.room15bot.bot.Actor
 import com.timcastelijns.room15bot.data.db.ReminderDao
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
@@ -9,14 +9,14 @@ import java.util.concurrent.TimeUnit
 
 class ReminderMonitor(
         private val reminderDao: ReminderDao
-) {
+) : Monitor {
 
-    fun start(room: Room): Disposable = Observable.interval(1, TimeUnit.MINUTES)
+    override fun start(actor: Actor): Disposable = Observable.interval(1, TimeUnit.MINUTES)
             .observeOn(Schedulers.io())
             .subscribe {
                 reminderDao.getMessageIdsToRemind()
                         .forEach {
-                            room.replyTo(it, "Here is your reminder")
+                            actor.acceptReply("Here is your reminder", it)
                         }
 
                 reminderDao.completePassedReminders()
