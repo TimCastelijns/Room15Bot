@@ -44,6 +44,10 @@ class CommandParserTest {
         command = "!stars Félix Gagnon-Grenier"
         assertTrue { parser.parse(command).type == CommandType.STARS_USER }
         assertTrue { parser.parse(command).args == "Félix Gagnon-Grenier" }
+
+        command = "!stars payne911"
+        assertTrue { parser.parse(command).type == CommandType.STARS_USER }
+        assertTrue { parser.parse(command).args == "payne911" }
     }
 
     @Test
@@ -101,6 +105,7 @@ class CommandParserTest {
         parser.parse("!reMinDMe bla bla bla")
         parser.parse("!FucKOFf")
         parser.parse("!SYNCstars")
+        parser.parse("!Cf")
     }
 
     @Test

@@ -9,7 +9,7 @@ class CommandParser {
     private val statsMePattern = Pattern.compile("!(?i)stats")
     private val statsUserPattern = Pattern.compile("!(?i)stats\\s(\\d+)")
     private val starsAnyPattern = Pattern.compile("!(?i)stars")
-    private val starsUserPattern = Pattern.compile("!(?i)stars\\s([\\-\\p{L} ]+)")
+    private val starsUserPattern = Pattern.compile("!(?i)stars\\s$anyUsernameRegex")
     private val remindMePattern = Pattern.compile("!(?i)remindme\\s(.+)")
     private val cfPattern = Pattern.compile("!(?i)cf(\\[-?(\\d+)\\])?")
 
