@@ -44,7 +44,6 @@ class MessageEventHandler(
     }
 
     private suspend fun handleMessage(message: Message) {
-        logger.debug("handling \"$message\"")
         if (message.containsCommand()) {
             val time = measureTimeMillis {
                 launch { processCommandMessage(message) }.join()

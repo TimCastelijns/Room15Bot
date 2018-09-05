@@ -81,6 +81,7 @@ class MessageFormatter {
 
     fun asCfString(cf: String) = cf
 
-    private fun String.sanitize() = this.replace("\r", "").replace("\n", " ").trimEnd()
 
 }
+
+fun String.sanitize() = this.replace("\r", "").replace("\n", " ").trimEnd()

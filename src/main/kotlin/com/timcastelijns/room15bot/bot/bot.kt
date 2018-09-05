@@ -56,8 +56,8 @@ class Bot(
         }
 
         room.messagePostedEventListener = {
-            logger.debug("${it.userName}: ${it.message.content}")
             launch {
+                logger.debug("${it.userName}: ${it.message.content?.sanitize()?.truncate(80)}")
                 messageEventHandler.handle(it, this@Bot)
             }
         }
