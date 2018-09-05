@@ -1,16 +1,21 @@
 package com.timcastelijns.room15bot.bot
 
-import com.timcastelijns.room15bot.bot.eventhandlers.AccessLevelChangedEventHandler
-import com.timcastelijns.room15bot.bot.eventhandlers.MessageEventHandler
-import com.timcastelijns.room15bot.bot.monitors.ReminderMonitor
 import com.timcastelijns.chatexchange.chat.ChatHost
 import com.timcastelijns.chatexchange.chat.Room
 import com.timcastelijns.chatexchange.chat.StackExchangeClient
+import com.timcastelijns.room15bot.bot.eventhandlers.AccessLevelChangedEventHandler
+import com.timcastelijns.room15bot.bot.eventhandlers.MessageEventHandler
+import com.timcastelijns.room15bot.bot.monitors.ReminderMonitor
+import com.timcastelijns.room15bot.bot.usecases.truncate
+import com.timcastelijns.room15bot.util.sanitize
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
 import kotlinx.coroutines.experimental.launch
 import org.slf4j.LoggerFactory
+import java.util.*
+import java.util.concurrent.TimeUnit
 
 class Bot(
         private val accessLevelChangedEventHandler: AccessLevelChangedEventHandler,
@@ -27,6 +32,8 @@ class Bot(
     private lateinit var room: Room
 
     private val disposables = CompositeDisposable()
+
+    private val outboundMessageQueue = LinkedList<OutboundMessage>()
 
     fun observeLife(): Observable<Boolean> {
         return aliveSubject.hide()
@@ -69,21 +76,53 @@ class Bot(
         }
 
         monitorReminders()
+        monitorOutboundMessageQueue()
     }
 
-    private fun monitorReminders() = disposables.add(reminderMonitor.start(room))
+    private fun monitorReminders() = disposables.add(reminderMonitor.start(this))
+
+    private fun monitorOutboundMessageQueue() {
+        val disposable = Observable.interval(4000, TimeUnit.MILLISECONDS)
+                .observeOn(Schedulers.io())
+                .subscribe {
+                    if (outboundMessageQueue.isNotEmpty()) {
+                        val outboundMessage = outboundMessageQueue.poll()
+                        sendOutboundMessage(outboundMessage)
+                    }
+                }
+
+        disposables.add(disposable)
+    }
+
+    private fun sendOutboundMessage(outboundMessage: OutboundMessage) {
+        logger.debug("sending message: $outboundMessage (${outboundMessageQueue.size} left in queue)")
+
+        if (outboundMessage.targetMessageId == null) {
+            room.send(outboundMessage.message)
+        } else {
+            room.replyTo(outboundMessage.targetMessageId, outboundMessage.message)
+        }
+    }
 
     override fun acceptMessage(message: String) {
-        room.send(message)
+        outboundMessageQueue.add(OutboundMessage(message))
+        logger.debug("queued message: $message")
     }
 
     override fun acceptReply(message: String, targetMessageId: Long) {
-        room.replyTo(targetMessageId, message)
+        outboundMessageQueue.add(OutboundMessage(message, targetMessageId))
+        logger.debug("queued reply: $message")
     }
 
     override fun leaveRoom() {
         die()
     }
+
+    data class OutboundMessage(
+            val message: String,
+            val targetMessageId: Long? = null
+    )
+
 }
 
 interface Actor {
