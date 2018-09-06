@@ -45,6 +45,10 @@ class Bot(
     }
 
     private fun die() {
+        while(outboundMessageQueue.isNotEmpty()) {
+            Thread.sleep(1000)
+        }
+
         disposables.clear()
 
         aliveSubject.onNext(false)
