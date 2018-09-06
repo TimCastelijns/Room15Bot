@@ -1,23 +1,24 @@
 package com.timcastelijns.room15bot.util
 
+import org.intellij.lang.annotations.Language
 import java.util.regex.Pattern
 
 class CommandParser {
 
     private val anyUsernameRegex = Regex("(.+)")
 
-    private val helpPattern = Pattern.compile("!(?i)(?:help|commands|usage)")
-    private val statsMePattern = Pattern.compile("!(?i)stats")
-    private val statsUserPattern = Pattern.compile("!(?i)stats\\s(\\d+)")
-    private val starsAnyPattern = Pattern.compile("!(?i)stars")
-    private val starsUserPattern = Pattern.compile("!(?i)stars\\s$anyUsernameRegex")
-    private val remindMePattern = Pattern.compile("!(?i)remindme\\s(.+)")
-    private val cfPattern = Pattern.compile("!(?i)cf(\\[-?(\\d+)\\])?")
+    private val helpPattern = caseInsensitivePattern("!(?:help|commands|usage)")
+    private val statsMePattern = caseInsensitivePattern("!stats")
+    private val statsUserPattern = caseInsensitivePattern("!stats\\s(\\d+)")
+    private val starsAnyPattern = caseInsensitivePattern("!stars")
+    private val starsUserPattern = caseInsensitivePattern("!stars\\s$anyUsernameRegex")
+    private val remindMePattern = caseInsensitivePattern("!remindme\\s(.+)")
+    private val cfPattern = caseInsensitivePattern("!cf(\\[-?(\\d+)\\])?")
 
-    private val acceptPattern = Pattern.compile("!(?i)accept\\s$anyUsernameRegex")
-    private val rejectPattern = Pattern.compile("!(?i)reject\\s$anyUsernameRegex")
-    private val leavePattern = Pattern.compile("!(?i)(?:shoo|leave|die|getlost|fuckoff|ahmad)")
-    private val syncStarsPattern = Pattern.compile("!(?i)syncstars")
+    private val acceptPattern = caseInsensitivePattern("!accept\\s$anyUsernameRegex")
+    private val rejectPattern = caseInsensitivePattern("!reject\\s$anyUsernameRegex")
+    private val leavePattern = caseInsensitivePattern("!(?:shoo|leave|die|getlost|fuckoff|ahmad)")
+    private val syncStarsPattern = caseInsensitivePattern("!syncstars")
 
     private val needsName = mapOf<Pattern, CommandType>(
             helpPattern to CommandType.HELP,
@@ -50,6 +51,9 @@ class CommandParser {
 
         return command ?: throw IllegalArgumentException("Unknown command: $rawCommand")
     }
+
+    private fun caseInsensitivePattern(@Language("RegExp") regex: String) =
+            Pattern.compile(regex, Pattern.CASE_INSENSITIVE)
 }
 
 class Command private constructor(

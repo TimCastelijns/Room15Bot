@@ -32,6 +32,8 @@ dependencies {
     implementation 'org.slf4j:slf4j-log4j12:1.7.5'
     implementation 'com.github.TimCastelijns:ChatExchange:1.0.0-beta3'
 
+    implementation 'org.jetbrains:annotations:16.0.2'
+
     implementation 'com.squareup.retrofit2:retrofit:2.4.0'
     implementation 'com.squareup.retrofit2:converter-scalars:2.4.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
