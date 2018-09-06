@@ -45,6 +45,13 @@ class MessageFormatterTest {
     )
 
     @Test
+    fun testHelp() {
+        val output = messageFormatter.asHelpString()
+
+        assertEquals("You can find information on what I can do [here](https://github.com/TimCastelijns/Room15Bot#usage)", output)
+    }
+
+    @Test
     fun testShortData() {
         val data = StarsData(listOf(shortData), 1, 1)
 

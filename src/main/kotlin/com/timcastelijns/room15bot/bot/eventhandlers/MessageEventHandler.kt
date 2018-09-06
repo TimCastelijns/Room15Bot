@@ -74,6 +74,7 @@ class MessageEventHandler(
         }
 
         when (command.type) {
+            CommandType.HELP -> processHelpCommand(message.id)
             CommandType.STATS_ME -> {
                 val userId = message.user!!.id
                 val user = userRepository.getUser(userId)!!
@@ -99,6 +100,10 @@ class MessageEventHandler(
             CommandType.LEAVE -> processLeaveCommand(message.user!!)
             CommandType.SYNC_STARS -> processSyncStarsCommand(message.user!!)
         }
+    }
+
+    private fun processHelpCommand(messageId: Long) {
+        actor.acceptReply(messageFormatter.asHelpString(), messageId)
     }
 
     private fun processAcceptCommand(user: User, username: String) {

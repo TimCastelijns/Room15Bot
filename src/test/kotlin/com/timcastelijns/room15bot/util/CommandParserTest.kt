@@ -97,6 +97,21 @@ class CommandParserTest {
     }
 
     @Test
+    fun testHelp() {
+        var command = "!help"
+        assertTrue { parser.parse(command).type == CommandType.HELP }
+        assertTrue { parser.parse(command).args == null}
+
+        command = "!commands"
+        assertTrue { parser.parse(command).type == CommandType.HELP }
+        assertTrue { parser.parse(command).args == null}
+
+        command = "!usage"
+        assertTrue { parser.parse(command).type == CommandType.HELP }
+        assertTrue { parser.parse(command).args == null}
+    }
+
+    @Test
     fun testCasingDoesntMatter() {
         parser.parse("!STATS")
         parser.parse("!STAts 25436")

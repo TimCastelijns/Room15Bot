@@ -6,6 +6,7 @@ class CommandParser {
 
     private val anyUsernameRegex = Regex("(.+)")
 
+    private val helpPattern = Pattern.compile("!(?i)(?:help|commands|usage)")
     private val statsMePattern = Pattern.compile("!(?i)stats")
     private val statsUserPattern = Pattern.compile("!(?i)stats\\s(\\d+)")
     private val starsAnyPattern = Pattern.compile("!(?i)stars")
@@ -19,6 +20,7 @@ class CommandParser {
     private val syncStarsPattern = Pattern.compile("!(?i)syncstars")
 
     private val needsName = mapOf<Pattern, CommandType>(
+            helpPattern to CommandType.HELP,
             statsMePattern to CommandType.STATS_ME,
             statsUserPattern to CommandType.STATS_USER,
             starsAnyPattern to CommandType.STARS_ANY,
@@ -68,6 +70,7 @@ fun commandOf(block: Command.Builder.() -> Unit) =
 
 enum class CommandType {
     // User commands.
+    HELP,
     STATS_ME,
     STATS_USER,
     STARS_ANY,

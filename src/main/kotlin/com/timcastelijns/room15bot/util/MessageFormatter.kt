@@ -10,6 +10,9 @@ import java.time.format.DateTimeFormatter
 
 class MessageFormatter {
 
+    fun asHelpString() = "You can find information on what I can do " +
+            "[here](https://github.com/TimCastelijns/Room15Bot#usage)"
+
     fun asTableString(starsData: StarsData) = with(starsData) {
         if (starredMessages.isEmpty()) {
             return "No starred messages found"
