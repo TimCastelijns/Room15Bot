@@ -43,10 +43,10 @@ class CfUseCaseTest {
 
     @Test
     fun invalidIndexThrows() {
-        assertFailsWith(IndexOutOfBoundsException::class) {
+        assertFailsWith(IllegalArgumentException::class) {
             CfUseCase().execute("[6]")
         }
-        assertFailsWith(IndexOutOfBoundsException::class) {
+        assertFailsWith(IllegalArgumentException::class) {
             CfUseCase().execute("[10]")
         }
     }
