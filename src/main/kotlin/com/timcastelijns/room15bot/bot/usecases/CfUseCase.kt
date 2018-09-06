@@ -24,7 +24,14 @@ class CfUseCase : UseCase<String?, String> {
                 if (!matcher.find()) {
                     throw IllegalArgumentException("This input seems to be invalid")
                 }
+
                 val index = matcher.group(1).toInt()
+                val lastIndex = possibleReplies.lastIndex
+
+                if (index > lastIndex) {
+                    throw IllegalArgumentException("I can only go up to $lastIndex")
+                }
+
                 possibleReplies[index]
             }
 

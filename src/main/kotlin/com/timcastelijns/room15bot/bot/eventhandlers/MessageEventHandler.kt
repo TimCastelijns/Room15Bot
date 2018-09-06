@@ -175,8 +175,6 @@ class MessageEventHandler(
             messageFormatter.asCfString(data)
         } catch (e: IllegalArgumentException) {
             "IllegalArgumentException: ${e.message ?: commandArgs}"
-        } catch (e: IndexOutOfBoundsException) {
-            "IndexOutOfBoundsException: ${e.message ?: commandArgs}"
         }
 
         actor.acceptMessage(message)
