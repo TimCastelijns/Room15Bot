@@ -136,11 +136,6 @@ class Bot(
         logger.info("set access for '$username to $userAccess")
     }
 
-    override fun acceptErrorMessage(message: String) {
-        logger.error(message)
-        acceptMessage(message)
-    }
-
     override fun leaveRoom() {
         die()
     }
@@ -156,6 +151,5 @@ interface Actor {
     fun acceptMessage(message: String)
     fun acceptReply(message: String, targetMessageId: Long)
     fun acceptAccessChangeForUserByName(username: String, accessLevel: AccessLevel)
-    fun acceptErrorMessage(message: String)
     fun leaveRoom()
 }

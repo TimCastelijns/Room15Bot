@@ -22,6 +22,11 @@ class FutureDateExpressionParserTest {
     }
 
     @Test
+    fun testDateTooFarInTheFutureThrowsIllegalArgument() {
+        assertFailsWith(IllegalArgumentException::class) { parser.parse("9223372036854775806h") }
+    }
+
+    @Test
     fun testMinutesAreParsedCorrectly() {
         assertTrue { parser.parse("1m") == TimeUnit.MINUTES.toMillis(1) }
         assertTrue { parser.parse("5 min") == TimeUnit.MINUTES.toMillis(5) }
@@ -29,7 +34,7 @@ class FutureDateExpressionParserTest {
     }
 
     @Test
-    fun testHourssAreParsedCorrectly() {
+    fun testHoursAreParsedCorrectly() {
         assertTrue { parser.parse("1h") == TimeUnit.HOURS.toMillis(1) }
         assertTrue { parser.parse("24h") == TimeUnit.HOURS.toMillis(24) }
         assertTrue { parser.parse("24 h") == TimeUnit.HOURS.toMillis(24) }

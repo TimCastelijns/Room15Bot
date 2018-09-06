@@ -132,7 +132,7 @@ class MessageEventHandler(
         try {
             actor.acceptAccessChangeForUserByName(username, accessLevel)
         } catch (e: IllegalStateException) {
-            actor.acceptErrorMessage("Illegal state: ${e.message}")
+            actor.acceptMessage("Illegal state: ${e.message}")
         } catch (e: IllegalArgumentException) {
             actor.acceptMessage("Illegal argument passed: ${e.message}")
         }
@@ -175,14 +175,14 @@ class MessageEventHandler(
     private fun processRemindMeCommand(messageId: Long, commandArgs: String) {
         val params = SetReminderCommandParams(messageId, commandArgs)
 
-        val data = setReminderUseCase.execute(params)
-        try {
-            actor.acceptMessage(messageFormatter.asReminderString(data))
+        val message = try {
+            val data = setReminderUseCase.execute(params)
+            messageFormatter.asReminderString(data)
         } catch (e: IllegalArgumentException) {
-            e.message?.let {
-                actor.acceptMessage(it)
-            }
+            e.message!!
         }
+
+        actor.acceptMessage(message)
     }
 
     private fun processCfCommand(commandArgs: String?) {
