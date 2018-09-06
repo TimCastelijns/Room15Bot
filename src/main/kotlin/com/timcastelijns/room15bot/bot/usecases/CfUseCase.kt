@@ -25,8 +25,12 @@ class CfUseCase : UseCase<String?, String> {
                     throw IllegalArgumentException("This input seems to be invalid")
                 }
 
-                val index = matcher.group(1).toInt()
                 val lastIndex = possibleReplies.lastIndex
+                val index = try {
+                    matcher.group(1).toInt()
+                } catch (e: NumberFormatException) {
+                    throw IllegalArgumentException("I can only go up to $lastIndex")
+                }
 
                 if (index > lastIndex) {
                     throw IllegalArgumentException("I can only go up to $lastIndex")
