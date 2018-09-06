@@ -7,6 +7,32 @@ This is a bot solely for [room 15](https://chat.stackoverflow.com/rooms/15/andro
 It currently depends on [ChatExchange](https://github.com/TimCastelijns/ChatExchange) for listening to chat events.
 
 
+## Usage
+
+Commands are prefixed with `!`. Commands are only recognized when they are at the start of a message. Commands are case insensitive, however their arguments might not be.
+
+Available commands are listed below. Some require an elevated access level. 
+
+|Name|Format|Example|Access|Description
+|-|-|-|-|-
+|Stats me|!stats|!stats|All|Shows your stats
+|Stats user|!stats \<user id\>|!stats 1|All|Shows a user's stats
+|Stars any|!stars|!stars|All|Shows the most starred messages of the room
+|Stars user|!stars \<user name\>|!stars john|All|Shows a user's most starred messages
+|Remind me|!remindme \<future date expression\>|!remindme 2h|All|Sets a reminder. When it expires, the bot will ping you
+|||!remindme in 5 mins|
+|CF|!cf\<index(optional)\>|!cf|All|Does a good impression of CF
+|||!cf[0]|
+|Accept user|!accept \<user name\>|!accept john|Room owner|Posts a welcome message for the user and grants him write access
+|Reject user|!reject \<user name\>|!reject john|Room owner|Posts a rejection message for the user and clears his access
+|Stop bot|!ahmad|!ahmad|Bot owner|Stops the bot
+|Sync stars data|!syncstars|!syncstars|Bot owner|Synchronizes all starred messages data
+
+Access levels do not overlap. I.e. a bot owner is not necessarily a room owner.
+
+For more detailed information on how each command is processed and what input it will take you can check its UseCase [here](https://github.com/TimCastelijns/Room15Bot/tree/master/src/main/kotlin/com/timcastelijns/room15bot/bot/usecases). For more detailed information on what constitutes a command you can check its pattern in the [CommandParser](https://github.com/TimCastelijns/Room15Bot/blob/master/src/main/kotlin/com/timcastelijns/room15bot/util/CommandParser.kt).
+
+
 ## Running
 
 A `config.properties` file must be located in the root of the project with values for at least the following properties:
