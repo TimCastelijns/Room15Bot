@@ -174,7 +174,7 @@ class MessageEventHandler(
             val data = cfUseCase.execute(commandArgs)
             messageFormatter.asCfString(data)
         } catch (e: IllegalArgumentException) {
-            "IllegalArgumentException: ${e.message ?: commandArgs}"
+            e.message!!
         }
 
         actor.acceptMessage(message)
