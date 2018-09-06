@@ -1,10 +1,7 @@
 package com.timcastelijns.room15bot.bot.eventhandlers
 
+import com.timcastelijns.chatexchange.chat.*
 import com.timcastelijns.room15bot.bot.Actor
-import com.timcastelijns.chatexchange.chat.Message
-import com.timcastelijns.chatexchange.chat.MessageEditedEvent
-import com.timcastelijns.chatexchange.chat.MessagePostedEvent
-import com.timcastelijns.chatexchange.chat.User
 import com.timcastelijns.room15bot.bot.usecases.*
 import com.timcastelijns.room15bot.data.repositories.UserRepository
 import kotlinx.coroutines.experimental.launch
@@ -111,6 +108,8 @@ class MessageEventHandler(
 
         val message = acceptUserUseCase.execute(username)
         actor.acceptMessage(message)
+
+        setUserAccess(username, AccessLevel.READ_WRITE)
     }
 
     private fun processRejectCommand(user: User, username: String) {
@@ -120,6 +119,18 @@ class MessageEventHandler(
 
         val message = rejectUserUseCase.execute(username)
         actor.acceptMessage(message)
+
+        setUserAccess(username, AccessLevel.DEFAULT)
+    }
+
+    private fun setUserAccess(username: String, accessLevel: AccessLevel) {
+        try {
+            actor.acceptAccessChangeForUserByName(username, accessLevel)
+        } catch (e: IllegalStateException) {
+            actor.acceptErrorMessage("Illegal state: ${e.message}")
+        } catch (e: IllegalArgumentException) {
+            actor.acceptMessage("Illegal argument passed: ${e.message}")
+        }
     }
 
     private fun processLeaveCommand(user: User) {

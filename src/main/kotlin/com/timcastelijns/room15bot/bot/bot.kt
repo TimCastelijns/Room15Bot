@@ -1,8 +1,6 @@
 package com.timcastelijns.room15bot.bot
 
-import com.timcastelijns.chatexchange.chat.ChatHost
-import com.timcastelijns.chatexchange.chat.Room
-import com.timcastelijns.chatexchange.chat.StackExchangeClient
+import com.timcastelijns.chatexchange.chat.*
 import com.timcastelijns.room15bot.bot.eventhandlers.AccessLevelChangedEventHandler
 import com.timcastelijns.room15bot.bot.eventhandlers.MessageEventHandler
 import com.timcastelijns.room15bot.bot.monitors.ReminderMonitor
@@ -35,6 +33,8 @@ class Bot(
 
     private val outboundMessageQueue = LinkedList<OutboundMessage>()
 
+    private val recentAccessRequestees = mutableSetOf<User>()
+
     fun observeLife(): Observable<Boolean> {
         return aliveSubject.hide()
     }
@@ -62,6 +62,10 @@ class Bot(
     fun start() {
         room.accessLevelChangedEventListener = {
             launch {
+                if (it.accessLevel == AccessLevel.REQUEST) {
+                    recentAccessRequestees += it.targetUser
+                }
+
                 accessLevelChangedEventHandler.handle(it, this@Bot)
             }
         }
@@ -118,6 +122,25 @@ class Bot(
         logger.debug("queued reply: $message")
     }
 
+    override fun acceptAccessChangeForUserByName(username: String, accessLevel: AccessLevel) {
+        val user = recentAccessRequestees.firstOrNull { it.name == username }
+                ?: throw IllegalStateException("Cannot find requestee named $username")
+
+        val userAccess = when (accessLevel) {
+            AccessLevel.DEFAULT -> "remove"
+            AccessLevel.READ -> "read-only"
+            AccessLevel.READ_WRITE -> "read-write"
+            else -> throw IllegalArgumentException("Cannot set user access to $accessLevel")
+        }
+        room.setUserAccess(user.id, userAccess)
+        logger.info("set access for '$username to $userAccess")
+    }
+
+    override fun acceptErrorMessage(message: String) {
+        logger.error(message)
+        acceptMessage(message)
+    }
+
     override fun leaveRoom() {
         die()
     }
@@ -132,5 +155,7 @@ class Bot(
 interface Actor {
     fun acceptMessage(message: String)
     fun acceptReply(message: String, targetMessageId: Long)
+    fun acceptAccessChangeForUserByName(username: String, accessLevel: AccessLevel)
+    fun acceptErrorMessage(message: String)
     fun leaveRoom()
 }
