@@ -27,7 +27,7 @@ class SyncStarsDataUseCase(
                 starredMessageRepository.getStarredMessagesByPage(pageNr)
             }
         }
-        logger.debug("started ${jobs.size} jobs}")
+        logger.debug("started ${jobs.size} jobs")
 
         val starredMessages = mutableListOf<StarredMessage>()
         jobs.forEachIndexed { i, it ->
