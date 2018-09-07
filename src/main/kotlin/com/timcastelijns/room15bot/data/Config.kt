@@ -11,3 +11,10 @@ data class DatabaseConfig(
         val url: String,
         val driver: String
 )
+
+data class BuildConfig(
+        val version: String,
+        val branch: String,
+        val commit: String,
+        val buildTime: String
+)

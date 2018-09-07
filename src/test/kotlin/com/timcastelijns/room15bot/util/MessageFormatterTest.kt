@@ -3,6 +3,7 @@ package com.timcastelijns.room15bot.util
 import com.timcastelijns.room15bot.bot.usecases.StarsData
 import com.timcastelijns.room15bot.bot.usecases.UserStats
 import com.timcastelijns.chatexchange.chat.User
+import com.timcastelijns.room15bot.data.BuildConfig
 import com.timcastelijns.room15bot.data.repositories.StarredMessage
 import org.junit.Test
 import java.time.Instant
@@ -49,6 +50,14 @@ class MessageFormatterTest {
         val output = messageFormatter.asHelpString()
 
         assertEquals("You can find information on what I can do [here](https://github.com/TimCastelijns/Room15Bot#usage)", output)
+    }
+
+    @Test
+    fun testStatus() {
+        val buildConfig = BuildConfig("0.1", "master", "abcd1234", "epoch")
+        val output = messageFormatter.asStatusString(buildConfig)
+
+        assertEquals("Online since epoch. Running version 0.1 on master@abcd1234", output)
     }
 
     @Test

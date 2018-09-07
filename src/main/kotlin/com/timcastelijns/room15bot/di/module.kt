@@ -32,8 +32,9 @@ private val module: Module = applicationContext {
     factory { Bot(get(), get(), get()) }
 
     bean { AccessLevelChangedEventHandler(get(), get()) }
-    bean { MessageEventHandler(get(), get(), get(), get(), get(), get(), get(), get(), get()) }
+    bean { MessageEventHandler(get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }
 
+    factory { GetBuildConfigUseCase(get()) }
     factory { GetUserStatsUseCase(get()) }
     factory { SyncStarsDataUseCase(get(), get()) }
     factory { GetStarsDataUseCase(get()) }

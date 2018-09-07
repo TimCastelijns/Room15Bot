@@ -4,6 +4,7 @@ import com.timcastelijns.room15bot.bot.usecases.StarsData
 import com.timcastelijns.room15bot.bot.usecases.UserStats
 import com.timcastelijns.room15bot.bot.usecases.truncate
 import com.timcastelijns.chatexchange.chat.User
+import com.timcastelijns.room15bot.data.BuildConfig
 import java.time.Instant
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
@@ -12,6 +13,11 @@ class MessageFormatter {
 
     fun asHelpString() = "You can find information on what I can do " +
             "[here](https://github.com/TimCastelijns/Room15Bot#usage)"
+
+    fun asStatusString(buildConfig: BuildConfig) =
+            "Online since ${buildConfig.buildTime}. " +
+                    "Running version ${buildConfig.version} on " +
+                    "${buildConfig.branch}@${buildConfig.commit}"
 
     fun asTableString(starsData: StarsData) = with(starsData) {
         if (starredMessages.isEmpty()) {

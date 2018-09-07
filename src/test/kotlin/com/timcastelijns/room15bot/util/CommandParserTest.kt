@@ -1,6 +1,7 @@
 package com.timcastelijns.room15bot.util
 
 import org.junit.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
@@ -8,6 +9,15 @@ import kotlin.test.assertTrue
 class CommandParserTest {
 
     private val parser = CommandParser()
+
+    @Test
+    fun testStatus() {
+        val commands = listOf("!status", "!alive")
+        commands.forEach {
+            assertEquals(CommandType.STATUS, parser.parse(it).type)
+            assertNull(parser.parse(it).args)
+        }
+    }
 
     @Test
     fun testStatsMe() {
@@ -121,6 +131,7 @@ class CommandParserTest {
         parser.parse("!FucKOFf")
         parser.parse("!SYNCstars")
         parser.parse("!Cf")
+        parser.parse("!STatuS")
     }
 
     @Test

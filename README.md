@@ -15,6 +15,7 @@ Available commands are listed below. Some require an elevated access level.
 
 |Name|Format|Example|Access|Description
 |-|-|-|-|-
+|Status|!status|!status|All|Display a status message
 |Stats me|!stats|!stats|All|Shows your stats
 |Stats user|!stats \<user id\>|!stats 1|All|Shows a user's stats
 |Stars any|!stars|!stars|All|Shows the most starred messages of the room
@@ -30,7 +31,7 @@ Available commands are listed below. Some require an elevated access level.
 
 Access levels do not overlap. I.e. a bot owner is not necessarily a room owner.
 
-For more detailed information on how each command is processed and what input it will take you can check its UseCase [here](https://github.com/TimCastelijns/Room15Bot/tree/master/src/main/kotlin/com/timcastelijns/room15bot/bot/usecases). For more detailed information on what constitutes a command you can check its pattern in the [CommandParser](https://github.com/TimCastelijns/Room15Bot/blob/master/src/main/kotlin/com/timcastelijns/room15bot/util/CommandParser.kt).
+For more detailed information on how each command is processed, what input it will take and what aliases it has, you can check its UseCase [here](https://github.com/TimCastelijns/Room15Bot/tree/master/src/main/kotlin/com/timcastelijns/room15bot/bot/usecases). For more detailed information on what constitutes a command you can check its pattern in the [CommandParser](https://github.com/TimCastelijns/Room15Bot/blob/master/src/main/kotlin/com/timcastelijns/room15bot/util/CommandParser.kt).
 
 
 ## Running

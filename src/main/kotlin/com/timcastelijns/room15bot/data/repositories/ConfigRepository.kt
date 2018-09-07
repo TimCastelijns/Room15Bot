@@ -1,5 +1,6 @@
 package com.timcastelijns.room15bot.data.repositories
 
+import com.timcastelijns.room15bot.data.BuildConfig
 import com.timcastelijns.room15bot.data.Credentials
 import com.timcastelijns.room15bot.data.DatabaseConfig
 import java.io.FileInputStream
@@ -7,6 +8,13 @@ import java.util.*
 
 
 private const val CONFIG_FILE_PATH = "config.properties"
+
+private const val PROPERTY_VERSION = "version"
+private const val PROPERTY_BRANCH = "branch"
+private const val PROPERTY_COMMIT = "commit"
+private const val PROPERTY_BUILD_TIME = "buildtime"
+
+private const val BUILD_CONFIG_FILE_PATH = "gen/buildconfig.properties"
 
 private const val PROPERTY_BOT_EMAIL = "botemail"
 private const val PROPERTY_BOT_PASSWORD = "botpassword"
@@ -44,6 +52,21 @@ class ConfigRepository {
         val driver = properties.getProperty(PROPERTY_DB_DRIVER)
 
         return DatabaseConfig(user, password, url, driver)
+    }
+
+    fun getBuildConfig(): BuildConfig {
+        val properties = Properties()
+
+        FileInputStream(BUILD_CONFIG_FILE_PATH).use {
+            properties.load(it)
+        }
+
+        val version = properties.getProperty(PROPERTY_VERSION)
+        val branch = properties.getProperty(PROPERTY_BRANCH)
+        val commit = properties.getProperty(PROPERTY_COMMIT)
+        val buildTime = properties.getProperty(PROPERTY_BUILD_TIME)
+
+        return BuildConfig(version, branch, commit, buildTime)
     }
 
 }

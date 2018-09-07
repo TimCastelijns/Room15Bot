@@ -13,6 +13,7 @@ import com.timcastelijns.room15bot.util.MessageFormatter
 import kotlin.system.measureTimeMillis
 
 class MessageEventHandler(
+        private val getBuildConfigUseCase: GetBuildConfigUseCase,
         private val getUserStatsUseCase: GetUserStatsUseCase,
         private val getStarsDataUseCase: GetStarsDataUseCase,
         private val acceptUserUseCase: AcceptUserUseCase,
@@ -75,6 +76,7 @@ class MessageEventHandler(
 
         when (command.type) {
             CommandType.HELP -> processHelpCommand(message.id)
+            CommandType.STATUS -> processStatusCommand(message.id)
             CommandType.STATS_ME -> {
                 val userId = message.user!!.id
                 val user = userRepository.getUser(userId)!!
@@ -104,6 +106,11 @@ class MessageEventHandler(
 
     private fun processHelpCommand(messageId: Long) {
         actor.acceptReply(messageFormatter.asHelpString(), messageId)
+    }
+
+    private fun processStatusCommand(messageId: Long) {
+        val buildConfig = getBuildConfigUseCase.execute(Unit)
+        actor.acceptReply(messageFormatter.asStatusString(buildConfig), messageId)
     }
 
     private fun processAcceptCommand(user: User, username: String) {
