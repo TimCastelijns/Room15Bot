@@ -1,3 +1,5 @@
+import java.text.SimpleDateFormat
+
 buildscript {
     ext.kotlin_version = '1.2.60'
 
@@ -65,3 +67,38 @@ kotlin {
         coroutines 'enable'
     }
 }
+
+task writeBuildConfig() {
+    def sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm")
+    sdf.setTimeZone(TimeZone.getTimeZone("UTC"))
+    def formattedTimestamp = sdf.format(new Date())
+
+    def text = """|version: $version
+    |branch: ${getGitBranch()}
+    |commit: ${getGitHash()}
+    |buildtime: $formattedTimestamp
+    |""".stripMargin()
+
+    new File("$projectDir/gen").mkdir()
+    new File("$projectDir/gen/buildconfig.properties").text = text
+}
+
+def getGitBranch() {
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'rev-parse', '--abbrev-ref', 'HEAD'
+        standardOutput = stdout
+    }
+    return stdout.toString().trim()
+}
+
+def getGitHash() {
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'rev-parse', '--short', 'HEAD'
+        standardOutput = stdout
+    }
+    return stdout.toString().trim()
+}
+
+tasks.run.dependsOn(writeBuildConfig)
