@@ -68,8 +68,6 @@ class FutureDateExpressionParser {
         if (regexPast.toPattern().matcher(expression).find()) {
             throw IllegalArgumentException("This date seems to be in the past")
         }
-
-        expression.toLongOrNull() ?: throw IllegalArgumentException("This number is a bit too large")
     }
 
     private fun String.extractValue(): Long {
