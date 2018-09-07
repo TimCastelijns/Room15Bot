@@ -18,7 +18,7 @@ class GetUserStatsUseCase(
 
     private fun answersPerQuestion(questions: Int, answers: Int) = when (answers) {
         0 -> 0F
-        else -> (answers / (questions / 4.0)).toFloat()
+        else -> answers / (questions / 4F)
     }
 
     private fun ratio(answersPerQuestion: Float) = "4:%.1f".format(answersPerQuestion).stripUnnecessaryDecimal()
