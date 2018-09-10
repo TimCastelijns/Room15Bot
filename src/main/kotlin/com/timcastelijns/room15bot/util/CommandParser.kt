@@ -20,6 +20,7 @@ class CommandParser {
     private val rejectPattern = caseInsensitivePattern("!reject\\s$anyUsernameRegex")
     private val leavePattern = caseInsensitivePattern("!(?:shoo|leave|die|getlost|fuckoff|ahmad)")
     private val syncStarsPattern = caseInsensitivePattern("!syncstars")
+    private val updatePattern = caseInsensitivePattern("!update")
 
     private val needsName = mapOf<Pattern, CommandType>(
             helpPattern to CommandType.HELP,
@@ -33,7 +34,8 @@ class CommandParser {
             acceptPattern to CommandType.ACCEPT,
             rejectPattern to CommandType.REJECT,
             leavePattern to CommandType.LEAVE,
-            syncStarsPattern to CommandType.SYNC_STARS
+            syncStarsPattern to CommandType.SYNC_STARS,
+            updatePattern to CommandType.UPDATE
     )
 
     fun parse(rawCommand: String): Command {
@@ -89,5 +91,6 @@ enum class CommandType {
     ACCEPT,
     REJECT,
     LEAVE,
-    SYNC_STARS
+    SYNC_STARS,
+    UPDATE
 }

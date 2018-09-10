@@ -90,6 +90,10 @@ class MessageFormatter {
 
     fun asCfString(cf: String) = cf
 
+    fun asBeRightBackString() = "Ok, be right back"
+
+    fun asUpdateErrorString() = "I tried to update, but something went wrong"
+
 
 }
 

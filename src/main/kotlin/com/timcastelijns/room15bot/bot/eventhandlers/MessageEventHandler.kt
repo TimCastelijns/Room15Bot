@@ -10,6 +10,7 @@ import com.timcastelijns.room15bot.util.Command
 import com.timcastelijns.room15bot.util.CommandParser
 import com.timcastelijns.room15bot.util.CommandType
 import com.timcastelijns.room15bot.util.MessageFormatter
+import java.io.IOException
 import kotlin.system.measureTimeMillis
 
 class MessageEventHandler(
@@ -20,6 +21,7 @@ class MessageEventHandler(
         private val rejectUserUseCase: RejectUserUseCase,
         private val syncStarsDataUseCase: SyncStarsDataUseCase,
         private val setReminderUseCase: SetReminderUseCase,
+        private val updateUseCase: UpdateUseCase,
         private val cfUseCase: CfUseCase,
         private val userRepository: UserRepository,
         private val messageFormatter: MessageFormatter
@@ -101,6 +103,7 @@ class MessageEventHandler(
             CommandType.REJECT -> processRejectCommand(message.user!!, command.args!!)
             CommandType.LEAVE -> processLeaveCommand(message.user!!)
             CommandType.SYNC_STARS -> processSyncStarsCommand(message.user!!)
+            CommandType.UPDATE -> processUpdateCommand(message.user!!, message.id)
         }
     }
 
@@ -201,6 +204,22 @@ class MessageEventHandler(
         }
 
         actor.acceptMessage(message)
+    }
+
+    private fun processUpdateCommand(user: User, messageId: Long) {
+        if (user.id != 1843331L) {
+            messageFormatter.asNoAccessString()
+            return
+        }
+
+        actor.acceptReply(messageFormatter.asBeRightBackString(), messageId)
+
+        try {
+            updateUseCase.execute(Unit)
+        } catch (e: IOException) {
+            logger.error(e.message)
+            actor.acceptMessage(messageFormatter.asUpdateErrorString())
+        }
     }
 
     private fun processUnknownCommand(rawCommand: String) =
