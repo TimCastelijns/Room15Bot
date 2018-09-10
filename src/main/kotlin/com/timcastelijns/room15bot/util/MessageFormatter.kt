@@ -97,7 +97,6 @@ class MessageFormatter {
     fun asUpdateErrorString() = "I tried to update, but something went wrong"
 
 
-
 }
 
 fun String.sanitize() = this.replace("\r", "").replace("\n", " ").trimEnd()
