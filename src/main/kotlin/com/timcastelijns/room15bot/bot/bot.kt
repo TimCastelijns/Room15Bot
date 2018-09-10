@@ -4,7 +4,9 @@ import com.timcastelijns.chatexchange.chat.*
 import com.timcastelijns.room15bot.bot.eventhandlers.AccessLevelChangedEventHandler
 import com.timcastelijns.room15bot.bot.eventhandlers.MessageEventHandler
 import com.timcastelijns.room15bot.bot.monitors.ReminderMonitor
+import com.timcastelijns.room15bot.bot.usecases.GetBuildConfigUseCase
 import com.timcastelijns.room15bot.bot.usecases.truncate
+import com.timcastelijns.room15bot.util.MessageFormatter
 import com.timcastelijns.room15bot.util.sanitize
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
@@ -18,7 +20,9 @@ import java.util.concurrent.TimeUnit
 class Bot(
         private val accessLevelChangedEventHandler: AccessLevelChangedEventHandler,
         private val messageEventHandler: MessageEventHandler,
-        private val reminderMonitor: ReminderMonitor
+        private val reminderMonitor: ReminderMonitor,
+        private val getBuildConfigUseCase: GetBuildConfigUseCase,
+        private val messageFormatter: MessageFormatter
 ) : Actor {
 
     companion object {
@@ -57,6 +61,9 @@ class Bot(
 
     private fun joinRoom(client: StackExchangeClient, roomId: Int) {
         room = client.joinRoom(ChatHost.STACK_OVERFLOW, roomId)
+
+        val buildConfig = getBuildConfigUseCase.execute(Unit)
+        acceptMessage(messageFormatter.asStatusString(buildConfig))
     }
 
     fun start() {
