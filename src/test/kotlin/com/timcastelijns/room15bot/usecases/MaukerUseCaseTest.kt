@@ -10,12 +10,6 @@ class MaukerUseCaseTest {
 
     @Test
     fun testMaukerReply() {
-        assertTrue { reply == MaukerUseCase().execute(null) }
-    }
-
-    @Test
-    fun testMaukerWithArguments() {
-        val input = "Whatever"
-        assertTrue { reply == MaukerUseCase().execute(input) }
+        assertTrue { reply == MaukerUseCase().execute(Unit) }
     }
 }

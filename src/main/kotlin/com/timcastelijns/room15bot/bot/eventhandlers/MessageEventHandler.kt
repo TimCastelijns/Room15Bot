@@ -210,7 +210,7 @@ class MessageEventHandler(
 
     private fun processMaukerCommand() {
         val message = try {
-            val data = maukerUseCase.execute(null)
+            val data = maukerUseCase.execute(Unit)
             messageFormatter.asMaukerString(data)
         } catch (e: IllegalArgumentException) {
             e.message!!
