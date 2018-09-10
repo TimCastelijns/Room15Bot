@@ -32,8 +32,7 @@ private val module: Module = applicationContext {
     factory { Bot(get(), get(), get(), get(), get()) }
 
     bean { AccessLevelChangedEventHandler(get(), get()) }
-    bean { MessageEventHandler(get(), get(), get(), get(), get(), get(),
-            get(), get(), get(), get(), get()) }
+    bean { MessageEventHandler(get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }
 
     factory { GetBuildConfigUseCase(get()) }
     factory { GetUserStatsUseCase(get()) }
@@ -41,6 +40,7 @@ private val module: Module = applicationContext {
     factory { GetStarsDataUseCase(get()) }
     factory { SetReminderUseCase(get()) }
     factory { CfUseCase() }
+    factory { MaukerUseCase() }
     factory { AcceptUserUseCase() }
     factory { RejectUserUseCase() }
     factory { UpdateUseCase(Runtime.getRuntime()) }

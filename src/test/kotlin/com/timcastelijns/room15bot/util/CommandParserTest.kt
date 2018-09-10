@@ -79,6 +79,13 @@ class CommandParserTest {
     }
 
     @Test
+    fun testMauker() {
+        val command = "!mauker"
+        assertTrue { parser.parse(command).type == CommandType.MAUKER }
+        assertNull(parser.parse(command).args)
+    }
+
+    @Test
     fun testAccept() {
         val command = "!accept Random Username123"
         assertTrue { parser.parse(command).type == CommandType.ACCEPT }
@@ -138,6 +145,7 @@ class CommandParserTest {
         parser.parse("!FucKOFf")
         parser.parse("!SYNCstars")
         parser.parse("!Cf")
+        parser.parse("!MaUkEr")
         parser.parse("!STatuS")
         parser.parse("!UpDaTe")
     }
