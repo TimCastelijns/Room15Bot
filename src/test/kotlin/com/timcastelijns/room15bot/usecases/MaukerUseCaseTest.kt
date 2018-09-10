@@ -2,7 +2,7 @@ package com.timcastelijns.room15bot.usecases
 
 import com.timcastelijns.room15bot.bot.usecases.MaukerUseCase
 import org.junit.Test
-import kotlin.test.assertTrue
+import kotlin.test.assertEquals
 
 class MaukerUseCaseTest {
 
@@ -10,6 +10,6 @@ class MaukerUseCaseTest {
 
     @Test
     fun testMaukerReply() {
-        assertTrue { reply == MaukerUseCase().execute(Unit) }
+        assertEquals(reply, MaukerUseCase().execute(Unit))
     }
 }
