@@ -90,9 +90,12 @@ class MessageFormatter {
 
     fun asCfString(cf: String) = cf
 
+    fun asMaukerString(mauker: String) = mauker
+
     fun asBeRightBackString() = "Ok, be right back"
 
     fun asUpdateErrorString() = "I tried to update, but something went wrong"
+
 
 
 }
