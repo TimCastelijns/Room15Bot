@@ -150,4 +150,12 @@ class MessageFormatterTest {
         assertEquals(expected, output)
     }
 
+    @Test
+    fun testBeRightBackFormat() {
+        val expected = "Ok, be right back"
+        val output = messageFormatter.asBeRightBackString()
+
+        assertEquals(expected, output)
+    }
+
 }

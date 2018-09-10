@@ -122,6 +122,13 @@ class CommandParserTest {
     }
 
     @Test
+    fun testUpdate() {
+        val command = "!update"
+        assertEquals(CommandType.UPDATE, parser.parse(command).type)
+        assertNull(parser.parse(command).args)
+    }
+
+    @Test
     fun testCasingDoesntMatter() {
         parser.parse("!STATS")
         parser.parse("!STAts 25436")
@@ -132,6 +139,7 @@ class CommandParserTest {
         parser.parse("!SYNCstars")
         parser.parse("!Cf")
         parser.parse("!STatuS")
+        parser.parse("!UpDaTe")
     }
 
     @Test

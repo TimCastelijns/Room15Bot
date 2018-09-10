@@ -43,7 +43,7 @@ private val module: Module = applicationContext {
     factory { CfUseCase() }
     factory { AcceptUserUseCase() }
     factory { RejectUserUseCase() }
-    factory { UpdateUseCase() }
+    factory { UpdateUseCase(Runtime.getRuntime()) }
 
     bean { ConfigRepository() }
     bean { UserRepository(get()) }
