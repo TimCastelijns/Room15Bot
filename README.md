@@ -24,6 +24,7 @@ Available commands are listed below. Some require an elevated access level.
 |||!remindme in 5 mins|
 |CF|!cf\<index(optional)\>|!cf|All|Does a good impression of CF
 |||!cf[0]|
+|Mauker|!mauker|!mauker|All|Mocks Mauker
 |Accept user|!accept \<user name\>|!accept john|Room owner|Posts a welcome message for the user and grants him write access
 |Reject user|!reject \<user name\>|!reject john|Room owner|Posts a rejection message for the user and clears his access
 |Stop bot|!ahmad|!ahmad|Bot owner|Stops the bot
