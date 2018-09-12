@@ -49,9 +49,7 @@ class Bot(
     }
 
     private fun die() {
-        while(outboundMessageQueue.isNotEmpty()) {
-            Thread.sleep(1000)
-        }
+        snoozeUntilAllMessagesAreSent()
 
         disposables.clear()
 
@@ -145,6 +143,12 @@ class Bot(
 
     override fun leaveRoom() {
         die()
+    }
+
+    private fun snoozeUntilAllMessagesAreSent() {
+        while (outboundMessageQueue.isNotEmpty()) {
+            Thread.sleep(1000)
+        }
     }
 
     data class OutboundMessage(
