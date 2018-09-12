@@ -59,7 +59,7 @@ class MessageEventHandler(
     private fun processMessage(message: Message) {
         if (message.content?.contains("dQw4w9WgXcQ") == true) {
             actor.acceptReply(messageFormatter.asRickRollAlertString(), message.id)
-        } else {
+        } else if (message.postedByMe) {
             val matcher = requesteeUnableToUseChatRegex.toPattern().matcher(message.content)
             if (matcher.find()) {
                 val username = matcher.group(1)
@@ -252,3 +252,6 @@ class MessageEventHandler(
 }
 
 private fun Message.isCommand() = content?.startsWith("!") ?: false
+
+private val Message.postedByMe
+    get() = user?.id == 9676629L
