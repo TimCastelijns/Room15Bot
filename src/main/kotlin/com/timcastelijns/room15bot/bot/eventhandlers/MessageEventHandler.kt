@@ -45,7 +45,7 @@ class MessageEventHandler(
     }
 
     private suspend fun handleMessage(message: Message) {
-        if (message.containsCommand()) {
+        if (message.isCommand()) {
             val time = measureTimeMillis {
                 launch { processCommandMessage(message) }.join()
             }
@@ -240,4 +240,4 @@ class MessageEventHandler(
 
 }
 
-private fun Message.containsCommand() = content?.startsWith("!") ?: false
+private fun Message.isCommand() = content?.startsWith("!") ?: false
