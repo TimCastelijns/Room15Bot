@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+source ~/.bashrc
+
 printf "stopping..\n" >> bot.log
 ./gradlew --stop >> bot.log
 
