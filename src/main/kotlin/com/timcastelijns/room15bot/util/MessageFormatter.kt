@@ -96,6 +96,9 @@ class MessageFormatter {
 
     fun asUpdateErrorString() = "I tried to update, but something went wrong"
 
+    fun asRespondAcceptanceDeadlineExceeded(user: User) = "${user.name.replace(" ", "")} " +
+            "your access has been revoked because you did not respond"
+
 
 }
 

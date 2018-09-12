@@ -14,6 +14,7 @@ import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
 import kotlinx.coroutines.experimental.launch
 import org.slf4j.LoggerFactory
+import java.time.Instant
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -27,6 +28,7 @@ class Bot(
 
     companion object {
         private val logger = LoggerFactory.getLogger(Bot::class.java)
+        private const val RESPOND_TO_ACCEPTANCE_DEADLINE = 1_800_000L
     }
 
     private val aliveSubject = BehaviorSubject.create<Boolean>()
@@ -38,6 +40,7 @@ class Bot(
     private val outboundMessageQueue = LinkedList<OutboundMessage>()
 
     private val recentAccessRequestees = mutableSetOf<User>()
+    private val recentAccessGrants = mutableSetOf<Pair<User, Instant>>()
 
     fun observeLife(): Observable<Boolean> {
         return aliveSubject.hide()
@@ -75,10 +78,14 @@ class Bot(
             }
         }
 
-        room.messagePostedEventListener = {
+        room.messagePostedEventListener = { messagePostedEvent ->
             launch {
-                logger.debug("${it.userName}: ${it.message.content?.sanitize()?.truncate(80)}")
-                messageEventHandler.handle(it, this@Bot)
+                logger.debug("${messagePostedEvent.userName}: ${messagePostedEvent.message.content?.sanitize()?.truncate(80)}")
+                messageEventHandler.handle(messagePostedEvent, this@Bot)
+
+                // If this message was posted by a user who was recently granted write access,
+                // remove him from the set so he is no longer monitored.
+                recentAccessGrants.removeIf { it.first.id == messagePostedEvent.userId }
             }
         }
 
@@ -89,10 +96,28 @@ class Bot(
         }
 
         monitorReminders()
+        monitorRecentAccessGrants()
         monitorOutboundMessageQueue()
     }
 
     private fun monitorReminders() = disposables.add(reminderMonitor.start(this))
+
+    private fun monitorRecentAccessGrants() {
+        val disposable = Observable.interval(5, TimeUnit.MINUTES)
+                .observeOn(Schedulers.io())
+                .subscribe {
+                    recentAccessGrants.forEach { accessGrant ->
+                        if (accessGrant.respondDeadlineExceeded) {
+                            acceptAccessChangeForUserByName(accessGrant.first.name, AccessLevel.DEFAULT)
+
+                            recentAccessGrants.remove(accessGrant)
+                            acceptMessage(messageFormatter.asRespondAcceptanceDeadlineExceeded(accessGrant.first))
+                        }
+                    }
+                }
+
+        disposables.add(disposable)
+    }
 
     private fun monitorOutboundMessageQueue() {
         val disposable = Observable.interval(4000, TimeUnit.MILLISECONDS)
@@ -139,6 +164,12 @@ class Bot(
         }
         room.setUserAccess(user.id, userAccess)
         logger.info("set access for '$username to $userAccess")
+
+        if (accessLevel == AccessLevel.READ_WRITE) {
+            // Add users who have just been granted write access to the collection
+            // so we can monitor if they respond in a timely fashion.
+            recentAccessGrants.add(Pair(user, Instant.now()))
+        }
     }
 
     override fun leaveRoom() {
@@ -155,6 +186,9 @@ class Bot(
             val message: String,
             val targetMessageId: Long? = null
     )
+
+    private val Pair<User, Instant>.respondDeadlineExceeded
+        get() = Instant.now().isAfter(second.plusMillis(RESPOND_TO_ACCEPTANCE_DEADLINE))
 
 }
 
