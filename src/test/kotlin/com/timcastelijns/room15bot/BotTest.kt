@@ -9,14 +9,14 @@ class BotTest {
 
     @Test
     fun testRequesteeUnableToChatDetectedCorrectly() {
-        val regex = Regex("(.+) requested access\\. Rep: ([1-9]|1[0-9]) (?:.+)")
+        val regex = Regex("(.+) requested access\\. (?:<b>|\\*\\*)Rep(?:</b>|\\*\\*): ([1-9]|1[0-9]) (?:.+)")
 
         listOf(
                 Pair("Aneesh P V", 1),
                 Pair("guy", 19),
                 Pair("another guy", 20)
         ).forEach {
-            val message = "${it.first} requested access. Rep: ${it.second} - Questions: 0 - Answers: 0 (ratio 4:0)"
+            val message = "${it.first} requested access. **Rep**: ${it.second} - **Questions**: 0 - **Answers**: 0 (ratio 4:0)"
 
             val matcher = regex.toPattern().matcher(message)
             val found = matcher.find()

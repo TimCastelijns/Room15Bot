@@ -30,7 +30,7 @@ class MessageEventHandler(
 
     companion object {
         private val logger = LoggerFactory.getLogger(MessageEventHandler::class.java)
-        private val requesteeUnableToUseChatRegex = Regex("(.+) requested access\\. Rep: ([1-9]|1[0-9]) (?:.+)")
+        private val requesteeUnableToUseChatRegex = Regex("(.+) requested access\\. (?:<b>|\\*\\*)Rep:(?:</b>|\\*\\*) ([1-9]|1[0-9]) (?:.+)")
     }
 
     private lateinit var actor: Actor
@@ -60,7 +60,7 @@ class MessageEventHandler(
         if (message.content?.contains("dQw4w9WgXcQ") == true) {
             actor.acceptReply(messageFormatter.asRickRollAlertString(), message.id)
         } else if (message.postedByMe) {
-            val matcher = requesteeUnableToUseChatRegex.toPattern().matcher(message.content)
+            val matcher = requesteeUnableToUseChatRegex.toPattern().matcher(message.plainContent)
             if (matcher.find()) {
                 val username = matcher.group(1)
                 rejectUser(username)
