@@ -11,6 +11,13 @@ class CommandParserTest {
     private val parser = CommandParser()
 
     @Test
+    fun testBenz() {
+        val command = ("!\uD83D\uDE97")
+        assertTrue { parser.parse(command).type == CommandType.BENZ }
+        assertTrue { parser.parse(command).args == null }
+    }
+
+    @Test
     fun testStatus() {
         val commands = listOf("!status", "!alive")
         commands.forEach {

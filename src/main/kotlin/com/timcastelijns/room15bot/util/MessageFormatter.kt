@@ -11,6 +11,10 @@ import java.time.format.DateTimeFormatter
 
 class MessageFormatter {
 
+    fun asBenzPeasantString() = "Looks like your car does not have a star in the front."
+
+    fun asBenzString() = "\uD83C\uDF1F Nice Benz bro! \uD83C\uDF1F"
+
     fun asHelpString() = "You can find information on what I can do " +
             "[here](https://github.com/TimCastelijns/Room15Bot#usage)"
 

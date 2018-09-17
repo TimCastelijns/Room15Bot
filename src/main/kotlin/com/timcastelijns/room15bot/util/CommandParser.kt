@@ -7,6 +7,7 @@ class CommandParser {
 
     private val anyUsernameRegex = Regex("(.+)")
 
+    private val benzPattern = caseInsensitivePattern("!\\uD83D\\uDE97")
     private val helpPattern = caseInsensitivePattern("!(?:help|commands|usage)")
     private val statusPattern = caseInsensitivePattern("!(?:status|alive)")
     private val statsMePattern = caseInsensitivePattern("!stats")
@@ -24,6 +25,7 @@ class CommandParser {
     private val updatePattern = caseInsensitivePattern("!update")
 
     private val needsName = mapOf<Pattern, CommandType>(
+            benzPattern to CommandType.BENZ,
             helpPattern to CommandType.HELP,
             statusPattern to CommandType.STATUS,
             statsMePattern to CommandType.STATS_ME,
@@ -80,6 +82,7 @@ fun commandOf(block: Command.Builder.() -> Unit) =
 
 enum class CommandType {
     // User commands.
+    BENZ,
     HELP,
     STATUS,
     STATS_ME,

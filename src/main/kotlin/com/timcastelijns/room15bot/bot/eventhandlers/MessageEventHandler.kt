@@ -85,6 +85,7 @@ class MessageEventHandler(
         }
 
         when (command.type) {
+            CommandType.BENZ -> processBenzCommand(message.user!!)
             CommandType.HELP -> processHelpCommand(message.id)
             CommandType.STATUS -> processStatusCommand(message.id)
             CommandType.STATS_ME -> {
@@ -113,6 +114,14 @@ class MessageEventHandler(
             CommandType.LEAVE -> processLeaveCommand(message.user!!)
             CommandType.SYNC_STARS -> processSyncStarsCommand(message.user!!)
             CommandType.UPDATE -> processUpdateCommand(message.user!!, message.id)
+        }
+    }
+
+    private fun processBenzCommand(user: User) {
+        if (user.id == 4467208L) {
+            actor.acceptMessage(messageFormatter.asBenzString())
+        } else {
+            actor.acceptMessage(messageFormatter.asBenzPeasantString())
         }
     }
 
