@@ -107,6 +107,7 @@ class MessageEventHandler(
             }
             CommandType.CF -> processCfCommand(command.args)
             CommandType.MAUKER -> processMaukerCommand()
+            CommandType.BENZ -> processBenzCommand(message.id, message.user!!)
 
             CommandType.ACCEPT -> processAcceptCommand(message.id, message.user!!, command.args!!)
             CommandType.REJECT -> processRejectCommand(message.id, message.user!!, command.args!!)
@@ -230,6 +231,14 @@ class MessageEventHandler(
         }
 
         actor.acceptMessage(message)
+    }
+
+    private fun processBenzCommand(messageId: Long, user: User) {
+        if (user.id == 4467208L) {
+            actor.acceptReply(messageFormatter.asBenzString(), messageId)
+        } else {
+            actor.acceptReply(messageFormatter.asBenzPeasantString(), messageId)
+        }
     }
 
     private fun processUpdateCommand(user: User, messageId: Long) {

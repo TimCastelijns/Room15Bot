@@ -16,6 +16,7 @@ class CommandParser {
     private val remindMePattern = caseInsensitivePattern("!remindme\\s(.+)")
     private val cfPattern = caseInsensitivePattern("!cf(\\[-?(\\d+)\\])?")
     private val maukerPattern = caseInsensitivePattern("!mauker")
+    private val benzPattern = caseInsensitivePattern("!\\uD83D\\uDE97")
 
     private val acceptPattern = caseInsensitivePattern("!accept\\s$anyUsernameRegex")
     private val rejectPattern = caseInsensitivePattern("!reject\\s$anyUsernameRegex")
@@ -33,6 +34,7 @@ class CommandParser {
             remindMePattern to CommandType.REMIND_ME,
             cfPattern to CommandType.CF,
             maukerPattern to CommandType.MAUKER,
+            benzPattern to CommandType.BENZ,
             acceptPattern to CommandType.ACCEPT,
             rejectPattern to CommandType.REJECT,
             leavePattern to CommandType.LEAVE,
@@ -89,6 +91,7 @@ enum class CommandType {
     REMIND_ME,
     CF,
     MAUKER,
+    BENZ,
 
     // Elevated access commands.
     ACCEPT,
