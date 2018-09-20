@@ -86,6 +86,13 @@ class CommandParserTest {
     }
 
     @Test
+    fun testBenz() {
+        val command = ("!\uD83D\uDE97")
+        assertTrue { parser.parse(command).type == CommandType.BENZ }
+        assertTrue { parser.parse(command).args == null }
+    }
+
+    @Test
     fun testAccept() {
         val command = "!accept Random Username123"
         assertTrue { parser.parse(command).type == CommandType.ACCEPT }
@@ -117,15 +124,15 @@ class CommandParserTest {
     fun testHelp() {
         var command = "!help"
         assertTrue { parser.parse(command).type == CommandType.HELP }
-        assertTrue { parser.parse(command).args == null}
+        assertTrue { parser.parse(command).args == null }
 
         command = "!commands"
         assertTrue { parser.parse(command).type == CommandType.HELP }
-        assertTrue { parser.parse(command).args == null}
+        assertTrue { parser.parse(command).args == null }
 
         command = "!usage"
         assertTrue { parser.parse(command).type == CommandType.HELP }
-        assertTrue { parser.parse(command).args == null}
+        assertTrue { parser.parse(command).args == null }
     }
 
     @Test

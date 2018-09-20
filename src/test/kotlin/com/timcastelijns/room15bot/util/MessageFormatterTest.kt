@@ -158,4 +158,12 @@ class MessageFormatterTest {
         assertEquals(expected, output)
     }
 
+    @Test
+    fun testBenz() {
+        val outputPeasants = messageFormatter.asBenzPeasantString()
+        val outputBenz = messageFormatter.asBenzString()
+        assertEquals("Looks like your car does not have a star in the front.", outputPeasants)
+        assertEquals("\uD83C\uDF1F Nice Benz bro! \uD83C\uDF1F", outputBenz)
+    }
+
 }

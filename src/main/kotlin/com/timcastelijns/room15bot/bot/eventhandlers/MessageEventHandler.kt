@@ -30,6 +30,7 @@ class MessageEventHandler(
 
     companion object {
         private val logger = LoggerFactory.getLogger(MessageEventHandler::class.java)
+        private val requesteeUnableToUseChatRegex = Regex("(.+) requested access\\. (?:<b>|\\*\\*)Rep:(?:</b>|\\*\\*) ([1-9]|1[0-9]) (?:.+)")
     }
 
     private lateinit var actor: Actor
@@ -45,7 +46,7 @@ class MessageEventHandler(
     }
 
     private suspend fun handleMessage(message: Message) {
-        if (message.containsCommand()) {
+        if (message.isCommand()) {
             val time = measureTimeMillis {
                 launch { processCommandMessage(message) }.join()
             }
@@ -58,6 +59,12 @@ class MessageEventHandler(
     private fun processMessage(message: Message) {
         if (message.content?.contains("dQw4w9WgXcQ") == true) {
             actor.acceptReply(messageFormatter.asRickRollAlertString(), message.id)
+        } else if (message.postedByMe) {
+            val matcher = requesteeUnableToUseChatRegex.toPattern().matcher(message.plainContent)
+            if (matcher.find()) {
+                val username = matcher.group(1)
+                rejectUser(username)
+            }
         }
     }
 
@@ -100,9 +107,10 @@ class MessageEventHandler(
             }
             CommandType.CF -> processCfCommand(command.args)
             CommandType.MAUKER -> processMaukerCommand()
+            CommandType.BENZ -> processBenzCommand(message.id, message.user!!)
 
-            CommandType.ACCEPT -> processAcceptCommand(message.user!!, command.args!!)
-            CommandType.REJECT -> processRejectCommand(message.user!!, command.args!!)
+            CommandType.ACCEPT -> processAcceptCommand(message.id, message.user!!, command.args!!)
+            CommandType.REJECT -> processRejectCommand(message.id, message.user!!, command.args!!)
             CommandType.LEAVE -> processLeaveCommand(message.user!!)
             CommandType.SYNC_STARS -> processSyncStarsCommand(message.user!!)
             CommandType.UPDATE -> processUpdateCommand(message.user!!, message.id)
@@ -118,8 +126,9 @@ class MessageEventHandler(
         actor.acceptReply(messageFormatter.asStatusString(buildConfig), messageId)
     }
 
-    private fun processAcceptCommand(user: User, username: String) {
+    private fun processAcceptCommand(messageId: Long, user: User, username: String) {
         if (!user.isRoomOwner) {
+            actor.acceptReply(messageFormatter.asNoAccessString(), messageId)
             return
         }
 
@@ -129,13 +138,18 @@ class MessageEventHandler(
         setUserAccess(username, AccessLevel.READ_WRITE)
     }
 
-    private fun processRejectCommand(user: User, username: String) {
+    private fun processRejectCommand(messageId: Long, user: User, username: String) {
         if (!user.isRoomOwner) {
+            actor.acceptReply(messageFormatter.asNoAccessString(), messageId)
             return
         }
 
-        val message = rejectUserUseCase.execute(username)
-        actor.acceptMessage(message)
+        rejectUser(username)
+    }
+
+    private fun rejectUser(username: String) {
+        val rejectMessage = rejectUserUseCase.execute(username)
+        actor.acceptMessage(rejectMessage)
 
         setUserAccess(username, AccessLevel.DEFAULT)
     }
@@ -219,6 +233,14 @@ class MessageEventHandler(
         actor.acceptMessage(message)
     }
 
+    private fun processBenzCommand(messageId: Long, user: User) {
+        if (user.id == 4467208L) {
+            actor.acceptReply(messageFormatter.asBenzString(), messageId)
+        } else {
+            actor.acceptReply(messageFormatter.asBenzPeasantString(), messageId)
+        }
+    }
+
     private fun processUpdateCommand(user: User, messageId: Long) {
         if (user.id != 1843331L) {
             messageFormatter.asNoAccessString()
@@ -240,4 +262,7 @@ class MessageEventHandler(
 
 }
 
-private fun Message.containsCommand() = content?.startsWith("!") ?: false
+private fun Message.isCommand() = content?.startsWith("!") ?: false
+
+private val Message.postedByMe
+    get() = user?.id == 9676629L

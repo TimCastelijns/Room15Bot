@@ -92,9 +92,16 @@ class MessageFormatter {
 
     fun asMaukerString(mauker: String) = mauker
 
+    fun asBenzPeasantString() = "Looks like your car does not have a star in the front."
+
+    fun asBenzString() = "\uD83C\uDF1F Nice Benz bro! \uD83C\uDF1F"
+
     fun asBeRightBackString() = "Ok, be right back"
 
     fun asUpdateErrorString() = "I tried to update, but something went wrong"
+
+    fun asRespondAcceptanceDeadlineExceeded(user: User) = "${user.name.replace(" ", "")} " +
+            "your access has been revoked because you did not respond"
 
 
 }

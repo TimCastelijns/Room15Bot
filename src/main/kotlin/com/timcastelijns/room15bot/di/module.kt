@@ -29,7 +29,7 @@ private val module: Module = applicationContext {
 
     bean { Database(get()) }
 
-    factory { Bot(get(), get(), get()) }
+    factory { Bot(get(), get(), get(), get(), get()) }
 
     bean { AccessLevelChangedEventHandler(get(), get()) }
     bean { MessageEventHandler(get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }
