@@ -6,7 +6,7 @@ import kotlin.test.assertEquals
 
 class AdamUseCaseTest {
 
-    private val reply = "\ud83d\udd11"
+    private val reply = "[\ud83d\udd11](https://stackoverflow.com/keystore)"
 
     @Test
     fun testAdamReply() {
