@@ -15,7 +15,7 @@ class MessageFormatter {
             "[here](https://github.com/TimCastelijns/Room15Bot#usage)"
 
     fun asStatusString(buildConfig: BuildConfig) =
-            "Online since ${buildConfig.buildTime}. " +
+            "Online since ${buildConfig.buildTime} (UTC). " +
                     "Running version ${buildConfig.version} on " +
                     "${buildConfig.branch}@${buildConfig.commit}"
 
