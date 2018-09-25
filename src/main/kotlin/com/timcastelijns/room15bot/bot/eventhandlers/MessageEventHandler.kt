@@ -23,6 +23,7 @@ class MessageEventHandler(
         private val setReminderUseCase: SetReminderUseCase,
         private val updateUseCase: UpdateUseCase,
         private val cfUseCase: CfUseCase,
+        private val adamUseCase: AdamUseCase,
         private val maukerUseCase: MaukerUseCase,
         private val userRepository: UserRepository,
         private val messageFormatter: MessageFormatter
@@ -106,6 +107,7 @@ class MessageEventHandler(
                 processRemindMeCommand(message.id, command.args!!)
             }
             CommandType.CF -> processCfCommand(command.args)
+            CommandType.ADAM -> processAdamCommand()
             CommandType.MAUKER -> processMaukerCommand()
             CommandType.BENZ -> processBenzCommand(message.id, message.user!!)
 
@@ -215,6 +217,17 @@ class MessageEventHandler(
         val message = try {
             val data = cfUseCase.execute(commandArgs)
             messageFormatter.asCfString(data)
+        } catch (e: IllegalArgumentException) {
+            e.message!!
+        }
+
+        actor.acceptMessage(message)
+    }
+
+    private fun processAdamCommand() {
+        val message = try {
+            val data = adamUseCase.execute(Unit)
+            messageFormatter.asAdamString(data)
         } catch (e: IllegalArgumentException) {
             e.message!!
         }

@@ -90,6 +90,8 @@ class MessageFormatter {
 
     fun asCfString(cf: String) = cf
 
+    fun asAdamString(adam: String) = adam
+
     fun asMaukerString(mauker: String) = mauker
 
     fun asBenzPeasantString() = "Looks like your car does not have a star in the front."
