@@ -6,7 +6,7 @@ import kotlin.test.assertEquals
 
 class AdamUseCaseTest {
 
-    private val reply = "\\ud83d\\udd11"
+    private val reply = "\ud83d\udd11"
 
     @Test
     fun testAdamReply() {
