@@ -20,6 +20,8 @@ import com.timcastelijns.room15bot.util.MessageFormatter
 import com.timcastelijns.room15bot.util.UserNameValidator
 import org.koin.dsl.module.Module
 import org.koin.dsl.module.module
+import org.koin.experimental.builder.factory
+import org.koin.experimental.builder.single
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
@@ -29,35 +31,36 @@ private val module: Module = module {
 
     single { Database(get()) }
 
-    factory { Bot(get(), get(), get(), get(), get()) }
+    single<Bot>()
 
-    single { AccessLevelChangedEventHandler(get(), get()) }
-    single { MessageEventHandler(get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }
+    single<AccessLevelChangedEventHandler>()
+    single<MessageEventHandler>()
 
-    factory { GetBuildConfigUseCase(get()) }
-    factory { GetUserStatsUseCase(get()) }
-    factory { SyncStarsDataUseCase(get(), get()) }
-    factory { GetStarsDataUseCase(get()) }
-    factory { SetReminderUseCase(get()) }
-    factory { CfUseCase() }
-    factory { AdamUseCase() }
-    factory { MaukerUseCase() }
-    factory { AcceptUserUseCase() }
-    factory { RejectUserUseCase() }
+    factory<GetBuildConfigUseCase>()
+    factory<GetUserStatsUseCase>()
+    factory<SyncStarsDataUseCase>()
+    factory<GetStarsDataUseCase>()
+    factory<SetReminderUseCase>()
+    factory<CfUseCase>()
+    factory<AdamUseCase>()
+    factory<MaukerUseCase>()
+    factory<AcceptUserUseCase>()
+    factory<RejectUserUseCase>()
+
     factory { UpdateUseCase(Runtime.getRuntime()) }
 
-    single { ConfigRepository() }
-    single { UserRepository(get()) }
-    single { StarredMessageRepository(get()) }
-    single { UserStatsRepository(get()) }
+    single<ConfigRepository>()
+    single<UserRepository>()
+    single<StarredMessageRepository>()
+    single<UserStatsRepository>()
 
-    single { ReminderMonitor(get()) }
+    single<ReminderMonitor>()
 
-    single { StarredMessageDao() }
-    single { ReminderDao() }
+    single<StarredMessageDao>()
+    single<ReminderDao>()
 
-    factory { UserNameValidator() }
-    factory { MessageFormatter() }
+    factory<UserNameValidator>()
+    factory<MessageFormatter>()
 
     single { provideChatRetrofit().create(StarService::class.java) as StarService }
     single { provideChatRetrofit().create(UserService::class.java) as UserService }
