@@ -19,20 +19,20 @@ import com.timcastelijns.room15bot.network.UserStatsService
 import com.timcastelijns.room15bot.util.MessageFormatter
 import com.timcastelijns.room15bot.util.UserNameValidator
 import org.koin.dsl.module.Module
-import org.koin.dsl.module.applicationContext
+import org.koin.dsl.module.module
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 
-private val module: Module = applicationContext {
+private val module: Module = module {
 
-    bean { Database(get()) }
+    single { Database(get()) }
 
     factory { Bot(get(), get(), get(), get(), get()) }
 
-    bean { AccessLevelChangedEventHandler(get(), get()) }
-    bean { MessageEventHandler(get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }
+    single { AccessLevelChangedEventHandler(get(), get()) }
+    single { MessageEventHandler(get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }
 
     factory { GetBuildConfigUseCase(get()) }
     factory { GetUserStatsUseCase(get()) }
@@ -46,22 +46,22 @@ private val module: Module = applicationContext {
     factory { RejectUserUseCase() }
     factory { UpdateUseCase(Runtime.getRuntime()) }
 
-    bean { ConfigRepository() }
-    bean { UserRepository(get()) }
-    bean { StarredMessageRepository(get()) }
-    bean { UserStatsRepository(get()) }
+    single { ConfigRepository() }
+    single { UserRepository(get()) }
+    single { StarredMessageRepository(get()) }
+    single { UserStatsRepository(get()) }
 
-    bean { ReminderMonitor(get()) }
+    single { ReminderMonitor(get()) }
 
-    bean { StarredMessageDao() }
-    bean { ReminderDao() }
+    single { StarredMessageDao() }
+    single { ReminderDao() }
 
     factory { UserNameValidator() }
     factory { MessageFormatter() }
 
-    bean { provideChatRetrofit().create(StarService::class.java) as StarService }
-    bean { provideChatRetrofit().create(UserService::class.java) as UserService }
-    bean { provideMainRetrofit().create(UserStatsService::class.java) as UserStatsService }
+    single { provideChatRetrofit().create(StarService::class.java) as StarService }
+    single { provideChatRetrofit().create(UserService::class.java) as UserService }
+    single { provideMainRetrofit().create(UserStatsService::class.java) as UserStatsService }
 
 }
 
