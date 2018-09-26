@@ -1,10 +1,9 @@
 package com.timcastelijns.room15bot.util
 
+import com.timcastelijns.chatexchange.chat.User
 import com.timcastelijns.room15bot.bot.usecases.StarsData
 import com.timcastelijns.room15bot.bot.usecases.UserStats
 import com.timcastelijns.room15bot.bot.usecases.truncate
-import com.timcastelijns.chatexchange.chat.User
-import com.timcastelijns.room15bot.bot.usecases.asPingName
 import com.timcastelijns.room15bot.data.BuildConfig
 import java.time.Instant
 import java.time.ZoneOffset
@@ -107,5 +106,7 @@ class MessageFormatter {
             "your access has been revoked because you did not respond"
 
 }
+
+fun String.asPingName() = this.replace(" ", "")
 
 fun String.sanitize() = this.replace("\r", "").replace("\n", " ").trimEnd()

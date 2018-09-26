@@ -1,5 +1,7 @@
 package com.timcastelijns.room15bot.bot.usecases
 
+import com.timcastelijns.room15bot.util.asPingName
+
 class AcceptUserUseCase : UseCase<String, String> {
 
     companion object {
@@ -11,5 +13,3 @@ class AcceptUserUseCase : UseCase<String, String> {
     override fun execute(params: String) = acceptMessage.format(params.asPingName())
 
 }
-
-fun String.asPingName() = this.replace(" ", "")

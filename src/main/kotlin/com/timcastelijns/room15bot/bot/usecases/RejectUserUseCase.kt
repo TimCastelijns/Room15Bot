@@ -1,5 +1,7 @@
 package com.timcastelijns.room15bot.bot.usecases
 
+import com.timcastelijns.room15bot.util.asPingName
+
 class RejectUserUseCase : UseCase<String, String> {
 
     companion object {
