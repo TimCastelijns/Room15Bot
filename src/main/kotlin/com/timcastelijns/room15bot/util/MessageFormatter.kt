@@ -4,6 +4,7 @@ import com.timcastelijns.room15bot.bot.usecases.StarsData
 import com.timcastelijns.room15bot.bot.usecases.UserStats
 import com.timcastelijns.room15bot.bot.usecases.truncate
 import com.timcastelijns.chatexchange.chat.User
+import com.timcastelijns.room15bot.bot.usecases.asPingName
 import com.timcastelijns.room15bot.data.BuildConfig
 import java.time.Instant
 import java.time.ZoneOffset
@@ -102,9 +103,8 @@ class MessageFormatter {
 
     fun asUpdateErrorString() = "I tried to update, but something went wrong"
 
-    fun asRespondAcceptanceDeadlineExceeded(user: User) = "${user.name.replace(" ", "")} " +
+    fun asRespondAcceptanceDeadlineExceeded(user: User) = "@${user.name.asPingName()} " +
             "your access has been revoked because you did not respond"
-
 
 }
 
