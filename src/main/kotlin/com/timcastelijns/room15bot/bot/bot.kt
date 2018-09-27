@@ -153,7 +153,7 @@ class Bot(
     }
 
     override fun acceptAccessChangeForUserByName(username: String, accessLevel: AccessLevel) {
-        val user = recentAccessRequestees.firstOrNull { it.name.equals(username, ignoreCase = false) }
+        val user = recentAccessRequestees.firstOrNull { it.name.equals(username, ignoreCase = true) }
                 ?: throw IllegalStateException("Cannot find requestee named $username")
 
         val userAccess = when (accessLevel) {
