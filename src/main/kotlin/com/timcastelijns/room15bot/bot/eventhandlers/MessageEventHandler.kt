@@ -64,7 +64,7 @@ class MessageEventHandler(
             val matcher = requesteeUnableToUseChatRegex.toPattern().matcher(message.plainContent)
             if (matcher.find()) {
                 val username = matcher.group(1)
-                rejectUser(username)
+                rejectUserByName(username)
             }
         }
     }
@@ -111,8 +111,8 @@ class MessageEventHandler(
             CommandType.MAUKER -> processMaukerCommand()
             CommandType.BENZ -> processBenzCommand(message.id, message.user!!)
 
-            CommandType.ACCEPT -> processAcceptCommand(message.id, message.user!!, command.args!!)
-            CommandType.REJECT -> processRejectCommand(message.id, message.user!!, command.args!!)
+            CommandType.ACCEPT -> processAcceptCommand(message.id, message.user!!, command.args)
+            CommandType.REJECT -> processRejectCommand(message.id, message.user!!, command.args)
             CommandType.LEAVE -> processLeaveCommand(message.user!!)
             CommandType.SYNC_STARS -> processSyncStarsCommand(message.user!!)
             CommandType.UPDATE -> processUpdateCommand(message.user!!, message.id)
@@ -128,28 +128,44 @@ class MessageEventHandler(
         actor.acceptReply(messageFormatter.asStatusString(buildConfig), messageId)
     }
 
-    private fun processAcceptCommand(messageId: Long, user: User, username: String) {
+    private fun processAcceptCommand(messageId: Long, user: User, username: String?) {
         if (!user.isRoomOwner) {
             actor.acceptReply(messageFormatter.asNoAccessString(), messageId)
             return
         }
 
+        if (username != null) {
+            acceptUserByName(username)
+        } else {
+            actor.provideLatestAccessRequestee()?.let { requestee ->
+                acceptUserByName(requestee.name)
+            } ?: actor.acceptMessage(messageFormatter.asRequesteeNotFound())
+        }
+    }
+
+    private fun acceptUserByName(username: String) {
         val message = acceptUserUseCase.execute(username)
         actor.acceptMessage(message)
 
         setUserAccess(username, AccessLevel.READ_WRITE)
     }
 
-    private fun processRejectCommand(messageId: Long, user: User, username: String) {
+    private fun processRejectCommand(messageId: Long, user: User, username: String?) {
         if (!user.isRoomOwner) {
             actor.acceptReply(messageFormatter.asNoAccessString(), messageId)
             return
         }
 
-        rejectUser(username)
+        if (username != null) {
+            rejectUserByName(username)
+        } else {
+            actor.provideLatestAccessRequestee()?.let { requestee ->
+                rejectUserByName(requestee.name)
+            } ?: actor.acceptMessage(messageFormatter.asRequesteeNotFound())
+        }
     }
 
-    private fun rejectUser(username: String) {
+    private fun rejectUserByName(username: String) {
         val rejectMessage = rejectUserUseCase.execute(username)
         actor.acceptMessage(rejectMessage)
 

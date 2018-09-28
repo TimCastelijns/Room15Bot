@@ -170,4 +170,12 @@ class MessageFormatterTest {
         assertEquals("Looks like your car does not have a star in the front.", outputPeasants)
     }
 
+    @Test
+    fun testRequesteeNotFound() {
+        val expected = "I could not find a user that recently requested access"
+        val output = messageFormatter.asRequesteeNotFound()
+
+        assertEquals(expected, output)
+    }
+
 }
