@@ -110,6 +110,7 @@ class Bot(
                         if (accessGrant.respondDeadlineExceeded) {
                             acceptAccessChangeForUserByName(accessGrant.first.name, AccessLevel.DEFAULT)
 
+                            // This user is processed. Remove them from the collection.
                             recentAccessGrants.remove(accessGrant)
                             acceptMessage(messageFormatter.asRespondAcceptanceDeadlineExceeded(accessGrant.first))
                         }
@@ -170,6 +171,9 @@ class Bot(
             // so we can monitor if they respond in a timely fashion.
             recentAccessGrants.add(Pair(user, Instant.now()))
         }
+
+        // This user is processed. Remove them from the collection.
+        recentAccessRequestees.remove(user)
     }
 
     override fun leaveRoom() {
