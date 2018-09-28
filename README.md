@@ -24,11 +24,13 @@ Available commands are listed below. Some require an elevated access level.
 |||!remindme in 5 mins|
 |CF|!cf\<index(optional)\>|!cf|All|Does a good impression of CF
 |||!cf[0]|
-|Adam|!adam|!adam|All|Find lost things
+|Adam|!adam|!adam|All|Finds lost things
 |Mauker|!mauker|!mauker|All|Mocks Mauker
 |Benz|!🚗|!🚗|All|Checks your car
 |Accept user|!accept \<user name\>|!accept john|Room owner|Posts a welcome message for the user and grants him write access
+||!accept|!accept|Room owner|Accepts the most recent user to request access
 |Reject user|!reject \<user name\>|!reject john|Room owner|Posts a rejection message for the user and clears his access
+||!reject|!reject|Room owner|Rejectsthe most recent user to request access
 |Stop bot|!ahmad|!ahmad|Bot owner|Stops the bot
 |Sync stars data|!syncstars|!syncstars|Bot owner|Synchronizes all starred messages data
 
