@@ -84,6 +84,7 @@ fun commandOf(block: Command.Builder.() -> Unit) =
 
 enum class CommandType {
     // User commands.
+    // Core bot commands.
     HELP,
     STATUS,
     STATS_ME,
@@ -91,14 +92,19 @@ enum class CommandType {
     STARS_ANY,
     STARS_USER,
     REMIND_ME,
+
+    // Custom commands.
     CF,
     ADAM,
     MAUKER,
     BENZ,
 
     // Elevated access commands.
+    // Room owner.
     ACCEPT,
     REJECT,
+
+    // Bot owner.
     LEAVE,
     SYNC_STARS,
     UPDATE
