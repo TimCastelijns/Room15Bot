@@ -19,8 +19,8 @@ class CommandParser {
     private val maukerPattern = caseInsensitivePattern("!mauker")
     private val benzPattern = caseInsensitivePattern("!\\uD83D\\uDE97")
 
-    private val acceptPattern = caseInsensitivePattern("!accept\\s$anyUsernameRegex")
-    private val rejectPattern = caseInsensitivePattern("!reject\\s$anyUsernameRegex")
+    private val acceptPattern = caseInsensitivePattern("!accept(?:\\s)?$anyUsernameRegex?")
+    private val rejectPattern = caseInsensitivePattern("!reject\\s?$anyUsernameRegex?")
     private val leavePattern = caseInsensitivePattern("!(?:shoo|leave|die|getlost|fuckoff|ahmad)")
     private val syncStarsPattern = caseInsensitivePattern("!syncstars")
     private val updatePattern = caseInsensitivePattern("!update")

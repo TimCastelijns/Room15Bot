@@ -143,6 +143,8 @@ class Bot(
         }
     }
 
+    override fun provideLatestAccessRequestee() = recentAccessRequestees.lastOrNull()
+
     override fun acceptMessage(message: String) {
         outboundMessageQueue.add(OutboundMessage(message))
         logger.debug("queued message: $message")
@@ -197,6 +199,7 @@ class Bot(
 }
 
 interface Actor {
+    fun provideLatestAccessRequestee(): User?
     fun acceptMessage(message: String)
     fun acceptReply(message: String, targetMessageId: Long)
     fun acceptAccessChangeForUserByName(username: String, accessLevel: AccessLevel)
