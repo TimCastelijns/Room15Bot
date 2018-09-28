@@ -29,7 +29,7 @@ import retrofit2.converter.scalars.ScalarsConverterFactory
 
 private val module: Module = module {
 
-    single { Database(get()) }
+    single<Database>()
 
     single<Bot>()
 
