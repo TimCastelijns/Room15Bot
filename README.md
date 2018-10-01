@@ -31,7 +31,7 @@ Available commands are listed below. Some require an elevated access level.
 ||!accept|!accept|Room owner|Accepts the most recent user to request access
 |Reject user|!reject \<user name\>|!reject john|Room owner|Posts a rejection message for the user and clears his access
 ||!reject|!reject|Room owner|Rejects the most recent user to request access
-|Stop bot|!ahmad|!ahmad|Bot owner|Stops the bot
+|Stop bot|!leave|!leave|Bot owner|Stops the bot
 |Sync stars data|!syncstars|!syncstars|Bot owner|Synchronizes all starred messages data
 
 Access levels do not overlap. I.e. a bot owner is not necessarily a room owner.
