@@ -68,17 +68,6 @@ class CommandParserTest {
     }
 
     @Test
-    fun testCf() {
-        var command = "!cf"
-        assertTrue { parser.parse(command).type == CommandType.CF }
-        assertNull(parser.parse(command).args)
-
-        command = "!cf[3]"
-        assertTrue { parser.parse(command).type == CommandType.CF }
-        assertTrue { parser.parse(command).args == "[3]" }
-    }
-
-    @Test
     fun testAdam() {
         val command = "!adam"
         assertTrue { parser.parse(command).type == CommandType.ADAM }
@@ -166,7 +155,6 @@ class CommandParserTest {
         parser.parse("!reMinDMe bla bla bla")
         parser.parse("!LEAve")
         parser.parse("!SYNCstars")
-        parser.parse("!Cf")
         parser.parse("!AdAm")
         parser.parse("!MaUkEr")
         parser.parse("!STatuS")

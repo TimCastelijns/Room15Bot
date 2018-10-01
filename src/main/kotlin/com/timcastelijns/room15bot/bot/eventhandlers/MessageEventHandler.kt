@@ -22,7 +22,6 @@ class MessageEventHandler(
         private val syncStarsDataUseCase: SyncStarsDataUseCase,
         private val setReminderUseCase: SetReminderUseCase,
         private val updateUseCase: UpdateUseCase,
-        private val cfUseCase: CfUseCase,
         private val adamUseCase: AdamUseCase,
         private val maukerUseCase: MaukerUseCase,
         private val userRepository: UserRepository,
@@ -106,7 +105,6 @@ class MessageEventHandler(
             CommandType.REMIND_ME -> {
                 processRemindMeCommand(message.id, command.args!!)
             }
-            CommandType.CF -> processCfCommand(command.args)
             CommandType.ADAM -> processAdamCommand()
             CommandType.MAUKER -> processMaukerCommand()
             CommandType.BENZ -> processBenzCommand(message.id, message.user!!)
@@ -222,17 +220,6 @@ class MessageEventHandler(
         val message = try {
             val data = setReminderUseCase.execute(params)
             messageFormatter.asReminderString(data)
-        } catch (e: IllegalArgumentException) {
-            e.message!!
-        }
-
-        actor.acceptMessage(message)
-    }
-
-    private fun processCfCommand(commandArgs: String?) {
-        val message = try {
-            val data = cfUseCase.execute(commandArgs)
-            messageFormatter.asCfString(data)
         } catch (e: IllegalArgumentException) {
             e.message!!
         }

@@ -41,7 +41,6 @@ private val module: Module = module {
     factory<SyncStarsDataUseCase>()
     factory<GetStarsDataUseCase>()
     factory<SetReminderUseCase>()
-    factory<CfUseCase>()
     factory<AdamUseCase>()
     factory<MaukerUseCase>()
     factory<AcceptUserUseCase>()

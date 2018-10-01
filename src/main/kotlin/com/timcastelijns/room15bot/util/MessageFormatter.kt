@@ -88,8 +88,6 @@ class MessageFormatter {
 
     fun asRickRollAlertString() = "Rick roll alert"
 
-    fun asCfString(cf: String) = cf
-
     fun asAdamString(adam: String) = adam
 
     fun asMaukerString(mauker: String) = mauker

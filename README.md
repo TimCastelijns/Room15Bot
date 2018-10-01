@@ -24,8 +24,6 @@ Stars any|!stars|!stars|Shows the most starred messages of the room
 Stars user|!stars \<user name\>|!stars john|Shows a user's most starred messages
 Remind me|!remindme \<future date expression\>|!remindme 2h|Sets a reminder. When it expires, the bot will ping you
 ||!remindme in 5 mins|
-CF|!cf\<index(optional)\>|!cf|Does a good impression of CF
-||!cf[0]|
 Adam|!adam|!adam|Finds lost things
 Mauker|!mauker|!mauker|Mocks Mauker
 Benz|!🚗|!🚗|All|Checks your car
