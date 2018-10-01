@@ -187,7 +187,7 @@ class MessageEventHandler(
             actor.acceptMessage(messageFormatter.asLeavingString())
             actor.leaveRoom()
         } else {
-            actor.acceptMessage("\uD83D\uDD95\uD83C\uDFFB")
+            actor.acceptMessage(messageFormatter.asNoAccessString())
         }
     }
 
