@@ -15,36 +15,36 @@ Available commands are listed below. Some require an elevated access level.
 
 ### Commands for all users
 
-|Name|Format|Example|Description
-|-|-|-|-
-|Status|!status|!status|Display a status message
-|Stats me|!stats|!stats|Shows your stats
-|Stats user|!stats \<user id\>|!stats 1|Shows a user's stats
-|Stars any|!stars|!stars|Shows the most starred messages of the room
-|Stars user|!stars \<user name\>|!stars john|Shows a user's most starred messages
-|Remind me|!remindme \<future date expression\>|!remindme 2h|Sets a reminder. When it expires, the bot will ping you
-|||!remindme in 5 mins|
-|CF|!cf\<index(optional)\>|!cf|Does a good impression of CF
-|||!cf[0]|
-|Adam|!adam|!adam|Finds lost things
-|Mauker|!mauker|!mauker|Mocks Mauker
-|Benz|!🚗|!🚗|All|Checks your car
+Name|Format|Example|Description
+---|---|---|---
+Status|!status|!status|Display a status message
+Stats me|!stats|!stats|Shows your stats
+Stats user|!stats \<user id\>|!stats 1|Shows a user's stats
+Stars any|!stars|!stars|Shows the most starred messages of the room
+Stars user|!stars \<user name\>|!stars john|Shows a user's most starred messages
+Remind me|!remindme \<future date expression\>|!remindme 2h|Sets a reminder. When it expires, the bot will ping you
+||!remindme in 5 mins|
+CF|!cf\<index(optional)\>|!cf|Does a good impression of CF
+||!cf[0]|
+Adam|!adam|!adam|Finds lost things
+Mauker|!mauker|!mauker|Mocks Mauker
+Benz|!🚗|!🚗|All|Checks your car
 
 ### Commands for room owners
 
-|Name|Format|Example|Description
-|-|-|-|-
-|Accept user|!accept \<user name\>|!accept john|Posts a welcome message for the user and grants him write access
-||!accept|!accept|Accepts the most recent user to request access
-|Reject user|!reject \<user name\>|!reject john|Posts a rejection message for the user and clears his access
-||!reject|!reject|Rejects the most recent user to request access
+Name|Format|Example|Description
+---|---|---|---
+Accept user|!accept \<user name\>|!accept john|Posts a welcome message for the user and grants him write access
+|!accept|!accept|Accepts the most recent user to request access
+Reject user|!reject \<user name\>|!reject john|Posts a rejection message for the user and clears his access
+|!reject|!reject|Rejects the most recent user to request access
 
 ### Command for bot owners
 
-|Name|Format|Example|Description
-|-|-|-|-
-|Stop bot|!leave|!leave|Stops the bot
-|Sync stars data|!syncstars|!syncstars|Synchronizes all starred messages data
+Name|Format|Example|Description
+---|---|---|---
+Stop bot|!leave|!leave|Stops the bot
+Sync stars data|!syncstars|!syncstars|Synchronizes all starred messages data
 
 Access levels do not overlap. I.e. a bot owner is not necessarily a room owner.
 
