@@ -123,7 +123,7 @@ class CommandParserTest {
 
     @Test
     fun testLeave() {
-        val command = "!getlost"
+        val command = "!leave"
         assertTrue { parser.parse(command).type == CommandType.LEAVE }
         assertTrue { parser.parse(command).args == null }
     }
@@ -164,7 +164,7 @@ class CommandParserTest {
         parser.parse("!STArs Tim")
         parser.parse("!stARs")
         parser.parse("!reMinDMe bla bla bla")
-        parser.parse("!FucKOFf")
+        parser.parse("!LEAve")
         parser.parse("!SYNCstars")
         parser.parse("!Cf")
         parser.parse("!AdAm")
