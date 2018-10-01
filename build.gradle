@@ -1,7 +1,7 @@
 import java.text.SimpleDateFormat
 
 buildscript {
-    ext.kotlin_version = '1.2.61'
+    ext.kotlin_version = '1.2.71'
     ext.koin_version = '1.0.1'
 
     repositories {
