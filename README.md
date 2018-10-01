@@ -13,26 +13,38 @@ Commands are prefixed with `!`. Commands are only recognized when they are at th
 
 Available commands are listed below. Some require an elevated access level. 
 
-|Name|Format|Example|Access|Description
-|-|-|-|-|-
-|Status|!status|!status|All|Display a status message
-|Stats me|!stats|!stats|All|Shows your stats
-|Stats user|!stats \<user id\>|!stats 1|All|Shows a user's stats
-|Stars any|!stars|!stars|All|Shows the most starred messages of the room
-|Stars user|!stars \<user name\>|!stars john|All|Shows a user's most starred messages
-|Remind me|!remindme \<future date expression\>|!remindme 2h|All|Sets a reminder. When it expires, the bot will ping you
+### Commands for all users
+
+|Name|Format|Example|Description
+|-|-|-|-
+|Status|!status|!status|Display a status message
+|Stats me|!stats|!stats|Shows your stats
+|Stats user|!stats \<user id\>|!stats 1|Shows a user's stats
+|Stars any|!stars|!stars|Shows the most starred messages of the room
+|Stars user|!stars \<user name\>|!stars john|Shows a user's most starred messages
+|Remind me|!remindme \<future date expression\>|!remindme 2h|Sets a reminder. When it expires, the bot will ping you
 |||!remindme in 5 mins|
-|CF|!cf\<index(optional)\>|!cf|All|Does a good impression of CF
+|CF|!cf\<index(optional)\>|!cf|Does a good impression of CF
 |||!cf[0]|
-|Adam|!adam|!adam|All|Finds lost things
-|Mauker|!mauker|!mauker|All|Mocks Mauker
+|Adam|!adam|!adam|Finds lost things
+|Mauker|!mauker|!mauker|Mocks Mauker
 |Benz|!🚗|!🚗|All|Checks your car
-|Accept user|!accept \<user name\>|!accept john|Room owner|Posts a welcome message for the user and grants him write access
-||!accept|!accept|Room owner|Accepts the most recent user to request access
-|Reject user|!reject \<user name\>|!reject john|Room owner|Posts a rejection message for the user and clears his access
-||!reject|!reject|Room owner|Rejects the most recent user to request access
-|Stop bot|!leave|!leave|Bot owner|Stops the bot
-|Sync stars data|!syncstars|!syncstars|Bot owner|Synchronizes all starred messages data
+
+### Commands for room owners
+
+|Name|Format|Example|Description
+|-|-|-|-
+|Accept user|!accept \<user name\>|!accept john|Posts a welcome message for the user and grants him write access
+||!accept|!accept|Accepts the most recent user to request access
+|Reject user|!reject \<user name\>|!reject john|Posts a rejection message for the user and clears his access
+||!reject|!reject|Rejects the most recent user to request access
+
+### Command for bot owners
+
+|Name|Format|Example|Description
+|-|-|-|-
+|Stop bot|!leave|!leave|Stops the bot
+|Sync stars data|!syncstars|!syncstars|Synchronizes all starred messages data
 
 Access levels do not overlap. I.e. a bot owner is not necessarily a room owner.
 
