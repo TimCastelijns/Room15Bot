@@ -17,6 +17,7 @@ class CommandParser {
     private val adamPattern = caseInsensitivePattern("!adam")
     private val maukerPattern = caseInsensitivePattern("!mauker")
     private val benzPattern = caseInsensitivePattern("!\\uD83D\\uDE97")
+    private val davePattern = caseInsensitivePattern("!dave")
 
     private val acceptPattern = caseInsensitivePattern("!accept(?:\\s)?$anyUsernameRegex?")
     private val rejectPattern = caseInsensitivePattern("!reject\\s?$anyUsernameRegex?")
@@ -35,6 +36,7 @@ class CommandParser {
             adamPattern to CommandType.ADAM,
             maukerPattern to CommandType.MAUKER,
             benzPattern to CommandType.BENZ,
+            davePattern to CommandType.DAVE,
             acceptPattern to CommandType.ACCEPT,
             rejectPattern to CommandType.REJECT,
             leavePattern to CommandType.LEAVE,
@@ -95,6 +97,7 @@ enum class CommandType {
     ADAM,
     MAUKER,
     BENZ,
+    DAVE,
 
     // Elevated access commands.
     // Room owner.

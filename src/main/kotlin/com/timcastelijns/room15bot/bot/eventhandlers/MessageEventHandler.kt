@@ -24,6 +24,7 @@ class MessageEventHandler(
         private val updateUseCase: UpdateUseCase,
         private val adamUseCase: AdamUseCase,
         private val maukerUseCase: MaukerUseCase,
+        private val daveUseCase: DaveUseCase,
         private val userRepository: UserRepository,
         private val messageFormatter: MessageFormatter
 ) {
@@ -108,6 +109,7 @@ class MessageEventHandler(
             CommandType.ADAM -> processAdamCommand()
             CommandType.MAUKER -> processMaukerCommand()
             CommandType.BENZ -> processBenzCommand(message.id, message.user!!)
+            CommandType.DAVE -> processDaveCommand()
 
             CommandType.ACCEPT -> processAcceptCommand(message.id, message.user!!, command.args)
             CommandType.REJECT -> processRejectCommand(message.id, message.user!!, command.args)
@@ -255,6 +257,17 @@ class MessageEventHandler(
         } else {
             actor.acceptReply(messageFormatter.asBenzPeasantString(), messageId)
         }
+    }
+
+    private fun processDaveCommand() {
+        val message = try {
+            val data = daveUseCase.execute(Unit)
+            messageFormatter.asDaveString(data)
+        } catch (e: IllegalArgumentException) {
+            e.message!!
+        }
+
+        actor.acceptMessage(message)
     }
 
     private fun processUpdateCommand(user: User, messageId: Long) {

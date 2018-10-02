@@ -96,6 +96,8 @@ class MessageFormatter {
 
     fun asBenzString() = "\uD83C\uDF1F Nice Benz bro! \uD83C\uDF1F"
 
+    fun asDaveString(tiredOf: String) = tiredOf
+
     fun asBeRightBackString() = "Ok, be right back"
 
     fun asUpdateErrorString() = "I tried to update, but something went wrong"
