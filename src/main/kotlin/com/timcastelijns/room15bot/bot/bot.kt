@@ -12,11 +12,15 @@ import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
 import java.time.Instant
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.coroutines.CoroutineContext
 
 class Bot(
         private val accessLevelChangedEventHandler: AccessLevelChangedEventHandler,
@@ -24,12 +28,17 @@ class Bot(
         private val reminderMonitor: ReminderMonitor,
         private val getBuildConfigUseCase: GetBuildConfigUseCase,
         private val messageFormatter: MessageFormatter
-) : Actor {
+) : CoroutineScope, Actor {
 
     companion object {
         private val logger = LoggerFactory.getLogger(Bot::class.java)
         private const val RESPOND_TO_ACCEPTANCE_DEADLINE = 1_800_000L
     }
+
+    private val job = Job()
+
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main + job
 
     private val aliveSubject = BehaviorSubject.create<Boolean>()
 
@@ -54,6 +63,7 @@ class Bot(
     private fun die() {
         snoozeUntilAllMessagesAreSent()
 
+        job.cancel()
         disposables.clear()
 
         aliveSubject.onNext(false)

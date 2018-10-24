@@ -3,8 +3,8 @@ package com.timcastelijns.room15bot.bot.usecases
 import com.timcastelijns.room15bot.data.db.StarredMessageDao
 import com.timcastelijns.room15bot.data.repositories.StarredMessage
 import com.timcastelijns.room15bot.data.repositories.StarredMessageRepository
-import kotlinx.coroutines.experimental.Deferred
-import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
 import org.slf4j.LoggerFactory
 
 class SyncStarsDataUseCase(

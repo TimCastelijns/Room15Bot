@@ -50,7 +50,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.30.2-eap13'
-    implementation 'com.jakewharton.retrofit:retrofit2-kotlin-coroutines-experimental-adapter:1.0.0'
+    implementation 'com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.2'
 
     // Database
     implementation 'org.jetbrains.exposed:exposed:0.10.4'
@@ -60,14 +60,8 @@ dependencies {
     // Testing
     testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlin_version"
     testImplementation "org.koin:koin-test:$koin_version"
-    testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:2.0.0-RC1"
+    testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:2.0.0-RC3"
 
-}
-
-kotlin {
-    experimental {
-        coroutines 'enable'
-    }
 }
 
 task writeBuildConfig() {
