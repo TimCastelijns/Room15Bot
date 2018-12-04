@@ -16,8 +16,7 @@ class MessageFormatter {
 
     fun asStatusString(buildConfig: BuildConfig) =
             "Online since ${buildConfig.buildTime} (UTC). " +
-                    "Running version ${buildConfig.version} on " +
-                    "${buildConfig.branch}@${buildConfig.commit}"
+                    "Running on ${buildConfig.branch}@${buildConfig.commit}"
 
     fun asTableString(starsData: StarsData) = with(starsData) {
         if (starredMessages.isEmpty()) {
