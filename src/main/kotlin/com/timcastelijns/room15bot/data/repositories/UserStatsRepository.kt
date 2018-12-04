@@ -22,7 +22,7 @@ class UserStatsRepository(
 
     private fun Document.valueOfFirstCountClass(): Int {
         val text = getElementsByClass("count").first().text()
-        return if (text.isNotEmpty()) text.toInt() else 0
+        return if (text.isNotEmpty()) text.replace("," , "").toInt() else 0
     }
 
 }
