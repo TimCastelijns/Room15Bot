@@ -38,7 +38,7 @@ class Bot(
     private val job = Job()
 
     override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Main + job
+        get() = Dispatchers.IO + job
 
     private val aliveSubject = BehaviorSubject.create<Boolean>()
 
