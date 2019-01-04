@@ -145,5 +145,5 @@ class AhmadUseCase: UseCase<Unit, String> {
                 "Raspberry Pi Foundation")
     }
 
-    override fun execute(params: Unit): String = "$reply ${internships.random()}."
+    override fun execute(params: Unit): String = "$reply${internships.random()}."
 }
