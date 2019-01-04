@@ -4,12 +4,13 @@ import com.timcastelijns.chatexchange.chat.*
 import com.timcastelijns.room15bot.bot.Actor
 import com.timcastelijns.room15bot.bot.usecases.*
 import com.timcastelijns.room15bot.data.repositories.UserRepository
-import kotlinx.coroutines.experimental.launch
-import org.slf4j.LoggerFactory
 import com.timcastelijns.room15bot.util.Command
 import com.timcastelijns.room15bot.util.CommandParser
 import com.timcastelijns.room15bot.util.CommandType
 import com.timcastelijns.room15bot.util.MessageFormatter
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import org.slf4j.LoggerFactory
 import java.io.IOException
 import kotlin.system.measureTimeMillis
 
@@ -46,7 +47,7 @@ class MessageEventHandler(
         handleMessage(event.message)
     }
 
-    private suspend fun handleMessage(message: Message) {
+    private suspend fun handleMessage(message: Message)= coroutineScope {
         if (message.isCommand()) {
             val time = measureTimeMillis {
                 launch { processCommandMessage(message) }.join()

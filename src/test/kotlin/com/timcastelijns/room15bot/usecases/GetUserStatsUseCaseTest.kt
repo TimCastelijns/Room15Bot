@@ -6,7 +6,7 @@ import com.timcastelijns.chatexchange.chat.User
 import com.timcastelijns.room15bot.bot.usecases.GetUserStatsUseCase
 import com.timcastelijns.room15bot.bot.usecases.UserStats
 import com.timcastelijns.room15bot.data.repositories.UserStatsRepository
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
 import org.mockito.MockitoAnnotations

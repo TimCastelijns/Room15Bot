@@ -11,7 +11,7 @@ import com.timcastelijns.room15bot.bot.eventhandlers.AccessLevelChangedEventHand
 import com.timcastelijns.room15bot.bot.usecases.GetUserStatsUseCase
 import com.timcastelijns.room15bot.bot.usecases.UserStats
 import com.timcastelijns.room15bot.util.MessageFormatter
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
 import org.mockito.MockitoAnnotations

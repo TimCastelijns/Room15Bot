@@ -1,6 +1,6 @@
 package com.timcastelijns.room15bot.di
 
-import com.jakewharton.retrofit2.adapter.kotlin.coroutines.experimental.CoroutineCallAdapterFactory
+import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.timcastelijns.room15bot.bot.Bot
 import com.timcastelijns.room15bot.bot.eventhandlers.AccessLevelChangedEventHandler
 import com.timcastelijns.room15bot.bot.eventhandlers.MessageEventHandler

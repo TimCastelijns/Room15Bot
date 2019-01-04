@@ -57,7 +57,7 @@ class MessageFormatterTest {
         val buildConfig = BuildConfig("0.1", "master", "abcd1234", "epoch")
         val output = messageFormatter.asStatusString(buildConfig)
 
-        assertEquals("Online since epoch (UTC). Running version 0.1 on master@abcd1234", output)
+        assertEquals("Online since epoch (UTC). Running on master@abcd1234", output)
     }
 
     @Test
