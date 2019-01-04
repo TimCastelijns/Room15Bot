@@ -26,6 +26,7 @@ Remind me|!remindme \<future date expression\>|!remindme 2h|Sets a reminder. Whe
 ||!remindme in 5 mins|
 Adam|!adam|!adam|Finds lost things
 Mauker|!mauker|!mauker|Mocks Mauker
+Ahmad|!ahmad|!ahmad|Asks Ahmad about anything
 Benz|!🚗|!🚗|All|Checks your car
 Dave|!dave|!dave|Creates realistic simulation of interacting with Dave
 

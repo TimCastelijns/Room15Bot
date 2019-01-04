@@ -82,6 +82,13 @@ class CommandParserTest {
     }
 
     @Test
+    fun testAhmad() {
+        val command = "!ahmad"
+        assertTrue { parser.parse(command).type == CommandType.AHMAD }
+        assertNull(parser.parse(command).args)
+    }
+
+    @Test
     fun testBenz() {
         val command = ("!\uD83D\uDE97")
         assertTrue { parser.parse(command).type == CommandType.BENZ }
@@ -164,6 +171,7 @@ class CommandParserTest {
         parser.parse("!SYNCstars")
         parser.parse("!AdAm")
         parser.parse("!MaUkEr")
+        parser.parse("!AhMaD")
         parser.parse("!DaVe")
         parser.parse("!STatuS")
         parser.parse("!UpDaTe")
