@@ -16,6 +16,7 @@ class CommandParser {
     private val remindMePattern = caseInsensitivePattern("!remindme\\s(.+)")
     private val adamPattern = caseInsensitivePattern("!adam")
     private val maukerPattern = caseInsensitivePattern("!mauker")
+    private val ahmadPattern = caseInsensitivePattern("!ahmad")
     private val benzPattern = caseInsensitivePattern("!\\uD83D\\uDE97")
     private val davePattern = caseInsensitivePattern("!dave")
 
@@ -35,6 +36,7 @@ class CommandParser {
             remindMePattern to CommandType.REMIND_ME,
             adamPattern to CommandType.ADAM,
             maukerPattern to CommandType.MAUKER,
+            ahmadPattern to CommandType.AHMAD,
             benzPattern to CommandType.BENZ,
             davePattern to CommandType.DAVE,
             acceptPattern to CommandType.ACCEPT,
@@ -96,6 +98,7 @@ enum class CommandType {
     // Custom commands.
     ADAM,
     MAUKER,
+    AHMAD,
     BENZ,
     DAVE,
 

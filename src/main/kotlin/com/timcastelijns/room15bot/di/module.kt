@@ -43,6 +43,7 @@ private val module: Module = module {
     factory<SetReminderUseCase>()
     factory<AdamUseCase>()
     factory<MaukerUseCase>()
+    factory<AhmadUseCase>()
     factory<DaveUseCase>()
     factory<AcceptUserUseCase>()
     factory<RejectUserUseCase>()

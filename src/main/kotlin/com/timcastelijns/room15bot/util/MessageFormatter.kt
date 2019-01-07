@@ -91,6 +91,8 @@ class MessageFormatter {
 
     fun asMaukerString(mauker: String) = mauker
 
+    fun asAhmadString(ahmad: String) = ahmad
+
     fun asBenzPeasantString() = "Looks like your car does not have a star in the front."
 
     fun asBenzString() = "\uD83C\uDF1F Nice Benz bro! \uD83C\uDF1F"
