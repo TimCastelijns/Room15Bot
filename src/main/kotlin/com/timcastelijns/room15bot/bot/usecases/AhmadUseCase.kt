@@ -142,7 +142,9 @@ class AhmadUseCase: UseCase<Unit, String> {
                 "ASML",
                 "Applied Materials",
                 "Salesforce",
-                "Raspberry Pi Foundation")
+                "Raspberry Pi Foundation",
+                "McKinsey & Company",
+                "Yelp")
     }
 
     override fun execute(params: Unit): String = "$reply${internships.random()}."
