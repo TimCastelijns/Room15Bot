@@ -147,10 +147,8 @@ class AhmadUseCaseTest {
 
     @Test
     fun testRandomAhmadReply() {
-        assertTrue { internships.contains(AhmadUseCase().execute(Unit)) }
-        assertTrue { internships.contains(AhmadUseCase().execute(Unit)) }
-        assertTrue { internships.contains(AhmadUseCase().execute(Unit)) }
-        assertTrue { internships.contains(AhmadUseCase().execute(Unit)) }
-        assertTrue { internships.contains(AhmadUseCase().execute(Unit)) }
+        repeat(10) {
+            assertTrue { internships.contains(AhmadUseCase().execute(Unit)) }
+        }
     }
 }
