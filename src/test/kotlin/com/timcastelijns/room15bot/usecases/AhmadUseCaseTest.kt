@@ -23,7 +23,7 @@ class AhmadUseCaseTest {
             "I dunno man, I'm just an intern @ Ubiquity Networks.",
             "I dunno man, I'm just an intern @ Snapchat.",
             "I dunno man, I'm just an intern @ Facebook.",
-            "I dunno man, I'm just an intern @ Instagram https://www.instagram.com/rashiq.z/.",
+            "I dunno man, I'm just an intern @ Instagram.",
             "I dunno man, I'm just an intern @ Twitter.",
             "I dunno man, I'm just an intern @ Coinbase.",
             "I dunno man, I'm just an intern @ Dell.",

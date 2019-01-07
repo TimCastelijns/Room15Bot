@@ -22,7 +22,7 @@ class AhmadUseCase: UseCase<Unit, String> {
                 "Ubiquity Networks",
                 "Snapchat",
                 "Facebook",
-                "Instagram https://www.instagram.com/rashiq.z/",
+                "Instagram",
                 "Twitter",
                 "Coinbase",
                 "Dell",
