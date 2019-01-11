@@ -8,7 +8,7 @@ class FutureDateExpressionParser {
     private val pastDateIndicators = listOf("yesterday", "yday", "last", "past", "ago")
     private val regexPast =     Regex("(-[0-9]+)")
 
-    private val regexMinutes =  Regex("([A-Za-z ']+)?\\d+(\\s+)?m(in|ins)?(.+)?")
+    private val regexMinutes =  Regex("([A-Za-z ']+)?\\d+(\\s+)?(min|mins)(.+)?")
     private val regexHours =    Regex("([A-Za-z ']+)?\\d+(\\s+)?h(our|ours)?(.+)?")
     private val regexDays =     Regex("([A-Za-z ']+)?\\d+(\\s+)?d(ay)?(s)?(.+)?")
 
