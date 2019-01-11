@@ -38,7 +38,7 @@ class MessageFormatter {
         val messageHeader = "Message ($totalStarredMessages)".padEnd(messageColumnMaxLength)
         val starsHeader = "Stars ($totalStars)"
 
-        val header = " $userHeader | $messageHeader | $starsHeader | Link"
+        val header = " $userHeader | $messageHeader | $starsHeader"
         val separator = "-".repeat(header.length)
 
         val table = mutableListOf<String>()
@@ -48,9 +48,8 @@ class MessageFormatter {
         starredMessages.forEach {
             val user = it.username.truncate(nameColumnLength).padEnd(nameColumnLength)
             val message = it.message.sanitize().truncate(messageColumnMaxLength).padEnd(messageColumnMaxLength)
-            val stars = it.stars.toString().truncate(starsHeader.length).padEnd(starsHeader.length)
-            val permanentLink = ""
-            val line = " $user | $message | $stars |$permanentLink"
+            val stars = it.stars.toString().truncate(starsHeader.length)
+            val line = " $user | $message | $stars"
             table.add(line)
         }
 
