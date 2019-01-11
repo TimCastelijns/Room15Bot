@@ -15,3 +15,13 @@ object Reminders : IntIdTable() {
     val triggerAt = long("triggerAt")
     val completed = bool("completed").default(false)
 }
+
+object UserProfiles: IntIdTable() {
+    val userId = integer("userId")
+    val username = varchar("username", 255)
+    val nickname = varchar("nickname", 255)
+    val age = integer("age")
+    val location = varchar("location", 255)
+    val skills = varchar("skills", 255)
+    val title = varchar("title", 1024)
+}
