@@ -10,6 +10,18 @@ object Users : Table() {
     val id = long("id").primaryKey()
     val name = varchar("name", 255).nullable()
     val createdAt = datetime("createdAt").defaultExpression(CurrentDateTimeUtc())
+    val profileId = (integer("profileId") references UserProfiles.id).nullable()
+}
+
+object UserProfiles: Table() {
+    val id = integer("id").autoIncrement().primaryKey()
+//    val userId = integer("userId")
+//    val username = varchar("username", 255)
+    val nickname = varchar("nickname", 255)
+    val age = integer("age")
+//    val location = varchar("location", 255)
+//    val skills = varchar("skills", 255)
+//    val title = varchar("title", 1024)
 }
 
 object StarredMessages : LongIdTable() {

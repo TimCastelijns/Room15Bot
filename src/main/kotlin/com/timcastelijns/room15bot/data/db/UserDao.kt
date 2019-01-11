@@ -1,6 +1,7 @@
 package com.timcastelijns.room15bot.data.db
 
 import com.timcastelijns.room15bot.data.User
+import com.timcastelijns.room15bot.data.UserProfile
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.insertIgnore
 import org.jetbrains.exposed.sql.select
@@ -28,11 +29,26 @@ class UserDao {
                 .map { it.toUser() }
     }
 
+    fun getProfile(user: User): UserProfile? =
+            transaction {
+                (Users innerJoin UserProfiles).select { Users.id eq user.id }
+                        .firstOrNull()
+                        ?.toUserProfile()
+            }
+
 }
 
 private fun ResultRow.toUser() = with(this) {
     User(
             this[Users.id],
             this[Users.name]
+    )
+}
+
+private fun ResultRow.toUserProfile() = with(this) {
+    UserProfile(
+            this[UserProfiles.id],
+            this[UserProfiles.nickname],
+            this[UserProfiles.age]
     )
 }

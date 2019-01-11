@@ -1,7 +1,6 @@
 package com.timcastelijns.room15bot.data.db
 
 import com.timcastelijns.room15bot.data.DatabaseConfig
-import com.timcastelijns.room15bot.data.repositories.ConfigRepository
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -10,6 +9,7 @@ object Database {
 
     private val tables = listOf(
             Users,
+            UserProfiles,
             StarredMessages,
             Reminders
     )

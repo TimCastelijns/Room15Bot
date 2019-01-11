@@ -5,6 +5,12 @@ data class User(
         val name: String?
 )
 
+data class UserProfile(
+        val id: Int,
+        val nickname: String,
+        val age: Int
+)
+
 data class StarredMessage(
         val username: String,
         val message: String,
