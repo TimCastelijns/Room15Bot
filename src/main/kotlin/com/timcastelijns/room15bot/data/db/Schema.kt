@@ -17,11 +17,11 @@ object Reminders : IntIdTable() {
 }
 
 object UserProfiles: IntIdTable() {
-    val userId = integer("userId")
+    val userId = long("userId")
     val username = varchar("username", 255)
-    val nickname = varchar("nickname", 255)
-    val age = integer("age")
-    val location = varchar("location", 255)
-    val skills = varchar("skills", 255)
-    val title = varchar("title", 1024)
+    val nickname = varchar("nickname", 255).nullable()
+    val age = integer("age").nullable()
+    val location = varchar("location", 255).nullable()
+    val skills = varchar("skills", 255).nullable()
+    val title = varchar("title", 1024).nullable()
 }

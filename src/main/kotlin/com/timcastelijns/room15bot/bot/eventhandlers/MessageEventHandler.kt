@@ -27,6 +27,8 @@ class MessageEventHandler(
         private val rejectUserUseCase: RejectUserUseCase,
         private val syncStarsDataUseCase: SyncStarsDataUseCase,
         private val setReminderUseCase: SetReminderUseCase,
+        private val createUserProfileUseCase: CreateUserProfileUseCase,
+        private val updateUserProfileUseCase: UpdateUserProfileUseCase,
         private val updateUseCase: UpdateUseCase,
         private val adamUseCase: AdamUseCase,
         private val maukerUseCase: MaukerUseCase,
@@ -113,6 +115,9 @@ class MessageEventHandler(
             CommandType.REMIND_ME -> {
                 processRemindMeCommand(message.id, command.args!!)
             }
+            CommandType.CREATE_USER_PROFILE -> processCreateUserProfileCommand(message.id, message.user!!)
+            CommandType.UPDATE_USER_PROFILE -> processUpdateUserProfileCommand(message.id, message.user!!, command.args!!)
+
             CommandType.ADAM -> processAdamCommand()
             CommandType.MAUKER -> processMaukerCommand()
             CommandType.AHMAD -> processAhmadCommand()
@@ -244,6 +249,22 @@ class MessageEventHandler(
         }
 
         actor.acceptMessage(message)
+    }
+
+    private fun processCreateUserProfileCommand(messageId: Long, user: User) {
+        val params = CreateUserProfileParams(user.id, user.name)
+        createUserProfileUseCase.execute(params)
+
+        val message = messageFormatter.asUserProfileCreated()
+        actor.acceptReply(message, messageId)
+    }
+
+    private fun processUpdateUserProfileCommand(messageId: Long, user: User, commandArgs: String) {
+        val params = UpdateUserProfileParams(user.id, commandArgs)
+        updateUserProfileUseCase.execute(params)
+
+        val message = messageFormatter.asUserProfileUpdated()
+        actor.acceptReply(message, messageId)
     }
 
     private fun processAdamCommand() {

@@ -68,6 +68,12 @@ class MessageFormatter {
         return "Ok, I will remind you ${dtf.format(triggerDate)} (UTC)"
     }
 
+    fun asUserProfileCreated() =
+            "Profile created. Try !profile to view it"
+
+    fun asUserProfileUpdated() =
+            "Profile updated. Try !profile to view it"
+
     fun asStatsString(user: User, stats: UserStats) =
             "Stats for ${user.name} -- " +
                     "**Rep:** ${stats.reputation} - " +

@@ -9,6 +9,7 @@ import com.timcastelijns.room15bot.bot.usecases.*
 import com.timcastelijns.room15bot.data.db.Database
 import com.timcastelijns.room15bot.data.db.ReminderDao
 import com.timcastelijns.room15bot.data.db.StarredMessageDao
+import com.timcastelijns.room15bot.data.db.UserProfileDao
 import com.timcastelijns.room15bot.data.repositories.ConfigRepository
 import com.timcastelijns.room15bot.data.repositories.StarredMessageRepository
 import com.timcastelijns.room15bot.data.repositories.UserRepository
@@ -41,6 +42,8 @@ private val module: Module = module {
     factory<SyncStarsDataUseCase>()
     factory<GetStarsDataUseCase>()
     factory<SetReminderUseCase>()
+    factory<CreateUserProfileUseCase>()
+    factory<UpdateUserProfileUseCase>()
     factory<AdamUseCase>()
     factory<MaukerUseCase>()
     factory<AhmadUseCase>()
@@ -59,6 +62,7 @@ private val module: Module = module {
 
     single<StarredMessageDao>()
     single<ReminderDao>()
+    single<UserProfileDao>()
 
     factory<UserNameValidator>()
     factory<MessageFormatter>()
