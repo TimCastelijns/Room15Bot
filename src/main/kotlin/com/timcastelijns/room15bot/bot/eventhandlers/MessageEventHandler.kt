@@ -3,6 +3,7 @@ package com.timcastelijns.room15bot.bot.eventhandlers
 import com.timcastelijns.chatexchange.chat.*
 import com.timcastelijns.room15bot.bot.Actor
 import com.timcastelijns.room15bot.bot.usecases.*
+import com.timcastelijns.room15bot.data.BuildConfig
 import com.timcastelijns.room15bot.data.repositories.UserRepository
 import com.timcastelijns.room15bot.util.Command
 import com.timcastelijns.room15bot.util.CommandParser
@@ -12,6 +13,10 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
 import java.io.IOException
+import java.time.LocalDateTime
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 import kotlin.system.measureTimeMillis
 
 class MessageEventHandler(
@@ -128,7 +133,16 @@ class MessageEventHandler(
 
     private fun processStatusCommand(messageId: Long) {
         val buildConfig = getBuildConfigUseCase.execute(Unit)
-        actor.acceptReply(messageFormatter.asStatusString(buildConfig), messageId)
+        val uptimeHours = getUptimeHours(buildConfig)
+
+        actor.acceptReply(messageFormatter.asStatusString(buildConfig, uptimeHours), messageId)
+    }
+
+    private fun getUptimeHours(buildConfig: BuildConfig): Long {
+        val buildTime = buildConfig.buildTime
+
+        val ldt = LocalDateTime.parse(buildTime, DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"))
+        return ChronoUnit.HOURS.between(ldt, LocalDateTime.now(ZoneOffset.UTC))
     }
 
     private fun processAcceptCommand(messageId: Long, user: User, username: String?) {

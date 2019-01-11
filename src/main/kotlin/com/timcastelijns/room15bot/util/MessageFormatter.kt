@@ -14,9 +14,10 @@ class MessageFormatter {
     fun asHelpString() = "You can find information on what I can do " +
             "[here](https://github.com/TimCastelijns/Room15Bot#usage)"
 
-    fun asStatusString(buildConfig: BuildConfig) =
+    fun asStatusString(buildConfig: BuildConfig, uptimeHours: Long = 0) =
             "Online since ${buildConfig.buildTime} (UTC). " +
-                    "Running on ${buildConfig.branch}@${buildConfig.commit}"
+                    "Running on ${buildConfig.branch}@${buildConfig.commit}. " +
+                    "Uptime: ${uptimeHours}h"
 
     fun asTableString(starsData: StarsData) = with(starsData) {
         if (starredMessages.isEmpty()) {
