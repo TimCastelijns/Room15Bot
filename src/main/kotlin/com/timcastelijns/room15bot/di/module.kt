@@ -6,9 +6,7 @@ import com.timcastelijns.room15bot.bot.eventhandlers.AccessLevelChangedEventHand
 import com.timcastelijns.room15bot.bot.eventhandlers.MessageEventHandler
 import com.timcastelijns.room15bot.bot.monitors.ReminderMonitor
 import com.timcastelijns.room15bot.bot.usecases.*
-import com.timcastelijns.room15bot.data.db.Database
-import com.timcastelijns.room15bot.data.db.ReminderDao
-import com.timcastelijns.room15bot.data.db.StarredMessageDao
+import com.timcastelijns.room15bot.data.db.*
 import com.timcastelijns.room15bot.data.repositories.ConfigRepository
 import com.timcastelijns.room15bot.data.repositories.StarredMessageRepository
 import com.timcastelijns.room15bot.data.repositories.UserRepository
@@ -47,6 +45,7 @@ private val module: Module = module {
     factory<DaveUseCase>()
     factory<AcceptUserUseCase>()
     factory<RejectUserUseCase>()
+    factory<CreateAccessRequestUseCase>()
 
     factory { UpdateUseCase(Runtime.getRuntime()) }
 
@@ -59,6 +58,7 @@ private val module: Module = module {
 
     single<StarredMessageDao>()
     single<ReminderDao>()
+    single<AccessRequestDao>()
 
     factory<UserNameValidator>()
     factory<MessageFormatter>()

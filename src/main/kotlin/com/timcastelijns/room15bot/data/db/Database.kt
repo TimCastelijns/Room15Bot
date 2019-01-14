@@ -25,7 +25,8 @@ class Database(
         transaction {
             SchemaUtils.createMissingTablesAndColumns(
                     StarredMessages,
-                    Reminders
+                    Reminders,
+                    AccessRequests
             )
         }
     }
