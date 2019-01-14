@@ -25,6 +25,7 @@ class MessageEventHandler(
         private val getStarsDataUseCase: GetStarsDataUseCase,
         private val acceptUserUseCase: AcceptUserUseCase,
         private val rejectUserUseCase: RejectUserUseCase,
+        private val updateAccessRequestUseCase: UpdateAccessRequestUseCase,
         private val syncStarsDataUseCase: SyncStarsDataUseCase,
         private val setReminderUseCase: SetReminderUseCase,
         private val updateUseCase: UpdateUseCase,
@@ -53,7 +54,7 @@ class MessageEventHandler(
         handleMessage(event.message)
     }
 
-    private suspend fun handleMessage(message: Message)= coroutineScope {
+    private suspend fun handleMessage(message: Message) = coroutineScope {
         if (message.isCommand()) {
             val time = measureTimeMillis {
                 launch { processCommandMessage(message) }.join()
@@ -152,10 +153,12 @@ class MessageEventHandler(
         }
 
         if (username != null) {
-            acceptUserByName(username)
+//            acceptUserByName(username)
+            actor.acceptReply("Accepting by name is currently not supported", messageId)
         } else {
             actor.provideLatestAccessRequestee()?.let { requestee ->
                 acceptUserByName(requestee.name)
+                updateAccessRequest(requestee, user, true)
             } ?: actor.acceptMessage(messageFormatter.asRequesteeNotFound())
         }
     }
@@ -174,10 +177,12 @@ class MessageEventHandler(
         }
 
         if (username != null) {
-            rejectUserByName(username)
+//            rejectUserByName(username)
+            actor.acceptReply("Rejecting by name is currently not supported", messageId)
         } else {
             actor.provideLatestAccessRequestee()?.let { requestee ->
                 rejectUserByName(requestee.name)
+                updateAccessRequest(requestee, user, false)
             } ?: actor.acceptMessage(messageFormatter.asRequesteeNotFound())
         }
     }
@@ -198,6 +203,11 @@ class MessageEventHandler(
             actor.acceptMessage("Illegal argument passed: ${e.message}")
         }
     }
+
+    private fun updateAccessRequest(requestee: User, user: User, accessGranted: Boolean) =
+        updateAccessRequestUseCase.execute(
+                UpdateAccessRequestParams(requestee.id, true, user.name, accessGranted)
+        )
 
     private fun processLeaveCommand(user: User) {
         if (user.id == 1843331L) {

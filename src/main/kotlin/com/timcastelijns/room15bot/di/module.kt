@@ -46,6 +46,7 @@ private val module: Module = module {
     factory<AcceptUserUseCase>()
     factory<RejectUserUseCase>()
     factory<CreateAccessRequestUseCase>()
+    factory<UpdateAccessRequestUseCase>()
 
     factory { UpdateUseCase(Runtime.getRuntime()) }
 
