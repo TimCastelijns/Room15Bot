@@ -7,19 +7,33 @@ class UpdateAccessRequestUseCase(
 ) : UseCase<UpdateAccessRequestParams, Unit> {
 
     override fun execute(params: UpdateAccessRequestParams) {
-        accessRequestDao.update(
-                params.userId,
-                params.processed,
-                params.processedBy,
-                params.accessGranted
-        )
+        with(params) {
+            when {
+                processed != null -> accessRequestDao.updateProcessed(
+                        params.userId,
+                        processed,
+                        processedBy!!,
+                        granted!!
+                )
+                shouldMonitor != null -> accessRequestDao.updateShouldMonitor(
+                        params.userId,
+                        shouldMonitor
+                )
+                revoked != null -> accessRequestDao.updateRevoked(
+                        params.userId,
+                        revoked
+                )
+            }
+        }
     }
 
 }
 
 data class UpdateAccessRequestParams(
         val userId: Long,
-        val processed: Boolean,
-        val processedBy: String,
-        val accessGranted: Boolean
+        val processed: Boolean? = null,
+        val processedBy: String? = null,
+        val granted: Boolean? = null,
+        val revoked: Boolean? = null,
+        val shouldMonitor: Boolean? = null
 )

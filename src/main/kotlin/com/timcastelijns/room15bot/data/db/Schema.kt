@@ -23,5 +23,7 @@ object AccessRequests: IntIdTable() {
     val processedAt = long("processedAt").nullable()
     val processedBy = varchar("processedBy", 255).nullable()
     val createdAt = long("createdAt")
-    val accessGranted = bool("accessGranted").nullable()
+    val granted = bool("granted").nullable()
+    val revoked = bool("revoked").nullable()
+    val shouldMonitor = bool("shouldMonitor").default(false)
 }

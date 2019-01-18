@@ -4,6 +4,9 @@ import com.timcastelijns.chatexchange.chat.*
 import com.timcastelijns.room15bot.bot.Actor
 import com.timcastelijns.room15bot.bot.usecases.*
 import com.timcastelijns.room15bot.data.BuildConfig
+import com.timcastelijns.room15bot.data.db.AccessRequest
+import com.timcastelijns.room15bot.data.db.AccessRequestDao
+import com.timcastelijns.room15bot.data.db.AccessRequests
 import com.timcastelijns.room15bot.data.repositories.UserRepository
 import com.timcastelijns.room15bot.util.Command
 import com.timcastelijns.room15bot.util.CommandParser
@@ -11,6 +14,8 @@ import com.timcastelijns.room15bot.util.CommandType
 import com.timcastelijns.room15bot.util.MessageFormatter
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.update
 import org.slf4j.LoggerFactory
 import java.io.IOException
 import java.time.LocalDateTime
@@ -34,6 +39,7 @@ class MessageEventHandler(
         private val ahmadUseCase: AhmadUseCase,
         private val daveUseCase: DaveUseCase,
         private val userRepository: UserRepository,
+        private val accessRequestDao: AccessRequestDao,
         private val messageFormatter: MessageFormatter
 ) {
 
@@ -66,15 +72,24 @@ class MessageEventHandler(
     }
 
     private fun processMessage(message: Message) {
+        // If this message was posted by a user who was recently granted write access,
+        // make it so he is no longer monitored.
+        message.user?.let { user ->
+            accessRequestDao.updateShouldMonitor(user.id, shouldMonitor = false)
+        }
+
         if (message.content?.contains("dQw4w9WgXcQ") == true) {
             actor.acceptReply(messageFormatter.asRickRollAlertString(), message.id)
-        } else if (message.postedByMe) {
-            val matcher = requesteeUnableToUseChatRegex.toPattern().matcher(message.plainContent)
-            if (matcher.find()) {
-                val username = matcher.group(1)
-                rejectUserByName(username)
-            }
         }
+
+        // Automatic rejection of low rep users currently disabled
+//        else if (message.postedByMe) {
+//            val matcher = requesteeUnableToUseChatRegex.toPattern().matcher(message.plainContent)
+//            if (matcher.find()) {
+//                val username = matcher.group(1)
+//                rejectUser(username)
+//            }
+//        }
     }
 
     private suspend fun processCommandMessage(message: Message) {
@@ -146,6 +161,8 @@ class MessageEventHandler(
         return ChronoUnit.HOURS.between(ldt, LocalDateTime.now(ZoneOffset.UTC))
     }
 
+    private fun getLatestAccessRequest() = accessRequestDao.getLatestNotProcessed()
+
     private fun processAcceptCommand(messageId: Long, user: User, username: String?) {
         if (!user.isRoomOwner) {
             actor.acceptReply(messageFormatter.asNoAccessString(), messageId)
@@ -156,18 +173,20 @@ class MessageEventHandler(
 //            acceptUserByName(username)
             actor.acceptReply("Accepting by name is currently not supported", messageId)
         } else {
-            actor.provideLatestAccessRequestee()?.let { requestee ->
-                acceptUserByName(requestee.name)
-                updateAccessRequest(requestee, user, true)
+            getLatestAccessRequest()?.let { accessRequest ->
+                accessRequestDao.updateProcessed(accessRequest.userId, true, user.name, true)
+
+                acceptUser(accessRequest.userId, accessRequest.username)
+                updateAccessRequest(accessRequest, user, true)
             } ?: actor.acceptMessage(messageFormatter.asRequesteeNotFound())
         }
     }
 
-    private fun acceptUserByName(username: String) {
+    private fun acceptUser(userId: Long, username: String) {
         val message = acceptUserUseCase.execute(username)
         actor.acceptMessage(message)
 
-        setUserAccess(username, AccessLevel.READ_WRITE)
+        setUserAccess(userId, AccessLevel.READ_WRITE)
     }
 
     private fun processRejectCommand(messageId: Long, user: User, username: String?) {
@@ -180,23 +199,25 @@ class MessageEventHandler(
 //            rejectUserByName(username)
             actor.acceptReply("Rejecting by name is currently not supported", messageId)
         } else {
-            actor.provideLatestAccessRequestee()?.let { requestee ->
-                rejectUserByName(requestee.name)
-                updateAccessRequest(requestee, user, false)
+            getLatestAccessRequest()?.let { accessRequest ->
+                accessRequestDao.updateProcessed(accessRequest.userId, true, user.name, false)
+
+                rejectUser(accessRequest.userId, accessRequest.username)
+                updateAccessRequest(accessRequest, user, false)
             } ?: actor.acceptMessage(messageFormatter.asRequesteeNotFound())
         }
     }
 
-    private fun rejectUserByName(username: String) {
+    private fun rejectUser(userId: Long, username: String) {
         val rejectMessage = rejectUserUseCase.execute(username)
         actor.acceptMessage(rejectMessage)
 
-        setUserAccess(username, AccessLevel.DEFAULT)
+        setUserAccess(userId, AccessLevel.DEFAULT)
     }
 
-    private fun setUserAccess(username: String, accessLevel: AccessLevel) {
+    private fun setUserAccess(userId: Long, accessLevel: AccessLevel) {
         try {
-            actor.acceptAccessChangeForUserByName(username, accessLevel)
+            actor.acceptAccessChangeForUserById(userId, accessLevel)
         } catch (e: IllegalStateException) {
             actor.acceptMessage("Illegal state: ${e.message}")
         } catch (e: IllegalArgumentException) {
@@ -204,10 +225,10 @@ class MessageEventHandler(
         }
     }
 
-    private fun updateAccessRequest(requestee: User, user: User, accessGranted: Boolean) =
-        updateAccessRequestUseCase.execute(
-                UpdateAccessRequestParams(requestee.id, true, user.name, accessGranted)
-        )
+    private fun updateAccessRequest(accessRequest: AccessRequest, user: User, accessGranted: Boolean) =
+            updateAccessRequestUseCase.execute(
+                    UpdateAccessRequestParams(accessRequest.userId, true, user.name, accessGranted, null)
+            )
 
     private fun processLeaveCommand(user: User) {
         if (user.id == 1843331L) {

@@ -8,6 +8,7 @@ import com.timcastelijns.chatexchange.chat.AccessLevelChangedEvent
 import com.timcastelijns.chatexchange.chat.User
 import com.timcastelijns.room15bot.bot.Actor
 import com.timcastelijns.room15bot.bot.eventhandlers.AccessLevelChangedEventHandler
+import com.timcastelijns.room15bot.bot.usecases.CreateAccessRequestUseCase
 import com.timcastelijns.room15bot.bot.usecases.GetUserStatsUseCase
 import com.timcastelijns.room15bot.bot.usecases.UserStats
 import com.timcastelijns.room15bot.util.MessageFormatter
@@ -28,13 +29,18 @@ class AccessLevelChangedEventHandlerTest {
         onBlocking { execute(user) } doReturn userStats
     }
 
+    // TODO verify call
+    private val createAccessRequestUseCase = mock<CreateAccessRequestUseCase> {
+
+    }
+
     private lateinit var handler: AccessLevelChangedEventHandler
 
     @Before
     fun before() {
         MockitoAnnotations.initMocks(this)
 
-        handler = AccessLevelChangedEventHandler(getUserStatsUseCase, MessageFormatter())
+        handler = AccessLevelChangedEventHandler(getUserStatsUseCase, createAccessRequestUseCase, MessageFormatter())
     }
 
     @Test

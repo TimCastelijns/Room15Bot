@@ -103,7 +103,7 @@ class MessageFormatter {
 
     fun asUpdateErrorString() = "I tried to update, but something went wrong"
 
-    fun asRespondAcceptanceDeadlineExceeded(user: User) = "@${user.name.asPingName()} " +
+    fun asRespondAcceptanceDeadlineExceeded(username: String) = "@${username.asPingName()} " +
             "your access has been revoked because you did not respond"
 
     fun asRequesteeNotFound() = "I could not find a user that recently requested access"

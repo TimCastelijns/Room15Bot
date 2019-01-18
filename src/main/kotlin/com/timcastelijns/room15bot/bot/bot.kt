@@ -5,7 +5,11 @@ import com.timcastelijns.room15bot.bot.eventhandlers.AccessLevelChangedEventHand
 import com.timcastelijns.room15bot.bot.eventhandlers.MessageEventHandler
 import com.timcastelijns.room15bot.bot.monitors.ReminderMonitor
 import com.timcastelijns.room15bot.bot.usecases.GetBuildConfigUseCase
+import com.timcastelijns.room15bot.bot.usecases.UpdateAccessRequestParams
+import com.timcastelijns.room15bot.bot.usecases.UpdateAccessRequestUseCase
 import com.timcastelijns.room15bot.bot.usecases.truncate
+import com.timcastelijns.room15bot.data.db.AccessRequest
+import com.timcastelijns.room15bot.data.db.AccessRequestDao
 import com.timcastelijns.room15bot.util.MessageFormatter
 import com.timcastelijns.room15bot.util.sanitize
 import io.reactivex.Observable
@@ -27,6 +31,8 @@ class Bot(
         private val messageEventHandler: MessageEventHandler,
         private val reminderMonitor: ReminderMonitor,
         private val getBuildConfigUseCase: GetBuildConfigUseCase,
+        private val updateAccessRequestUseCase: UpdateAccessRequestUseCase,
+        private val accessRequestDao: AccessRequestDao,
         private val messageFormatter: MessageFormatter
 ) : CoroutineScope, Actor {
 
@@ -47,9 +53,6 @@ class Bot(
     private val disposables = CompositeDisposable()
 
     private val outboundMessageQueue = LinkedList<OutboundMessage>()
-
-    private val recentAccessRequests = mutableSetOf<AccessRequest>()
-    private val recentAccessGrants = mutableSetOf<AccessGrant>()
 
     fun observeLife(): Observable<Boolean> {
         return aliveSubject.hide()
@@ -80,10 +83,6 @@ class Bot(
     fun start() {
         room.accessLevelChangedEventListener = {
             launch {
-                if (it.accessLevel == AccessLevel.REQUEST) {
-                    recentAccessRequests += AccessRequest(it.targetUser, Instant.now())
-                }
-
                 accessLevelChangedEventHandler.handle(it, this@Bot)
             }
         }
@@ -92,10 +91,6 @@ class Bot(
             launch {
                 logger.debug("${messagePostedEvent.userName}: ${messagePostedEvent.message.content?.sanitize()?.truncate(80)}")
                 messageEventHandler.handle(messagePostedEvent, this@Bot)
-
-                // If this message was posted by a user who was recently granted write access,
-                // make it so he is no longer monitored.
-                recentAccessGrants.firstOrNull { it.user.id == messagePostedEvent.userId }?.shouldMonitor = false
             }
         }
 
@@ -116,18 +111,21 @@ class Bot(
         val disposable = Observable.interval(5, TimeUnit.MINUTES)
                 .observeOn(Schedulers.io())
                 .subscribe {
+                    val recentAccessGrants = accessRequestDao.getRecentGrantsToMonitor()
                     logger.debug("Checking access grants, have ${recentAccessGrants.size}")
-                    recentAccessGrants.filter { accessGrant -> accessGrant.shouldMonitor }
-                            .forEach { accessGrant ->
-                                if (accessGrant.respondDeadlineExceeded) {
-                                    logger.debug("deadline exceeded for ${accessGrant.user.name}. Granted at ${accessGrant.timestamp}")
-                                    acceptAccessChangeForUserByName(accessGrant.user.name, AccessLevel.DEFAULT)
 
-                                    // Access is removed, this data is no longer needed.
-                                    recentAccessGrants.remove(accessGrant)
-                                    acceptMessage(messageFormatter.asRespondAcceptanceDeadlineExceeded(accessGrant.user))
-                                }
-                            }
+                    recentAccessGrants.forEach { accessGrant ->
+                        if (accessGrant.respondDeadlineExceeded) {
+                            logger.debug("deadline exceeded for ${accessGrant.username}. Granted at ${accessGrant.processedAt}")
+                            acceptAccessChangeForUserById(accessGrant.userId, AccessLevel.DEFAULT)
+
+                            // Access is removed, stop monitoring.
+                            val params = UpdateAccessRequestParams(accessGrant.userId, shouldMonitor = false)
+                            updateAccessRequestUseCase.execute(params)
+
+                            acceptMessage(messageFormatter.asRespondAcceptanceDeadlineExceeded(accessGrant.username))
+                        }
+                    }
                 }
 
         disposables.add(disposable)
@@ -156,8 +154,6 @@ class Bot(
         }
     }
 
-    override fun provideLatestAccessRequestee() = recentAccessRequests.filterNot { it.processed }.lastOrNull()?.user
-
     override fun acceptMessage(message: String) {
         outboundMessageQueue.add(OutboundMessage(message))
         logger.debug("queued message: $message")
@@ -168,27 +164,25 @@ class Bot(
         logger.debug("queued reply: $message")
     }
 
-    override fun acceptAccessChangeForUserByName(username: String, accessLevel: AccessLevel) {
-        val user = recentAccessRequests.firstOrNull { it.user.name.equals(username, ignoreCase = true) }?.user
-                ?: throw IllegalStateException("Cannot find requestee named $username")
-
+    override fun acceptAccessChangeForUserById(userId: Long, accessLevel: AccessLevel) {
         val userAccess = when (accessLevel) {
             AccessLevel.DEFAULT -> "remove"
             AccessLevel.READ -> "read-only"
             AccessLevel.READ_WRITE -> "read-write"
             else -> throw IllegalArgumentException("Cannot set user access to $accessLevel")
         }
-        room.setUserAccess(user.id, userAccess)
-        logger.info("set access for '$username to $userAccess")
+        room.setUserAccess(userId, userAccess)
+        logger.info("set access for $userId to $userAccess")
 
         if (accessLevel == AccessLevel.READ_WRITE) {
-            // Add users who have just been granted write access to the collection
+            // Track when users have just been granted write access
             // so we can monitor if they respond in a timely fashion.
-            recentAccessGrants.add(AccessGrant(user, Instant.now()))
+            val params = UpdateAccessRequestParams(userId, shouldMonitor = true)
+            updateAccessRequestUseCase.execute(params)
+        } else if (accessLevel == AccessLevel.DEFAULT) {
+            val params = UpdateAccessRequestParams(userId, revoked = true)
+            updateAccessRequestUseCase.execute(params)
         }
-
-        // This user is processed.
-        recentAccessRequests.firstOrNull { it.user.name.equals(username, ignoreCase = true) }?.processed = true
     }
 
     override fun leaveRoom() {
@@ -206,19 +200,14 @@ class Bot(
             val targetMessageId: Long? = null
     )
 
-    private val AccessGrant.respondDeadlineExceeded
-        get() = Instant.now().isAfter(timestamp.plusMillis(RESPOND_TO_ACCEPTANCE_DEADLINE))
-
-    private data class AccessRequest(val user: User, val timestamp: Instant, var processed: Boolean = false)
-
-    private data class AccessGrant(val user: User, val timestamp: Instant, var shouldMonitor: Boolean = true)
+    private val AccessRequest.respondDeadlineExceeded
+        get() = Instant.now().isAfter(Instant.ofEpochMilli(processedAt!!).plusMillis(RESPOND_TO_ACCEPTANCE_DEADLINE))
 
 }
 
 interface Actor {
-    fun provideLatestAccessRequestee(): User?
     fun acceptMessage(message: String)
     fun acceptReply(message: String, targetMessageId: Long)
-    fun acceptAccessChangeForUserByName(username: String, accessLevel: AccessLevel)
+    fun acceptAccessChangeForUserById(userId: Long, accessLevel: AccessLevel)
     fun leaveRoom()
 }
