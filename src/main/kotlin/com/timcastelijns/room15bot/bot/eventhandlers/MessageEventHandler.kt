@@ -178,7 +178,7 @@ class MessageEventHandler(
 
                 acceptUser(accessRequest.userId, accessRequest.username)
                 updateAccessRequest(accessRequest, user, true)
-            } ?: actor.acceptMessage(messageFormatter.asRequesteeNotFound())
+            } ?: actor.acceptReply(messageFormatter.asRequesteeNotFound(), messageId)
         }
     }
 
@@ -204,7 +204,7 @@ class MessageEventHandler(
 
                 rejectUser(accessRequest.userId, accessRequest.username)
                 updateAccessRequest(accessRequest, user, false)
-            } ?: actor.acceptMessage(messageFormatter.asRequesteeNotFound())
+            } ?: actor.acceptReply(messageFormatter.asRequesteeNotFound(), messageId)
         }
     }
 

@@ -172,7 +172,7 @@ class MessageFormatterTest {
 
     @Test
     fun testRequesteeNotFound() {
-        val expected = "I could not find a user that recently requested access"
+        val expected = "I could not find a requestee that needs processing."
         val output = messageFormatter.asRequesteeNotFound()
 
         assertEquals(expected, output)

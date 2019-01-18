@@ -106,7 +106,7 @@ class MessageFormatter {
     fun asRespondAcceptanceDeadlineExceeded(username: String) = "@${username.asPingName()} " +
             "your access has been revoked because you did not respond"
 
-    fun asRequesteeNotFound() = "I could not find a user that recently requested access"
+    fun asRequesteeNotFound() = "I could not find a requestee that needs processing."
 
 }
 
