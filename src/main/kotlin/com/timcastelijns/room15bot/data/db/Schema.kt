@@ -29,6 +29,7 @@ object StarredMessages : LongIdTable() {
     val message = varchar("message", 500)
     val stars = integer("stars")
     val permalink = varchar("permalink", 255)
+    val age = integer("age") // Age in days since today. Posted today = 0 days of age.
 }
 
 object Reminders : IntIdTable() {

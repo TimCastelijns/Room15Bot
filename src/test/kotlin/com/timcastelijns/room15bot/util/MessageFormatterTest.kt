@@ -16,14 +16,16 @@ class MessageFormatterTest {
     private val shortData = StarredMessage("X",
             "Lol",
             1,
-            "")
+            "",
+            0)
 
     private val longData = StarredMessage("A random name",
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor " +
                     "incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud " +
                     "exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat",
             750,
-            "")
+            "",
+            0)
 
     private val weirdData = StarredMessage("ʇǝǝʞs uoɾ",
             "try {\n" +
@@ -31,7 +33,8 @@ class MessageFormatterTest {
                     "        } catch() {\n" +
                     "            ┬─┬\uFEFF | 9 |",
             1,
-            "")
+            "",
+            0)
 
     private val skeet = User(
             1,

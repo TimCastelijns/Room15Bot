@@ -14,6 +14,7 @@ class StarredMessageDao {
                 this[StarredMessages.message] = it.message.truncate()
                 this[StarredMessages.stars] = it.stars
                 this[StarredMessages.permalink] = it.permanentLink
+                this[StarredMessages.age] = it.age
             }
         }
     }
@@ -22,6 +23,17 @@ class StarredMessageDao {
         var list = emptyList<StarredMessage>()
         transaction {
             list = StarredMessages.selectAll()
+                    .orderBy(StarredMessages.stars to false)
+                    .limit(limit)
+                    .map { it.toStarredMessage() }
+        }
+        return list
+    }
+
+    fun getRecentStarredMessages(days: Int, limit: Int): List<StarredMessage> {
+        var list = emptyList<StarredMessage>()
+        transaction {
+            list = StarredMessages.select { StarredMessages.age lessEq days }
                     .orderBy(StarredMessages.stars to false)
                     .limit(limit)
                     .map { it.toStarredMessage() }
@@ -95,6 +107,7 @@ private fun ResultRow.toStarredMessage() = with(this) {
             this[StarredMessages.username],
             this[StarredMessages.message],
             this[StarredMessages.stars],
-            this[StarredMessages.permalink]
+            this[StarredMessages.permalink],
+            this[StarredMessages.age]
     )
 }

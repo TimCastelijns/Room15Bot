@@ -16,7 +16,8 @@ data class StarredMessage(
         val username: String,
         val message: String,
         val stars: Int,
-        val permanentLink: String
+        val permanentLink: String,
+        val age: Int
 )
 
 data class UserStats(
