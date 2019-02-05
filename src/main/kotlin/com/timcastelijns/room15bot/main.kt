@@ -30,13 +30,12 @@ class Application : KoinComponent {
     private val logger = LoggerFactory.getLogger(Application::class.java)
 
     private val configRepository: ConfigRepository by inject()
-    private val database: Database by inject()
     private val bot: Bot by inject()
 
     init {
         logger.info("starting")
 
-        database.connect()
+        Database.connect(configRepository.getDatabaseConfig())
         val countDownLatch = CountDownLatch(1)
 
         val credentials = configRepository.getBotCredentials()

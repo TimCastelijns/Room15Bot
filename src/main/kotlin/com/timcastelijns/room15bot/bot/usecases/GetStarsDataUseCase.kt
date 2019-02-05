@@ -1,7 +1,7 @@
 package com.timcastelijns.room15bot.bot.usecases
 
+import com.timcastelijns.room15bot.data.StarsData
 import com.timcastelijns.room15bot.data.db.StarredMessageDao
-import com.timcastelijns.room15bot.data.repositories.StarredMessage
 
 class GetStarsDataUseCase(
         private val starredMessageDao: StarredMessageDao
@@ -30,9 +30,3 @@ class GetStarsDataUseCase(
                     starredMessageDao.getStarCount())
 
 }
-
-data class StarsData(
-        val starredMessages: List<StarredMessage>,
-        val totalStarredMessages: Int,
-        val totalStars: Int
-)

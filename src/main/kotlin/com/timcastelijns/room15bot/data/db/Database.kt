@@ -1,16 +1,20 @@
 package com.timcastelijns.room15bot.data.db
 
+import com.timcastelijns.room15bot.data.DatabaseConfig
 import com.timcastelijns.room15bot.data.repositories.ConfigRepository
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
 
-class Database(
-        private val configRepository: ConfigRepository
-) {
+object Database {
 
-    fun connect() {
-        val config = configRepository.getDatabaseConfig()
+    private val tables = listOf(
+            Users,
+            StarredMessages,
+            Reminders
+    )
+
+    fun connect(config: DatabaseConfig, andInitialize: Boolean = true) {
         Database.connect(
                 config.url,
                 config.driver,
@@ -18,15 +22,24 @@ class Database(
                 config.password
         )
 
-        createTables()
+        if (andInitialize) {
+            initialize()
+        }
     }
+
+    fun initialize() = createTables()
 
     private fun createTables() {
         transaction {
-            SchemaUtils.createMissingTablesAndColumns(
-                    StarredMessages,
-                    Reminders
-            )
+            SchemaUtils.createMissingTablesAndColumns(*tables.toTypedArray())
+        }
+    }
+
+    fun wipe() = dropTables()
+
+    private fun dropTables() {
+        transaction {
+            SchemaUtils.drop(*tables.toTypedArray())
         }
     }
 

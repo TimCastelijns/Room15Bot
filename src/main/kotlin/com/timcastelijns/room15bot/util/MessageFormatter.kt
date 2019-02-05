@@ -1,10 +1,10 @@
 package com.timcastelijns.room15bot.util
 
 import com.timcastelijns.chatexchange.chat.User
-import com.timcastelijns.room15bot.bot.usecases.StarsData
-import com.timcastelijns.room15bot.bot.usecases.UserStats
 import com.timcastelijns.room15bot.bot.usecases.truncate
 import com.timcastelijns.room15bot.data.BuildConfig
+import com.timcastelijns.room15bot.data.StarsData
+import com.timcastelijns.room15bot.data.UserStats
 import java.time.Instant
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter

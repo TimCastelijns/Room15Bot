@@ -1,7 +1,7 @@
 package com.timcastelijns.room15bot.data.db
 
 import com.timcastelijns.room15bot.bot.usecases.truncate
-import com.timcastelijns.room15bot.data.repositories.StarredMessage
+import com.timcastelijns.room15bot.data.StarredMessage
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 

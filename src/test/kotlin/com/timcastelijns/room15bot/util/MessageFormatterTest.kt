@@ -1,10 +1,10 @@
 package com.timcastelijns.room15bot.util
 
-import com.timcastelijns.room15bot.bot.usecases.StarsData
-import com.timcastelijns.room15bot.bot.usecases.UserStats
 import com.timcastelijns.chatexchange.chat.User
 import com.timcastelijns.room15bot.data.BuildConfig
-import com.timcastelijns.room15bot.data.repositories.StarredMessage
+import com.timcastelijns.room15bot.data.StarredMessage
+import com.timcastelijns.room15bot.data.StarsData
+import com.timcastelijns.room15bot.data.UserStats
 import org.junit.Test
 import java.time.Instant
 import kotlin.test.assertEquals

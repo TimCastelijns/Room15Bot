@@ -9,6 +9,7 @@ import com.timcastelijns.room15bot.bot.usecases.*
 import com.timcastelijns.room15bot.data.db.Database
 import com.timcastelijns.room15bot.data.db.ReminderDao
 import com.timcastelijns.room15bot.data.db.StarredMessageDao
+import com.timcastelijns.room15bot.data.db.UserDao
 import com.timcastelijns.room15bot.data.repositories.ConfigRepository
 import com.timcastelijns.room15bot.data.repositories.StarredMessageRepository
 import com.timcastelijns.room15bot.data.repositories.UserRepository
@@ -28,8 +29,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 
 private val module: Module = module {
-
-    single<Database>()
 
     single<Bot>()
 
@@ -57,6 +56,7 @@ private val module: Module = module {
 
     single<ReminderMonitor>()
 
+    single<UserDao>()
     single<StarredMessageDao>()
     single<ReminderDao>()
 

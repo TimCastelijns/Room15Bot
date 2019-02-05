@@ -22,6 +22,7 @@ private const val PROPERTY_BOT_PASSWORD = "botpassword"
 private const val PROPERTY_DB_USER = "dbuser"
 private const val PROPERTY_DB_PASSWORD = "dbpassword"
 private const val PROPERTY_DB_URL = "dburl"
+private const val PROPERTY_DB_URL_TEST = "dburltest"
 private const val PROPERTY_DB_DRIVER = "dbdriver"
 
 class ConfigRepository {
@@ -39,7 +40,7 @@ class ConfigRepository {
         return Credentials(email, password)
     }
 
-    fun getDatabaseConfig(): DatabaseConfig {
+    fun getDatabaseConfig(test: Boolean = false): DatabaseConfig {
         val properties = Properties()
 
         FileInputStream(CONFIG_FILE_PATH).use {
@@ -48,7 +49,11 @@ class ConfigRepository {
 
         val user = properties.getProperty(PROPERTY_DB_USER)
         val password = properties.getProperty(PROPERTY_DB_PASSWORD)
-        val url = properties.getProperty(PROPERTY_DB_URL)
+        val url = if (test) {
+            properties.getProperty(PROPERTY_DB_URL_TEST)
+        } else {
+            properties.getProperty(PROPERTY_DB_URL)
+        }
         val driver = properties.getProperty(PROPERTY_DB_DRIVER)
 
         return DatabaseConfig(user, password, url, driver)
