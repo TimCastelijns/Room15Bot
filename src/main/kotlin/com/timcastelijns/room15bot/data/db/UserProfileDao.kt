@@ -7,7 +7,7 @@ import org.jetbrains.exposed.sql.update
 
 class UserProfileDao {
 
-    fun create(user: User, nickname: String, age: Int) {
+    fun create(user: User, nickname: String?, age: Int?) {
         transaction {
             val id = UserProfiles.insert {
                 it[UserProfiles.nickname] = nickname

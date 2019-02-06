@@ -4,6 +4,7 @@ import com.timcastelijns.chatexchange.chat.User
 import com.timcastelijns.room15bot.bot.usecases.truncate
 import com.timcastelijns.room15bot.data.BuildConfig
 import com.timcastelijns.room15bot.data.StarsData
+import com.timcastelijns.room15bot.data.UserProfile
 import com.timcastelijns.room15bot.data.UserStats
 import java.time.Instant
 import java.time.ZoneOffset
@@ -98,6 +99,11 @@ class MessageFormatter {
     fun asBenzString() = "\uD83C\uDF1F Nice Benz bro! \uD83C\uDF1F"
 
     fun asDaveString(tiredOf: String) = tiredOf
+
+    fun asUserProfile(profile: UserProfile) =
+            "[${profile.nickname ?: ""}] [${profile.age?: ""}]"
+
+    fun asUserProfileUpdated() = "Profile updated. Try !profile to view it"
 
     fun asBeRightBackString() = "Ok, be right back"
 

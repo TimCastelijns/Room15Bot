@@ -41,7 +41,8 @@ class UserDao {
 private fun ResultRow.toUser() = with(this) {
     User(
             this[Users.id],
-            this[Users.name]
+            this[Users.name],
+            this[Users.profileId]
     )
 }
 

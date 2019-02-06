@@ -2,13 +2,14 @@ package com.timcastelijns.room15bot.data
 
 data class User(
         val id: Long,
-        val name: String?
+        val name: String?,
+        val profileId: Int?
 )
 
 data class UserProfile(
         val id: Int,
-        val nickname: String,
-        val age: Int
+        val nickname: String?,
+        val age: Int?
 )
 
 data class StarredMessage(
