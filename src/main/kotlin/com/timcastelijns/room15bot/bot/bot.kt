@@ -80,15 +80,15 @@ class Bot(
     }
 
     fun start() {
-//        room.accessLevelChangedEventListener = {
-//            launch {
-//                if (it.accessLevel == AccessLevel.REQUEST) {
-//                    recentAccessRequests += AccessRequest(it.targetUser, Instant.now())
-//                }
-//
-//                accessLevelChangedEventHandler.handle(it, this@Bot)
-//            }
-//        }
+        room.accessLevelChangedEventListener = {
+            launch {
+                if (it.accessLevel == AccessLevel.REQUEST) {
+                    recentAccessRequests += AccessRequest(it.targetUser, Instant.now())
+                }
+
+                accessLevelChangedEventHandler.handle(it, this@Bot)
+            }
+        }
 
         room.messagePostedEventListener = { messagePostedEvent ->
             launch {
@@ -96,25 +96,25 @@ class Bot(
                 userDao.create(messagePostedEvent.userId, messagePostedEvent.userName)
             }
 
-//            launch {
-//                logger.debug("${messagePostedEvent.userName}: ${messagePostedEvent.message.content?.sanitize()?.truncate(80)}")
-//                messageEventHandler.handle(messagePostedEvent, this@Bot)
-//
-//                // If this message was posted by a user who was recently granted write access,
-//                // make it so he is no longer monitored.
-//                recentAccessGrants.firstOrNull { it.user.id == messagePostedEvent.userId }?.shouldMonitor = false
-//            }
+            launch {
+                logger.debug("${messagePostedEvent.userName}: ${messagePostedEvent.message.content?.sanitize()?.truncate(80)}")
+                messageEventHandler.handle(messagePostedEvent, this@Bot)
+
+                // If this message was posted by a user who was recently granted write access,
+                // make it so he is no longer monitored.
+                recentAccessGrants.firstOrNull { it.user.id == messagePostedEvent.userId }?.shouldMonitor = false
+            }
         }
 
-//        room.messageEditedEventListener = {
-//            launch {
-//                messageEventHandler.handle(it, this@Bot)
-//            }
-//        }
-//
-//        monitorReminders()
-//        monitorAccessGrants()
-//        monitorOutboundMessageQueue()
+        room.messageEditedEventListener = {
+            launch {
+                messageEventHandler.handle(it, this@Bot)
+            }
+        }
+
+        monitorReminders()
+        monitorAccessGrants()
+        monitorOutboundMessageQueue()
     }
 
     private fun monitorReminders() = disposables.add(reminderMonitor.start(this))
