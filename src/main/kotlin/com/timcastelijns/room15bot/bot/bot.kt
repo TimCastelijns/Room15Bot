@@ -6,6 +6,7 @@ import com.timcastelijns.room15bot.bot.eventhandlers.MessageEventHandler
 import com.timcastelijns.room15bot.bot.monitors.ReminderMonitor
 import com.timcastelijns.room15bot.bot.usecases.GetBuildConfigUseCase
 import com.timcastelijns.room15bot.bot.usecases.truncate
+import com.timcastelijns.room15bot.data.db.UserDao
 import com.timcastelijns.room15bot.util.MessageFormatter
 import com.timcastelijns.room15bot.util.sanitize
 import io.reactivex.Observable
@@ -27,7 +28,8 @@ class Bot(
         private val messageEventHandler: MessageEventHandler,
         private val reminderMonitor: ReminderMonitor,
         private val getBuildConfigUseCase: GetBuildConfigUseCase,
-        private val messageFormatter: MessageFormatter
+        private val messageFormatter: MessageFormatter,
+        private val userDao: UserDao
 ) : CoroutineScope, Actor {
 
     companion object {
@@ -78,36 +80,41 @@ class Bot(
     }
 
     fun start() {
-        room.accessLevelChangedEventListener = {
-            launch {
-                if (it.accessLevel == AccessLevel.REQUEST) {
-                    recentAccessRequests += AccessRequest(it.targetUser, Instant.now())
-                }
-
-                accessLevelChangedEventHandler.handle(it, this@Bot)
-            }
-        }
+//        room.accessLevelChangedEventListener = {
+//            launch {
+//                if (it.accessLevel == AccessLevel.REQUEST) {
+//                    recentAccessRequests += AccessRequest(it.targetUser, Instant.now())
+//                }
+//
+//                accessLevelChangedEventHandler.handle(it, this@Bot)
+//            }
+//        }
 
         room.messagePostedEventListener = { messagePostedEvent ->
             launch {
-                logger.debug("${messagePostedEvent.userName}: ${messagePostedEvent.message.content?.sanitize()?.truncate(80)}")
-                messageEventHandler.handle(messagePostedEvent, this@Bot)
-
-                // If this message was posted by a user who was recently granted write access,
-                // make it so he is no longer monitored.
-                recentAccessGrants.firstOrNull { it.user.id == messagePostedEvent.userId }?.shouldMonitor = false
+                logger.debug("${messagePostedEvent.userId} - ${messagePostedEvent.userName}")
+                userDao.create(messagePostedEvent.userId, messagePostedEvent.userName)
             }
+
+//            launch {
+//                logger.debug("${messagePostedEvent.userName}: ${messagePostedEvent.message.content?.sanitize()?.truncate(80)}")
+//                messageEventHandler.handle(messagePostedEvent, this@Bot)
+//
+//                // If this message was posted by a user who was recently granted write access,
+//                // make it so he is no longer monitored.
+//                recentAccessGrants.firstOrNull { it.user.id == messagePostedEvent.userId }?.shouldMonitor = false
+//            }
         }
 
-        room.messageEditedEventListener = {
-            launch {
-                messageEventHandler.handle(it, this@Bot)
-            }
-        }
-
-        monitorReminders()
-        monitorAccessGrants()
-        monitorOutboundMessageQueue()
+//        room.messageEditedEventListener = {
+//            launch {
+//                messageEventHandler.handle(it, this@Bot)
+//            }
+//        }
+//
+//        monitorReminders()
+//        monitorAccessGrants()
+//        monitorOutboundMessageQueue()
     }
 
     private fun monitorReminders() = disposables.add(reminderMonitor.start(this))
