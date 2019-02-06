@@ -14,6 +14,9 @@ class UserDaoTest {
         fun beforeClass() {
             val isCiBuild = System.getenv("CI")?.toBoolean() ?: false
             Assume.assumeFalse(isCiBuild)
+
+            val config = ConfigRepository().getDatabaseConfig(test = true)
+            Database.connect(config, andInitialize = false)
         }
 
         @AfterClass
@@ -26,9 +29,6 @@ class UserDaoTest {
 
     @Before
     fun before() {
-        val config = ConfigRepository().getDatabaseConfig(test = true)
-        Database.connect(config, andInitialize = false)
-
         Database.wipe()
         Database.initialize()
     }
