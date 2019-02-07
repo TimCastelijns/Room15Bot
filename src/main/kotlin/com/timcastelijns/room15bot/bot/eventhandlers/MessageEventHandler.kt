@@ -346,7 +346,10 @@ class MessageEventHandler(
 
 }
 
-private fun Message.isCommand() = content?.startsWith("!") ?: false
+private fun Message.isCommand() =
+        content?.run {
+            startsWith("!") && length > 1
+        } ?: false
 
 private val Message.postedByMe
     get() = user?.id == 9676629L
