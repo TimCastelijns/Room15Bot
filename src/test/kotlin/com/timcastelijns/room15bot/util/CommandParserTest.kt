@@ -111,7 +111,7 @@ class CommandParserTest {
 
     @Test
     fun testEditProfile() {
-        val command = "!profile [tim] [29]"
+        val command = "!editprofile [tim] [29]"
         assertTrue { parser.parse(command).type == CommandType.UPDATE_PROFILE }
         assertTrue { parser.parse(command).args == "[tim] [29]" }
     }
