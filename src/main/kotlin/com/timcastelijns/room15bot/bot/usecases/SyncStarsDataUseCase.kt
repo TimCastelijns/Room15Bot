@@ -1,7 +1,7 @@
 package com.timcastelijns.room15bot.bot.usecases
 
+import com.timcastelijns.room15bot.data.StarredMessage
 import com.timcastelijns.room15bot.data.db.StarredMessageDao
-import com.timcastelijns.room15bot.data.repositories.StarredMessage
 import com.timcastelijns.room15bot.data.repositories.StarredMessageRepository
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async

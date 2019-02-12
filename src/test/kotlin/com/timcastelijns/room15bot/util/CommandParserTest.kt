@@ -103,6 +103,20 @@ class CommandParserTest {
     }
 
     @Test
+    fun testProfile() {
+        val command = "!profile"
+        assertTrue { parser.parse(command).type == CommandType.PROFILE }
+        assertNull(parser.parse(command).args)
+    }
+
+    @Test
+    fun testEditProfile() {
+        val command = "!editprofile [tim] [29]"
+        assertTrue { parser.parse(command).type == CommandType.UPDATE_PROFILE }
+        assertTrue { parser.parse(command).args == "[tim] [29]" }
+    }
+
+    @Test
     fun testAccept() {
         var command = "!accept Random Username123"
         assertTrue { parser.parse(command).type == CommandType.ACCEPT }

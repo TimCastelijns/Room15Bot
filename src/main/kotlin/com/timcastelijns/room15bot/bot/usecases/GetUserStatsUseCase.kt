@@ -1,6 +1,7 @@
 package com.timcastelijns.room15bot.bot.usecases
 
 import com.timcastelijns.chatexchange.chat.User
+import com.timcastelijns.room15bot.data.UserStats
 import com.timcastelijns.room15bot.data.repositories.UserStatsRepository
 
 class GetUserStatsUseCase(
@@ -26,10 +27,3 @@ class GetUserStatsUseCase(
     private fun String.stripUnnecessaryDecimal() = removeSuffix(".0")
 
 }
-
-data class UserStats(
-        val reputation: Int,
-        val nrQuestions: Int,
-        val nrAnswers: Int,
-        val formattedRatio: String
-)

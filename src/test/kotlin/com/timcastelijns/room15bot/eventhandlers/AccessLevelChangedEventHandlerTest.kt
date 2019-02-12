@@ -9,7 +9,7 @@ import com.timcastelijns.chatexchange.chat.User
 import com.timcastelijns.room15bot.bot.Actor
 import com.timcastelijns.room15bot.bot.eventhandlers.AccessLevelChangedEventHandler
 import com.timcastelijns.room15bot.bot.usecases.GetUserStatsUseCase
-import com.timcastelijns.room15bot.bot.usecases.UserStats
+import com.timcastelijns.room15bot.data.UserStats
 import com.timcastelijns.room15bot.util.MessageFormatter
 import kotlinx.coroutines.runBlocking
 import org.junit.Before

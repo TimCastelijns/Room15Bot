@@ -1,10 +1,11 @@
 package com.timcastelijns.room15bot.util
 
 import com.timcastelijns.chatexchange.chat.User
-import com.timcastelijns.room15bot.bot.usecases.StarsData
-import com.timcastelijns.room15bot.bot.usecases.UserStats
 import com.timcastelijns.room15bot.bot.usecases.truncate
 import com.timcastelijns.room15bot.data.BuildConfig
+import com.timcastelijns.room15bot.data.StarsData
+import com.timcastelijns.room15bot.data.UserProfile
+import com.timcastelijns.room15bot.data.UserStats
 import java.time.Instant
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
@@ -14,9 +15,10 @@ class MessageFormatter {
     fun asHelpString() = "You can find information on what I can do " +
             "[here](https://github.com/TimCastelijns/Room15Bot#usage)"
 
-    fun asStatusString(buildConfig: BuildConfig) =
+    fun asStatusString(buildConfig: BuildConfig, uptimeHours: Long = 0) =
             "Online since ${buildConfig.buildTime} (UTC). " +
-                    "Running on ${buildConfig.branch}@${buildConfig.commit}"
+                    "Running on ${buildConfig.branch}@${buildConfig.commit}. " +
+                    "Uptime: ${uptimeHours}h"
 
     fun asTableString(starsData: StarsData) = with(starsData) {
         if (starredMessages.isEmpty()) {
@@ -38,7 +40,7 @@ class MessageFormatter {
         val messageHeader = "Message ($totalStarredMessages)".padEnd(messageColumnMaxLength)
         val starsHeader = "Stars ($totalStars)"
 
-        val header = " $userHeader | $messageHeader | $starsHeader | Link"
+        val header = " $userHeader | $messageHeader | $starsHeader"
         val separator = "-".repeat(header.length)
 
         val table = mutableListOf<String>()
@@ -48,9 +50,8 @@ class MessageFormatter {
         starredMessages.forEach {
             val user = it.username.truncate(nameColumnLength).padEnd(nameColumnLength)
             val message = it.message.sanitize().truncate(messageColumnMaxLength).padEnd(messageColumnMaxLength)
-            val stars = it.stars.toString().truncate(starsHeader.length).padEnd(starsHeader.length)
-            val permanentLink = ""
-            val line = " $user | $message | $stars |$permanentLink"
+            val stars = it.stars.toString().truncate(starsHeader.length)
+            val line = " $user | $message | $stars"
             table.add(line)
         }
 
@@ -98,6 +99,11 @@ class MessageFormatter {
     fun asBenzString() = "\uD83C\uDF1F Nice Benz bro! \uD83C\uDF1F"
 
     fun asDaveString(tiredOf: String) = tiredOf
+
+    fun asUserProfile(profile: UserProfile) =
+            "[${profile.nickname ?: ""}] [${profile.age?: ""}]"
+
+    fun asUserProfileUpdated() = "Profile updated. Try !profile to view it"
 
     fun asBeRightBackString() = "Ok, be right back"
 

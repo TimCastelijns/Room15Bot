@@ -1,10 +1,10 @@
 package com.timcastelijns.room15bot.util
 
-import com.timcastelijns.room15bot.bot.usecases.StarsData
-import com.timcastelijns.room15bot.bot.usecases.UserStats
 import com.timcastelijns.chatexchange.chat.User
 import com.timcastelijns.room15bot.data.BuildConfig
-import com.timcastelijns.room15bot.data.repositories.StarredMessage
+import com.timcastelijns.room15bot.data.StarredMessage
+import com.timcastelijns.room15bot.data.StarsData
+import com.timcastelijns.room15bot.data.UserStats
 import org.junit.Test
 import java.time.Instant
 import kotlin.test.assertEquals
@@ -54,10 +54,10 @@ class MessageFormatterTest {
 
     @Test
     fun testStatus() {
-        val buildConfig = BuildConfig("0.1", "master", "abcd1234", "epoch")
-        val output = messageFormatter.asStatusString(buildConfig)
+        val buildConfig = BuildConfig("0.1", "master", "abcd1234", "01-01-1970 08:00")
+        val output = messageFormatter.asStatusString(buildConfig, 200)
 
-        assertEquals("Online since epoch (UTC). Running on master@abcd1234", output)
+        assertEquals("Online since 01-01-1970 08:00 (UTC). Running on master@abcd1234. Uptime: 200h", output)
     }
 
     @Test
@@ -65,9 +65,9 @@ class MessageFormatterTest {
         val data = StarsData(listOf(shortData), 1, 1)
 
         val expected = """
-             User   | Message (1)                                      | Stars (1) | Link
-            -----------------------------------------------------------------------------
-             X      | Lol                                              | 1         |
+             User   | Message (1)                                      | Stars (1)
+            ----------------------------------------------------------------------
+             X      | Lol                                              | 1
         """.replaceIndent("    ")
 
         val output = messageFormatter.asTableString(data)
@@ -80,9 +80,9 @@ class MessageFormatterTest {
         val data = StarsData(listOf(longData), 13436, 999)
 
         val expected = """
-             User       | Message (13436)                                  | Stars (999) | Link
-            -----------------------------------------------------------------------------------
-             A random n | Lorem ipsum dolor sit amet, consectetur adipisci | 750         |
+             User       | Message (13436)                                  | Stars (999)
+            ----------------------------------------------------------------------------
+             A random n | Lorem ipsum dolor sit amet, consectetur adipisci | 750
         """.replaceIndent("    ")
 
         val output = messageFormatter.asTableString(data)
@@ -95,9 +95,9 @@ class MessageFormatterTest {
         val data = StarsData(listOf(weirdData), 1, 1)
 
         val expected = """
-             User      | Message (1)                                      | Stars (1) | Link
-            --------------------------------------------------------------------------------
-             ʇǝǝʞs uoɾ | try {             (╯°□°）╯︵ ┻━┻         } catch() | 1         |
+             User      | Message (1)                                      | Stars (1)
+            -------------------------------------------------------------------------
+             ʇǝǝʞs uoɾ | try {             (╯°□°）╯︵ ┻━┻         } catch() | 1
         """.replaceIndent("    ")
 
         val output = messageFormatter.asTableString(data)
@@ -110,11 +110,11 @@ class MessageFormatterTest {
         val data = StarsData(listOf(shortData, longData, weirdData), 3, 752)
 
         val expected = """
-             User       | Message (3)                                      | Stars (752) | Link
-            -----------------------------------------------------------------------------------
-             X          | Lol                                              | 1           |
-             A random n | Lorem ipsum dolor sit amet, consectetur adipisci | 750         |
-             ʇǝǝʞs uoɾ  | try {             (╯°□°）╯︵ ┻━┻         } catch() | 1           |
+             User       | Message (3)                                      | Stars (752)
+            ----------------------------------------------------------------------------
+             X          | Lol                                              | 1
+             A random n | Lorem ipsum dolor sit amet, consectetur adipisci | 750
+             ʇǝǝʞs uoɾ  | try {             (╯°□°）╯︵ ┻━┻         } catch() | 1
         """.replaceIndent("    ")
 
         val output = messageFormatter.asTableString(data)

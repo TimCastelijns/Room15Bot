@@ -19,9 +19,12 @@ class CommandParser {
     private val ahmadPattern = caseInsensitivePattern("!ahmad")
     private val benzPattern = caseInsensitivePattern("!\\uD83D\\uDE97")
     private val davePattern = caseInsensitivePattern("!dave")
+    private val profilePattern = caseInsensitivePattern("!profile")
+    private val updateProfilePattern = caseInsensitivePattern("!editprofile\\s(.*)")
 
     private val acceptPattern = caseInsensitivePattern("!accept(?:\\s)?$anyUsernameRegex?")
     private val rejectPattern = caseInsensitivePattern("!reject\\s?$anyUsernameRegex?")
+
     private val leavePattern = caseInsensitivePattern("!(?:shoo|leave|die)")
     private val syncStarsPattern = caseInsensitivePattern("!syncstars")
     private val updatePattern = caseInsensitivePattern("!update")
@@ -39,6 +42,8 @@ class CommandParser {
             ahmadPattern to CommandType.AHMAD,
             benzPattern to CommandType.BENZ,
             davePattern to CommandType.DAVE,
+            profilePattern to CommandType.PROFILE,
+            updateProfilePattern to CommandType.UPDATE_PROFILE,
             acceptPattern to CommandType.ACCEPT,
             rejectPattern to CommandType.REJECT,
             leavePattern to CommandType.LEAVE,
@@ -94,6 +99,8 @@ enum class CommandType {
     STARS_ANY,
     STARS_USER,
     REMIND_ME,
+    PROFILE,
+    UPDATE_PROFILE,
 
     // Custom commands.
     ADAM,

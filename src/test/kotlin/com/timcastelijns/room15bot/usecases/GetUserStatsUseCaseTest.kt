@@ -4,7 +4,6 @@ import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import com.timcastelijns.chatexchange.chat.User
 import com.timcastelijns.room15bot.bot.usecases.GetUserStatsUseCase
-import com.timcastelijns.room15bot.bot.usecases.UserStats
 import com.timcastelijns.room15bot.data.repositories.UserStatsRepository
 import kotlinx.coroutines.runBlocking
 import org.junit.Before

@@ -29,8 +29,13 @@ class FutureDateExpressionParserTest {
     }
 
     @Test
+    fun testAmbiguousUnitThrowsIllegalArgument() {
+        assertFailsWith(IllegalArgumentException::class) { parser.parse("1m") }
+    }
+
+    @Test
     fun testMinutesAreParsedCorrectly() {
-        assertTrue { parser.parse("1m") == TimeUnit.MINUTES.toMillis(1) }
+        assertTrue { parser.parse("1min") == TimeUnit.MINUTES.toMillis(1) }
         assertTrue { parser.parse("5 min") == TimeUnit.MINUTES.toMillis(5) }
         assertTrue { parser.parse("700mins") == TimeUnit.MINUTES.toMillis(700) }
     }

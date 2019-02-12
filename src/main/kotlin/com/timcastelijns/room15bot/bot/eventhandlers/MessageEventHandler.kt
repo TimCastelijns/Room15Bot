@@ -3,6 +3,7 @@ package com.timcastelijns.room15bot.bot.eventhandlers
 import com.timcastelijns.chatexchange.chat.*
 import com.timcastelijns.room15bot.bot.Actor
 import com.timcastelijns.room15bot.bot.usecases.*
+import com.timcastelijns.room15bot.data.BuildConfig
 import com.timcastelijns.room15bot.data.repositories.UserRepository
 import com.timcastelijns.room15bot.util.Command
 import com.timcastelijns.room15bot.util.CommandParser
@@ -12,6 +13,10 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
 import java.io.IOException
+import java.time.LocalDateTime
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 import kotlin.system.measureTimeMillis
 
 class MessageEventHandler(
@@ -22,6 +27,8 @@ class MessageEventHandler(
         private val rejectUserUseCase: RejectUserUseCase,
         private val syncStarsDataUseCase: SyncStarsDataUseCase,
         private val setReminderUseCase: SetReminderUseCase,
+        private val getProfileUseCase: GetProfileUseCase,
+        private val updateProfileUseCase: UpdateProfileUseCase,
         private val updateUseCase: UpdateUseCase,
         private val adamUseCase: AdamUseCase,
         private val maukerUseCase: MaukerUseCase,
@@ -108,6 +115,8 @@ class MessageEventHandler(
             CommandType.REMIND_ME -> {
                 processRemindMeCommand(message.id, command.args!!)
             }
+            CommandType.PROFILE -> processProfileCommand(message.id, message.user!!)
+            CommandType.UPDATE_PROFILE -> processUpdateProfileCommand(message.id, message.user!!, command.args!!)
             CommandType.ADAM -> processAdamCommand()
             CommandType.MAUKER -> processMaukerCommand()
             CommandType.AHMAD -> processAhmadCommand()
@@ -128,7 +137,39 @@ class MessageEventHandler(
 
     private fun processStatusCommand(messageId: Long) {
         val buildConfig = getBuildConfigUseCase.execute(Unit)
-        actor.acceptReply(messageFormatter.asStatusString(buildConfig), messageId)
+        val uptimeHours = getUptimeHours(buildConfig)
+
+        actor.acceptReply(messageFormatter.asStatusString(buildConfig, uptimeHours), messageId)
+    }
+
+    private fun getUptimeHours(buildConfig: BuildConfig): Long {
+        val buildTime = buildConfig.buildTime
+
+        val ldt = LocalDateTime.parse(buildTime, DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"))
+        return ChronoUnit.HOURS.between(ldt, LocalDateTime.now(ZoneOffset.UTC))
+    }
+
+    private fun processProfileCommand(messageId: Long, user: User) {
+        val message = try {
+            val profile = getProfileUseCase.execute(user.id)
+            messageFormatter.asUserProfile(profile)
+        } catch (e: IllegalArgumentException) {
+            e.message!!
+        }
+
+        actor.acceptReply(message, messageId)
+    }
+
+    private fun processUpdateProfileCommand(messageId: Long, user: User, commandArgs: String) {
+        val message = try {
+            val params = UpdateProfileCommandParams(user.id, commandArgs)
+            updateProfileUseCase.execute(params)
+            messageFormatter.asUserProfileUpdated()
+        } catch (e: IllegalArgumentException) {
+            e.message!!
+        }
+
+        actor.acceptReply(message, messageId)
     }
 
     private fun processAcceptCommand(messageId: Long, user: User, username: String?) {
@@ -305,7 +346,10 @@ class MessageEventHandler(
 
 }
 
-private fun Message.isCommand() = content?.startsWith("!") ?: false
+private fun Message.isCommand() =
+        content?.run {
+            startsWith("!") && length > 1
+        } ?: false
 
 private val Message.postedByMe
     get() = user?.id == 9676629L

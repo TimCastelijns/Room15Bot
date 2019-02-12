@@ -65,13 +65,17 @@ A `config.properties` file must be located in the root of the project with value
     dburl=
     dbdriver=
 
+When running tests locally, this file must also include the following properties:
+
+    dburltest=
+
 ### Database
 
 [Exposed](https://github.com/JetBrains/Exposed) is used as database framework. You are not tied to a specific database type, however it must be one that Exposed supports.
 
 Make sure that
 
-- you are connecting to a valid database (via the config in the file above).
+- you are connecting to a valid database (via the config in the file above). Note that tests use a different database. You should create both.
 - if you want to use a database/jdbc driver that is not mariadb, update the driver dependency in `build.gradle`.
 
 The bot will create the required tables and populate them (if applicable) for you.

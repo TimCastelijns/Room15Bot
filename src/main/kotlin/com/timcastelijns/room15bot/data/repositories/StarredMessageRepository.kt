@@ -1,6 +1,7 @@
 package com.timcastelijns.room15bot.data.repositories
 
 import com.timcastelijns.chatexchange.chat.ChatHost
+import com.timcastelijns.room15bot.data.StarredMessage
 import com.timcastelijns.room15bot.network.StarService
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -24,13 +25,6 @@ class StarredMessageRepository(
                 } ?: 0
     }
 }
-
-data class StarredMessage(
-        val username: String,
-        val message: String,
-        val stars: Int,
-        val permanentLink: String
-)
 
 private fun Document.extractStarredMessages(): List<StarredMessage> {
     val starredMessages = mutableListOf<StarredMessage>()
