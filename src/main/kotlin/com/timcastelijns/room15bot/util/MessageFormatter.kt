@@ -58,7 +58,7 @@ class MessageFormatter {
         table.joinToString("\n") { "    $it" }
     }
 
-    fun asStartingJobString() = "Ok, give me a second"
+    fun asStartingJobString() = "Ok, give me a minute."
 
     fun asDoneString(measuredTime: Long) = "Done, took $measuredTime ms"
 
