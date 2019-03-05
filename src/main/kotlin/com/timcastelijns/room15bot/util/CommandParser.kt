@@ -21,6 +21,7 @@ class CommandParser {
     private val davePattern = caseInsensitivePattern("!dave")
     private val profilePattern = caseInsensitivePattern("!profile")
     private val updateProfilePattern = caseInsensitivePattern("!editprofile\\s(.*)")
+    private val norsemenReferencePattern = caseInsensitivePattern("!nm(?:\\s)?(.+)?")
 
     private val acceptPattern = caseInsensitivePattern("!accept(?:\\s)?$anyUsernameRegex?")
     private val rejectPattern = caseInsensitivePattern("!reject\\s?$anyUsernameRegex?")
@@ -44,6 +45,7 @@ class CommandParser {
             davePattern to CommandType.DAVE,
             profilePattern to CommandType.PROFILE,
             updateProfilePattern to CommandType.UPDATE_PROFILE,
+            norsemenReferencePattern to CommandType.NORSEMEN_REFERENCE,
             acceptPattern to CommandType.ACCEPT,
             rejectPattern to CommandType.REJECT,
             leavePattern to CommandType.LEAVE,
@@ -101,6 +103,7 @@ enum class CommandType {
     REMIND_ME,
     PROFILE,
     UPDATE_PROFILE,
+    NORSEMEN_REFERENCE,
 
     // Custom commands.
     ADAM,

@@ -175,6 +175,17 @@ class CommandParserTest {
     }
 
     @Test
+    fun testNorsemenReference() {
+        var command = "!nm"
+        assertEquals(CommandType.NORSEMEN_REFERENCE, parser.parse(command).type)
+        assertNull(parser.parse(command).args)
+
+        command = "!nm shitting log"
+        assertEquals(CommandType.NORSEMEN_REFERENCE, parser.parse(command).type)
+        assertEquals("shitting log", parser.parse(command).args)
+    }
+
+    @Test
     fun testCasingDoesntMatter() {
         parser.parse("!STATS")
         parser.parse("!STAts 25436")
