@@ -11,6 +11,21 @@ class CommandParserTest {
     private val parser = CommandParser()
 
     @Test
+    fun testHelp() {
+        var command = "!help"
+        assertTrue { parser.parse(command).type == CommandType.HELP }
+        assertTrue { parser.parse(command).args == null }
+
+        command = "!commands"
+        assertTrue { parser.parse(command).type == CommandType.HELP }
+        assertTrue { parser.parse(command).args == null }
+
+        command = "!usage"
+        assertTrue { parser.parse(command).type == CommandType.HELP }
+        assertTrue { parser.parse(command).args == null }
+    }
+
+    @Test
     fun testStatus() {
         val commands = listOf("!status", "!alive")
         commands.forEach {
@@ -68,6 +83,31 @@ class CommandParserTest {
     }
 
     @Test
+    fun testProfile() {
+        val command = "!profile"
+        assertTrue { parser.parse(command).type == CommandType.PROFILE }
+        assertNull(parser.parse(command).args)
+    }
+
+    @Test
+    fun testEditProfile() {
+        val command = "!editprofile [tim] [29]"
+        assertTrue { parser.parse(command).type == CommandType.UPDATE_PROFILE }
+        assertTrue { parser.parse(command).args == "[tim] [29]" }
+    }
+
+    @Test
+    fun testNorsemenReference() {
+        var command = "!nm"
+        assertEquals(CommandType.NORSEMEN_REFERENCE, parser.parse(command).type)
+        assertNull(parser.parse(command).args)
+
+        command = "!nm shitting log"
+        assertEquals(CommandType.NORSEMEN_REFERENCE, parser.parse(command).type)
+        assertEquals("shitting log", parser.parse(command).args)
+    }
+
+    @Test
     fun testAdam() {
         val command = "!adam"
         assertTrue { parser.parse(command).type == CommandType.ADAM }
@@ -102,19 +142,6 @@ class CommandParserTest {
         assertNull(parser.parse(command).args)
     }
 
-    @Test
-    fun testProfile() {
-        val command = "!profile"
-        assertTrue { parser.parse(command).type == CommandType.PROFILE }
-        assertNull(parser.parse(command).args)
-    }
-
-    @Test
-    fun testEditProfile() {
-        val command = "!editprofile [tim] [29]"
-        assertTrue { parser.parse(command).type == CommandType.UPDATE_PROFILE }
-        assertTrue { parser.parse(command).args == "[tim] [29]" }
-    }
 
     @Test
     fun testAccept() {
@@ -153,36 +180,10 @@ class CommandParserTest {
     }
 
     @Test
-    fun testHelp() {
-        var command = "!help"
-        assertTrue { parser.parse(command).type == CommandType.HELP }
-        assertTrue { parser.parse(command).args == null }
-
-        command = "!commands"
-        assertTrue { parser.parse(command).type == CommandType.HELP }
-        assertTrue { parser.parse(command).args == null }
-
-        command = "!usage"
-        assertTrue { parser.parse(command).type == CommandType.HELP }
-        assertTrue { parser.parse(command).args == null }
-    }
-
-    @Test
     fun testUpdate() {
         val command = "!update"
         assertEquals(CommandType.UPDATE, parser.parse(command).type)
         assertNull(parser.parse(command).args)
-    }
-
-    @Test
-    fun testNorsemenReference() {
-        var command = "!nm"
-        assertEquals(CommandType.NORSEMEN_REFERENCE, parser.parse(command).type)
-        assertNull(parser.parse(command).args)
-
-        command = "!nm shitting log"
-        assertEquals(CommandType.NORSEMEN_REFERENCE, parser.parse(command).type)
-        assertEquals("shitting log", parser.parse(command).args)
     }
 
     @Test
