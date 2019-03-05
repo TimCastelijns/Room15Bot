@@ -1,6 +1,8 @@
 package com.timcastelijns.room15bot.util
 
 import com.timcastelijns.chatexchange.chat.User
+import com.timcastelijns.room15bot.bot.usecases.NorsemenReference
+import com.timcastelijns.room15bot.bot.usecases.ReferenceType
 import com.timcastelijns.room15bot.bot.usecases.truncate
 import com.timcastelijns.room15bot.data.BuildConfig
 import com.timcastelijns.room15bot.data.StarsData
@@ -101,9 +103,20 @@ class MessageFormatter {
     fun asDaveString(tiredOf: String) = tiredOf
 
     fun asUserProfile(profile: UserProfile) =
-            "[${profile.nickname ?: ""}] [${profile.age?: ""}]"
+            "[${profile.nickname ?: ""}] [${profile.age ?: ""}]"
 
     fun asUserProfileUpdated() = "Profile updated. Try !profile to view it"
+
+    fun asNorsemenReference(data: NorsemenReference): String = when (data.type) {
+        ReferenceType.QUOTE -> "“${data.output}”"
+        ReferenceType.IMAGE,
+        ReferenceType.VIDEO -> data.output
+        ReferenceType.HELP -> {
+            val options = data.output.split(",")
+                    .joinToString(",") { "`$it`" }
+            "Try `!nm reference` where reference can be any of the following: $options"
+        }
+    }
 
     fun asBeRightBackString() = "Ok, be right back"
 

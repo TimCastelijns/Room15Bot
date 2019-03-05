@@ -29,6 +29,7 @@ class MessageEventHandler(
         private val setReminderUseCase: SetReminderUseCase,
         private val getProfileUseCase: GetProfileUseCase,
         private val updateProfileUseCase: UpdateProfileUseCase,
+        private val norsemenReferenceUseCase: NorsemenReferenceUseCase,
         private val updateUseCase: UpdateUseCase,
         private val adamUseCase: AdamUseCase,
         private val maukerUseCase: MaukerUseCase,
@@ -117,6 +118,8 @@ class MessageEventHandler(
             }
             CommandType.PROFILE -> processProfileCommand(message.id, message.user!!)
             CommandType.UPDATE_PROFILE -> processUpdateProfileCommand(message.id, message.user!!, command.args!!)
+            CommandType.NORSEMEN_REFERENCE -> processNorsemenReferenceCommand(message.id, command.args)
+
             CommandType.ADAM -> processAdamCommand()
             CommandType.MAUKER -> processMaukerCommand()
             CommandType.AHMAD -> processAhmadCommand()
@@ -167,6 +170,20 @@ class MessageEventHandler(
             messageFormatter.asUserProfileUpdated()
         } catch (e: IllegalArgumentException) {
             e.message!!
+        }
+
+        actor.acceptReply(message, messageId)
+    }
+
+    private fun processNorsemenReferenceCommand(messageId: Long, args: String?) {
+        val message = try {
+            val params = args
+            val data = norsemenReferenceUseCase.execute(params)
+            messageFormatter.asNorsemenReference(data)
+        } catch (e: IllegalArgumentException) {
+            e.message!!
+        } catch (e: NoSuchElementException) {
+            "I am not familiar with this reference."
         }
 
         actor.acceptReply(message, messageId)

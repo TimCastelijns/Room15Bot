@@ -39,6 +39,7 @@ private val module: Module = module {
     factory<SetReminderUseCase>()
     factory<GetProfileUseCase>()
     factory<UpdateProfileUseCase>()
+    factory<NorsemenReferenceUseCase>()
     factory<AdamUseCase>()
     factory<MaukerUseCase>()
     factory<AhmadUseCase>()

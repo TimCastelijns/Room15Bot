@@ -41,7 +41,7 @@ class Application : KoinComponent {
         val credentials = configRepository.getBotCredentials()
         val client = connectClient(credentials)
 
-        bot.boot(client, ROOM_ID_ANDROID)
+        bot.boot(client, ROOM_ID_TEST)
         bot.observeLife()
                 .subscribe { alive ->
                     if (!alive) {
