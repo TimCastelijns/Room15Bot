@@ -365,7 +365,9 @@ class MessageEventHandler(
 
 private fun Message.isCommand() =
         content?.run {
-            startsWith("!") && length > 1
+            startsWith("!") &&
+                    // Exclude messages that consist of only !'s.
+                    toSet().size > 1
         } ?: false
 
 private val Message.postedByMe
