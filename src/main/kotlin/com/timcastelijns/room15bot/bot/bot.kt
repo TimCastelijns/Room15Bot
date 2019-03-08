@@ -5,6 +5,7 @@ import com.timcastelijns.room15bot.bot.eventhandlers.AccessLevelChangedEventHand
 import com.timcastelijns.room15bot.bot.eventhandlers.MessageEventHandler
 import com.timcastelijns.room15bot.bot.monitors.ReminderMonitor
 import com.timcastelijns.room15bot.bot.usecases.GetBuildConfigUseCase
+import com.timcastelijns.room15bot.bot.usecases.SyncStarsDataUseCase
 import com.timcastelijns.room15bot.bot.usecases.truncate
 import com.timcastelijns.room15bot.data.db.UserDao
 import com.timcastelijns.room15bot.util.MessageFormatter
@@ -18,16 +19,21 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
+import java.time.DayOfWeek
 import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.CoroutineContext
+import kotlin.system.measureTimeMillis
 
 class Bot(
         private val accessLevelChangedEventHandler: AccessLevelChangedEventHandler,
         private val messageEventHandler: MessageEventHandler,
         private val reminderMonitor: ReminderMonitor,
         private val getBuildConfigUseCase: GetBuildConfigUseCase,
+        private val syncStarsDataUseCase: SyncStarsDataUseCase,
         private val messageFormatter: MessageFormatter,
         private val userDao: UserDao
 ) : CoroutineScope, Actor {
@@ -115,6 +121,7 @@ class Bot(
         monitorReminders()
         monitorAccessGrants()
         monitorOutboundMessageQueue()
+        monitorAutoStarsDataSync()
     }
 
     private fun monitorReminders() = disposables.add(reminderMonitor.start(this))
@@ -147,6 +154,30 @@ class Bot(
                     if (outboundMessageQueue.isNotEmpty()) {
                         val outboundMessage = outboundMessageQueue.poll()
                         sendOutboundMessage(outboundMessage)
+                    }
+                }
+
+        disposables.add(disposable)
+    }
+
+    private fun monitorAutoStarsDataSync() {
+        val disposable = Observable.interval(1, TimeUnit.HOURS)
+                .filter {
+                    val now = LocalDateTime.now(ZoneOffset.UTC)
+
+                    // Mondays somewhere between 09.00 and 10.00 UTC.
+                    now.dayOfWeek == DayOfWeek.MONDAY && now.hour == 9
+                }
+                .observeOn(Schedulers.io())
+                .subscribe {
+                    launch {
+                        acceptMessage(messageFormatter.asStartingJobString())
+
+                        val measuredTime = measureTimeMillis {
+                            syncStarsDataUseCase.execute(Unit)
+                        }
+
+                        acceptMessage(messageFormatter.asDoneString(measuredTime))
                     }
                 }
 
