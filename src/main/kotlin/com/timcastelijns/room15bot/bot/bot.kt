@@ -16,7 +16,6 @@ import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
 import java.time.DayOfWeek
@@ -43,7 +42,7 @@ class Bot(
         private const val RESPOND_TO_ACCEPTANCE_DEADLINE = 1_800_000L
     }
 
-    private val job = Job()
+    private val job = kotlinx.coroutines.Job()
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.IO + job
@@ -171,13 +170,12 @@ class Bot(
                 .observeOn(Schedulers.io())
                 .subscribe {
                     launch {
-                        acceptMessage(messageFormatter.asStartingJobString())
-
                         val measuredTime = measureTimeMillis {
                             syncStarsDataUseCase.execute(Unit)
                         }
 
-                        acceptMessage(messageFormatter.asDoneString(measuredTime))
+                        acceptMessage(messageFormatter.asJobDoneString(
+                                Job.STARS_DATA_SYNC, measuredTime))
                     }
                 }
 

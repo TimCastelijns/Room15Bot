@@ -1,6 +1,7 @@
 package com.timcastelijns.room15bot.util
 
 import com.timcastelijns.chatexchange.chat.User
+import com.timcastelijns.room15bot.bot.Job
 import com.timcastelijns.room15bot.bot.usecases.NorsemenReference
 import com.timcastelijns.room15bot.bot.usecases.ReferenceType
 import com.timcastelijns.room15bot.bot.usecases.truncate
@@ -126,6 +127,10 @@ class MessageFormatter {
             "your access has been revoked because you did not respond"
 
     fun asRequesteeNotFound() = "I could not find a user that recently requested access"
+
+    fun asJobDoneString(job: Job, measuredTime: Long) = when (job) {
+        Job.STARS_DATA_SYNC -> "Synced starred message data. Took $measuredTime ms."
+    }
 
 }
 
