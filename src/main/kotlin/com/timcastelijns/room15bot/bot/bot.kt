@@ -5,6 +5,7 @@ import com.timcastelijns.room15bot.bot.eventhandlers.AccessLevelChangedEventHand
 import com.timcastelijns.room15bot.bot.eventhandlers.MessageEventHandler
 import com.timcastelijns.room15bot.bot.monitors.ReminderMonitor
 import com.timcastelijns.room15bot.bot.usecases.GetBuildConfigUseCase
+import com.timcastelijns.room15bot.bot.usecases.GetTopMessageUseCase
 import com.timcastelijns.room15bot.bot.usecases.SyncStarsDataUseCase
 import com.timcastelijns.room15bot.bot.usecases.truncate
 import com.timcastelijns.room15bot.data.db.UserDao
@@ -33,6 +34,7 @@ class Bot(
         private val reminderMonitor: ReminderMonitor,
         private val getBuildConfigUseCase: GetBuildConfigUseCase,
         private val syncStarsDataUseCase: SyncStarsDataUseCase,
+        private val getTopMessageUseCase: GetTopMessageUseCase,
         private val messageFormatter: MessageFormatter,
         private val userDao: UserDao
 ) : CoroutineScope, Actor {
@@ -121,6 +123,7 @@ class Bot(
         monitorAccessGrants()
         monitorOutboundMessageQueue()
         monitorAutoStarsDataSync()
+        monitorDailyTopMessage()
     }
 
     private fun monitorReminders() = disposables.add(reminderMonitor.start(this))
@@ -176,6 +179,31 @@ class Bot(
 
                         acceptMessage(messageFormatter.asJobDoneString(
                                 Job.STARS_DATA_SYNC, measuredTime))
+                    }
+                }
+
+        disposables.add(disposable)
+    }
+
+    private fun monitorDailyTopMessage() {
+        val disposable = Observable.interval(1, TimeUnit.HOURS)
+                .filter {
+                    val now = LocalDateTime.now(ZoneOffset.UTC)
+
+                    // Daily somewhere between 10.00 and 11.00 UTC.
+                    now.dayOfWeek == DayOfWeek.MONDAY && (now.hour == 10 || now.hour == 11)
+                }
+                .observeOn(Schedulers.io())
+                .subscribe {
+                    launch {
+                        val message = try {
+                            val data = getTopMessageUseCase.execute(365) // What are leap years?
+                            messageFormatter.asTopMessageString(data)
+                        } catch (e: IllegalArgumentException) {
+                            e.message!!
+                        }
+                        acceptMessage(messageFormatter.asTopMessageAnnouncementString())
+                        acceptMessage(message)
                     }
                 }
 

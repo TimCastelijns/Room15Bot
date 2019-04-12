@@ -21,6 +21,8 @@ Status|!status|!status|Display a status message
 Stats me|!stats|!stats|Shows your stats
 Stats user|!stats \<user id\>|!stats 1|Shows a user's stats
 Stars any|!stars|!stars|Shows the most starred messages of the room
+Stars week|!stars week||Shows the most starred messages of the room of the past week
+Stars month|!stars month||Shows the most starred messages of the room of the past month
 Stars user|!stars \<user name\>|!stars john|Shows a user's most starred messages
 Remind me|!remindme \<future date expression\>|!remindme 2h|Sets a reminder. When it expires, the bot will ping you
 ||!remindme in 5 mins|

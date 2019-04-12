@@ -5,10 +5,7 @@ import com.timcastelijns.room15bot.bot.Job
 import com.timcastelijns.room15bot.bot.usecases.NorsemenReference
 import com.timcastelijns.room15bot.bot.usecases.ReferenceType
 import com.timcastelijns.room15bot.bot.usecases.truncate
-import com.timcastelijns.room15bot.data.BuildConfig
-import com.timcastelijns.room15bot.data.StarsData
-import com.timcastelijns.room15bot.data.UserProfile
-import com.timcastelijns.room15bot.data.UserStats
+import com.timcastelijns.room15bot.data.*
 import java.time.Instant
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
@@ -131,6 +128,11 @@ class MessageFormatter {
     fun asJobDoneString(job: Job, measuredTime: Long) = when (job) {
         Job.STARS_DATA_SYNC -> "Synced starred message data. Took $measuredTime ms."
     }
+
+    fun asTopMessageAnnouncementString() = "This was the most starred message last year on this day:"
+
+    fun asTopMessageString(message: StarredMessage?) =
+            message?.permanentLink ?: "Hmm. Actually, nothing interesting was said on this day last year."
 
 }
 

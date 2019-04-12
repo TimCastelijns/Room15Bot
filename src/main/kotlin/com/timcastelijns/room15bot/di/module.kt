@@ -35,6 +35,7 @@ private val module: Module = module {
     factory<GetBuildConfigUseCase>()
     factory<GetUserStatsUseCase>()
     factory<SyncStarsDataUseCase>()
+    factory<GetTopMessageUseCase>()
     factory<GetStarsDataUseCase>()
     factory<SetReminderUseCase>()
     factory<GetProfileUseCase>()

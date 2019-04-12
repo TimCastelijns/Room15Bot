@@ -52,6 +52,18 @@ class StarredMessageDao {
         return list
     }
 
+    fun getTopStarredMessageWithAge(age: Int): StarredMessage? {
+        var message: StarredMessage? = null
+        transaction {
+            message = StarredMessages.select { StarredMessages.age eq age }
+                    .orderBy(StarredMessages.stars to SortOrder.DESC)
+                    .limit(1)
+                    .firstOrNull()
+                    ?.toStarredMessage()
+        }
+        return message
+    }
+
     fun getMessageCount(): Int {
         var totalStarredMessages = 0
         transaction {
