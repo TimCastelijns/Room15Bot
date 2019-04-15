@@ -196,6 +196,7 @@ class Bot(
                 .observeOn(Schedulers.io())
                 .subscribe {
                     launch {
+                        logger.debug("Checking what the top message last year was")
                         val message = try {
                             val data = getTopMessageUseCase.execute(365) // What are leap years?
                             messageFormatter.asTopMessageString(data)

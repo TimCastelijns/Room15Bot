@@ -4,6 +4,8 @@ import com.timcastelijns.room15bot.bot.usecases.truncate
 import com.timcastelijns.room15bot.data.StarredMessage
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.joda.time.DateTime
+import org.joda.time.DateTimeZone
 
 class StarredMessageDao {
 
@@ -14,7 +16,7 @@ class StarredMessageDao {
                 this[StarredMessages.message] = it.message.truncate()
                 this[StarredMessages.stars] = it.stars
                 this[StarredMessages.permalink] = it.permanentLink
-                this[StarredMessages.age] = it.age
+                this[StarredMessages.date] = it.date
             }
         }
     }
@@ -31,9 +33,10 @@ class StarredMessageDao {
     }
 
     fun getRecentStarredMessages(days: Int, limit: Int): List<StarredMessage> {
+        val then = DateTime.now(DateTimeZone.UTC).minusDays(days)
         var list = emptyList<StarredMessage>()
         transaction {
-            list = StarredMessages.select { StarredMessages.age lessEq days }
+            list = StarredMessages.select { StarredMessages.date.greaterEq(then) }
                     .orderBy(StarredMessages.stars to false)
                     .limit(limit)
                     .map { it.toStarredMessage() }
@@ -53,9 +56,10 @@ class StarredMessageDao {
     }
 
     fun getTopStarredMessageWithAge(age: Int): StarredMessage? {
+        val then = DateTime.now(DateTimeZone.UTC).minusDays(age)
         var message: StarredMessage? = null
         transaction {
-            message = StarredMessages.select { StarredMessages.age eq age }
+            message = StarredMessages.select { StarredMessages.date.eq(then)}
                     .orderBy(StarredMessages.stars to SortOrder.DESC)
                     .limit(1)
                     .firstOrNull()
@@ -120,6 +124,6 @@ private fun ResultRow.toStarredMessage() = with(this) {
             this[StarredMessages.message],
             this[StarredMessages.stars],
             this[StarredMessages.permalink],
-            this[StarredMessages.age]
+            this[StarredMessages.date]
     )
 }

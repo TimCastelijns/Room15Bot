@@ -1,5 +1,7 @@
 package com.timcastelijns.room15bot.data
 
+import org.joda.time.DateTime
+
 data class User(
         val id: Long,
         val name: String?,
@@ -17,7 +19,7 @@ data class StarredMessage(
         val message: String,
         val stars: Int,
         val permanentLink: String,
-        val age: Int
+        val date: DateTime
 )
 
 data class UserStats(

@@ -3,6 +3,8 @@ package com.timcastelijns.room15bot.data.repositories
 import com.timcastelijns.chatexchange.chat.ChatHost
 import com.timcastelijns.room15bot.data.StarredMessage
 import com.timcastelijns.room15bot.network.StarService
+import org.joda.time.DateTime
+import org.joda.time.DateTimeZone
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.time.DayOfWeek
@@ -83,14 +85,15 @@ private fun Document.extractStarredMessages(): List<StarredMessage> {
                 ChronoUnit.DAYS.between(LocalDate.parse(timestamp, FORMATTER_PREVIOUS_YEAR), now).toInt()
             timestamp.length > 12 ->  // This year
                 ChronoUnit.DAYS.between(LocalDate.parse(timestamp, FORMATTER_THIS_YEAR), now).toInt()
-            else -> {// This week
+            else -> { // This week
                 val then = DayOfWeek.from(FORMATTER_THIS_WEEK.parse(timestamp)).value
                 val today = now.dayOfWeek.value
                 daysAgo(today, then)
             }
         }
+        val then = DateTime.now(DateTimeZone.UTC).minusDays(ageInDays)
 
-        starredMessages += StarredMessage(username, message, stars, permalink, ageInDays)
+        starredMessages += StarredMessage(username, message, stars, permalink, then)
     }
 
     return starredMessages
