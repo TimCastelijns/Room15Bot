@@ -191,7 +191,7 @@ class Bot(
                     val now = LocalDateTime.now(ZoneOffset.UTC)
 
                     // Daily somewhere between 10.00 and 11.00 UTC.
-                    now.hour == 10 || now.hour == 11
+                    now.hour == 10
                 }
                 .observeOn(Schedulers.io())
                 .subscribe {
