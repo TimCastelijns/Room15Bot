@@ -10,7 +10,7 @@ class CommandParser {
     private val helpPattern = caseInsensitivePattern("!(?:help|commands|usage)")
     private val statusPattern = caseInsensitivePattern("!(?:status|alive)")
     private val statsMePattern = caseInsensitivePattern("!stats")
-    private val statsUserPattern = caseInsensitivePattern("!stats\\s(\\d+)")
+    private val statsUserPattern = caseInsensitivePattern("!stats\\s(-?\\d+)")
     private val starsAnyPattern = caseInsensitivePattern("!stars")
     private val starsUserPattern = caseInsensitivePattern("!stars\\s$anyUsernameRegex")
     private val remindMePattern = caseInsensitivePattern("!remindme\\s(.+)")

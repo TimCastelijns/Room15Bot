@@ -43,9 +43,13 @@ class CommandParserTest {
 
     @Test
     fun testStatsUser() {
-        val command = "!stats 12345678"
+        var command = "!stats 12345678"
         assertTrue { parser.parse(command).type == CommandType.STATS_USER }
         assertTrue { parser.parse(command).args == "12345678" }
+
+        command = "!stats -1"
+        assertTrue { parser.parse(command).type == CommandType.STATS_USER }
+        assertTrue { parser.parse(command).args == "-1" }
     }
 
     @Test
