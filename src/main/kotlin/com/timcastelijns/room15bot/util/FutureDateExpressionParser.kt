@@ -1,5 +1,8 @@
 package com.timcastelijns.room15bot.util
 
+import org.joda.time.DateTime
+import org.joda.time.DateTimeZone
+import org.joda.time.Days
 import java.util.concurrent.TimeUnit
 
 class FutureDateExpressionParser {
@@ -8,9 +11,11 @@ class FutureDateExpressionParser {
     private val pastDateIndicators = listOf("yesterday", "yday", "last", "past", "ago")
     private val regexPast =     Regex("(-[0-9]+)")
 
-    private val regexMinutes =  Regex("([A-Za-z ']+)?\\d+(\\s+)?(min|mins)(.+)?")
+    private val regexMinutes =  Regex("([A-Za-z ']+)?\\d+(\\s+)?m(?!o)(in(s))?(.+)?")
     private val regexHours =    Regex("([A-Za-z ']+)?\\d+(\\s+)?h(our|ours)?(.+)?")
     private val regexDays =     Regex("([A-Za-z ']+)?\\d+(\\s+)?d(ay)?(s)?(.+)?")
+    private val regexWeeks =    Regex("([A-Za-z ']+)?\\d+(\\s+)?w(eek)?(s)?(.+)?")
+    private val regexMonths =   Regex("([A-Za-z ']+)?\\d+(\\s+)?mon(th)?(s)?(.+)?")
 
     private val arbitraries = mapOf(
             "later" to TimeUnit.HOURS.toMillis(4),
@@ -47,6 +52,18 @@ class FutureDateExpressionParser {
             expression.matches(regexDays) -> {
                 val days = expression.extractValue()
                 TimeUnit.DAYS.toMillis(days)
+            }
+            expression.matches(regexWeeks) -> {
+                val weeks = expression.extractValue()
+                TimeUnit.DAYS.toMillis(weeks * 7)
+            }
+            expression.matches(regexMonths) -> {
+                val months = expression.extractValue()
+                // Check how many days away 'today + months' is.
+                val now = DateTime.now(DateTimeZone.UTC)
+                val then = now.plusMonths(months.toInt())
+                val days = Days.daysBetween(now, then).days
+                TimeUnit.DAYS.toMillis(days.toLong())
             }
             expression.matches(regexArbitrary) -> arbitraries[expression] ?: throw IllegalArgumentException("This syntax is not supported")
             else -> throw IllegalArgumentException("This syntax is not supported")
