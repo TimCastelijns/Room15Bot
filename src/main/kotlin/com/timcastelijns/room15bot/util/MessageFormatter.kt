@@ -134,6 +134,8 @@ class MessageFormatter {
     fun asTopMessageString(message: StarredMessage?) =
             message?.permanentLink ?: "Hmm. Actually, nothing interesting was said on this day last year."
 
+    fun asUserNotFoundString(userId: Long) = "Could not find a user with id $userId."
+
 }
 
 fun String.asPingName() = this.replace(" ", "")

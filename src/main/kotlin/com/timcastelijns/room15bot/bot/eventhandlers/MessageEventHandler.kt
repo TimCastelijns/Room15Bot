@@ -56,7 +56,7 @@ class MessageEventHandler(
         handleMessage(event.message)
     }
 
-    private suspend fun handleMessage(message: Message)= coroutineScope {
+    private suspend fun handleMessage(message: Message) = coroutineScope {
         if (message.isCommand()) {
             val time = measureTimeMillis {
                 launch { processCommandMessage(message) }.join()
@@ -100,13 +100,17 @@ class MessageEventHandler(
             CommandType.STATUS -> processStatusCommand(message.id)
             CommandType.STATS_ME -> {
                 val userId = message.user!!.id
-                val user = userRepository.getUser(userId)!!
-                processShowStatsCommand(user)
+                val user = userRepository.getUser(userId)
+                user?.let {
+                    processShowStatsCommand(user)
+                } ?: actor.acceptMessage(messageFormatter.asUserNotFoundString(userId))
             }
             CommandType.STATS_USER -> {
                 val userId = command.args!!.toLong()
-                val user = userRepository.getUser(userId)!!
-                processShowStatsCommand(user)
+                val user = userRepository.getUser(userId)
+                user?.let {
+                    processShowStatsCommand(user)
+                } ?: actor.acceptMessage(messageFormatter.asUserNotFoundString(userId))
             }
             CommandType.STARS_ANY -> processShowStarsCommand(null)
             CommandType.STARS_USER -> {
