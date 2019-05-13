@@ -16,8 +16,7 @@ import com.timcastelijns.room15bot.network.UserService
 import com.timcastelijns.room15bot.network.UserStatsService
 import com.timcastelijns.room15bot.util.MessageFormatter
 import com.timcastelijns.room15bot.util.UserNameValidator
-import org.koin.dsl.module.Module
-import org.koin.dsl.module.module
+import org.koin.dsl.module
 import org.koin.experimental.builder.factory
 import org.koin.experimental.builder.single
 import retrofit2.Retrofit
@@ -25,7 +24,7 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 
-private val module: Module = module {
+private val module = module {
 
     single<Bot>()
 
@@ -88,4 +87,4 @@ fun provideMainRetrofit(): Retrofit =
                 .addCallAdapterFactory(CoroutineCallAdapterFactory())
                 .build()
 
-val modules = listOf(module)
+val room15botModules = listOf(module)

@@ -5,10 +5,10 @@ import com.timcastelijns.chatexchange.chat.StackExchangeClient
 import com.timcastelijns.room15bot.data.Credentials
 import com.timcastelijns.room15bot.data.db.Database
 import com.timcastelijns.room15bot.data.repositories.ConfigRepository
-import com.timcastelijns.room15bot.di.modules
-import org.koin.standalone.KoinComponent
-import org.koin.standalone.StandAloneContext.startKoin
-import org.koin.standalone.inject
+import com.timcastelijns.room15bot.di.room15botModules
+import org.koin.core.KoinComponent
+import org.koin.core.context.startKoin
+import org.koin.core.inject
 import org.slf4j.LoggerFactory
 import java.util.concurrent.CountDownLatch
 
@@ -16,7 +16,10 @@ const val ROOM_ID_ANDROID = 15
 const val ROOM_ID_TEST = 1
 
 fun main(args: Array<String>) {
-    startKoin(modules)
+    startKoin {
+        printLogger()
+        modules(room15botModules)
+    }
 
     Application()
 }
