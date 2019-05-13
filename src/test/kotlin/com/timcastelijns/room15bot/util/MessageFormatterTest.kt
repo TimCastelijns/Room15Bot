@@ -5,6 +5,7 @@ import com.timcastelijns.room15bot.data.BuildConfig
 import com.timcastelijns.room15bot.data.StarredMessage
 import com.timcastelijns.room15bot.data.StarsData
 import com.timcastelijns.room15bot.data.UserStats
+import org.joda.time.DateTime
 import org.junit.Test
 import java.time.Instant
 import kotlin.test.assertEquals
@@ -17,7 +18,7 @@ class MessageFormatterTest {
             "Lol",
             1,
             "",
-            0)
+            DateTime.now())
 
     private val longData = StarredMessage("A random name",
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor " +
@@ -25,7 +26,7 @@ class MessageFormatterTest {
                     "exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat",
             750,
             "",
-            0)
+            DateTime.now())
 
     private val weirdData = StarredMessage("ʇǝǝʞs uoɾ",
             "try {\n" +
@@ -34,7 +35,7 @@ class MessageFormatterTest {
                     "            ┬─┬\uFEFF | 9 |",
             1,
             "",
-            0)
+            DateTime.now())
 
     private val skeet = User(
             1,
