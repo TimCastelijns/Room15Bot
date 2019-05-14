@@ -9,6 +9,7 @@ import com.timcastelijns.room15bot.di.room15botModules
 import org.koin.core.KoinComponent
 import org.koin.core.context.startKoin
 import org.koin.core.inject
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.util.concurrent.CountDownLatch
 
@@ -16,6 +17,10 @@ const val ROOM_ID_ANDROID = 15
 const val ROOM_ID_TEST = 1
 
 fun main(args: Array<String>) {
+    Thread.setDefaultUncaughtExceptionHandler { t, e ->
+        Application.logger.error("Uncaught exception in thread [${t?.name}]: $e")
+    }
+
     startKoin {
         printLogger()
         modules(room15botModules)
@@ -30,7 +35,9 @@ private fun connectClient(credentials: Credentials): StackExchangeClient {
 
 class Application : KoinComponent {
 
-    private val logger = LoggerFactory.getLogger(Application::class.java)
+    companion object {
+        val logger: Logger = LoggerFactory.getLogger(Application::class.java)
+    }
 
     private val configRepository: ConfigRepository by inject()
     private val bot: Bot by inject()
