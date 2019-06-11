@@ -287,6 +287,8 @@ class MessageEventHandler(
         val message = try {
             val data = setReminderUseCase.execute(params)
             messageFormatter.asReminderString(data)
+        } catch (e: NumberFormatException) {
+            messageFormatter.asCantProcessString()
         } catch (e: IllegalArgumentException) {
             e.message!!
         }

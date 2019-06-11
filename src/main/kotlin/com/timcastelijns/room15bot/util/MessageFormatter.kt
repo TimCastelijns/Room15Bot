@@ -136,6 +136,8 @@ class MessageFormatter {
 
     fun asUserNotFoundString(userId: Long) = "Could not find a user with id $userId."
 
+    fun asCantProcessString() = "I don't know how to process this"
+
 }
 
 fun String.asPingName() = this.replace(" ", "")

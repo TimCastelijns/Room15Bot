@@ -26,10 +26,11 @@ class FutureDateExpressionParserTest {
         assertFailsWith(IllegalArgumentException::class) { parser.parse("-365 days") }
     }
 
-    @Ignore
     @Test
     fun testDateTooFarInTheFutureThrowsIllegalArgument() {
-        assertFailsWith(IllegalArgumentException::class) { parser.parse("9223372036854775806h") }
+        assertFailsWith(NumberFormatException::class) { parser.parse(
+                "9223372036854775808h" // This is Long.MAX_VALUE + 1.
+        )}
     }
 
     @Ignore // 'm' is currently defaulting to minutes and no other ambiguous units are used.
