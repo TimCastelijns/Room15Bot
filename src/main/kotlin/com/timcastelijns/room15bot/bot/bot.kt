@@ -41,7 +41,8 @@ class Bot(
 
     companion object {
         private val logger = LoggerFactory.getLogger(Bot::class.java)
-        private const val RESPOND_TO_ACCEPTANCE_DEADLINE = 1_800_000L
+        private const val TIME_USER_HAS_TO_ACK_RULES_MS = 1_800_000L // 30 mins
+        private const val TIME_OWNER_HAS_TO_ACCEPT_REQUEST_MS = 2_100_000L // 35 mins
     }
 
     private val job = kotlinx.coroutines.Job()
@@ -221,7 +222,7 @@ class Bot(
         }
     }
 
-    override fun provideLatestAccessRequestee() = recentAccessRequests.filterNot { it.processed }.lastOrNull()?.user
+    override fun provideLatestAccessRequestee() = recentAccessRequests.filterNot { it.processed }.filterNot { it.acceptDeadlineExceeded }.lastOrNull()?.user
 
     override fun acceptMessage(message: String) {
         outboundMessageQueue.add(OutboundMessage(message))
@@ -272,9 +273,12 @@ class Bot(
     )
 
     private val AccessGrant.respondDeadlineExceeded
-        get() = Instant.now().isAfter(timestamp.plusMillis(RESPOND_TO_ACCEPTANCE_DEADLINE))
+        get() = Instant.now().isAfter(timestamp.plusMillis(TIME_USER_HAS_TO_ACK_RULES_MS))
 
     private data class AccessRequest(val user: User, val timestamp: Instant, var processed: Boolean = false)
+
+    private val AccessRequest.acceptDeadlineExceeded
+        get() = Instant.now().isAfter(timestamp.plusMillis(TIME_OWNER_HAS_TO_ACCEPT_REQUEST_MS))
 
     private data class AccessGrant(val user: User, val timestamp: Instant, var shouldMonitor: Boolean = true)
 
